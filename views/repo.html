@@ -1,15 +1,28 @@
 {{define "repo"}}
 <!DOCTYPE html>
 <html lang='en'>
+
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <title>{{ .Repo.Name }}</title>
 </head>
+
 <body>
-  <h1>Tools for migrating from GitBucket to GitLab</h1>
+  <h1>
+    <a href='/'>Tools for migrating from GitBucket to GitLab</a>
+  </h1>
   <h2>{{ .Repo.Name }}</h2>
   <p>{{ .Repo.Description }}</p>
+
+  <form method='POST'>
+    <button>Migrate</button>
+  </form>
+
+  {{ if .Project }}
+  <h2>{{ .Project.PathWithNamespace }}</h2>
+  <p>{{ .Project.Description }}</p>
+  {{ end }}
 
   <h3>Issues</h3>
   <ul>
@@ -25,5 +38,6 @@
     {{end }}
   </ul>
 </body>
+
 </html>
 {{end}}

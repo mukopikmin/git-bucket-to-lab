@@ -27,13 +27,6 @@ type IndexParam struct {
 	RepoProject []RepoProject
 }
 
-// RepoParam ...
-type RepoParam struct {
-	Repo   *gitbucket.Repo
-	Issues []gitbucket.Issue
-	Pulls  []gitbucket.Pull
-}
-
 // Render acts as renderer of templates
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	return t.templates.ExecuteTemplate(w, name, data)
@@ -51,7 +44,8 @@ func main() {
 	e.Renderer = t
 
 	e.GET("/", index)
-	e.GET("/:owner/:name", repo)
+	e.GET("/:owner/:name", showRepo)
+	e.POST("/:owner/:name", migrateRepo)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
@@ -84,29 +78,4 @@ func index(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "index", params)
-}
-
-func repo(c echo.Context) error {
-	client := gitbucket.NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	owner := c.Param("owner")
-	name := c.Param("name")
-
-	repo, err := client.GetRepo(owner, name)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
-	}
-
-	issues, err := client.GetIssues(repo)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
-	}
-
-	pulls, err := client.GetPulls(repo)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
-	}
-
-	params := RepoParam{repo, issues, pulls}
-
-	return c.Render(http.StatusOK, "repo", params)
 }

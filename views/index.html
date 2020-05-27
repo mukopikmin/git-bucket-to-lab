@@ -1,11 +1,13 @@
 {{define "index"}}
 <!DOCTYPE html>
 <html lang='en'>
+
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <title>Document</title>
 </head>
+
 <body>
   <h1>Tools for migrating from GitBucket to GitLab</h1>
   <p>
@@ -23,23 +25,24 @@
       </tr>
     </thead>
     <tbody>
-    {{ range $pair := .RepoProject }}
-    <tr>
-      <td>
-        <a href='{{ $pair.Repo.FullName }}'>Migration</a>
-      </td>
-      <td>
-        <a target="_blank", href='{{ $pair.Repo.HTTPURL }}'>{{ $pair.Repo.FullName }}</a>
-      </td>
-      <td>
-        {{ if $pair.Project }}
-          <a target="_blank", href='{{ $pair.Project.WebURL }}'>{{ $pair.Project.PathWithNamespace }}</a>
-        {{end }}
-      </td>
-    </tr>
-    {{end }}
-  </tbody>
+      {{ range $pair := .RepoProject }}
+      <tr>
+        <td>
+          <a href='{{ $pair.Repo.FullName }}'>Migration</a>
+        </td>
+        <td>
+          <a target="_blank" , href='{{ $pair.Repo.HTTPURL }}'>{{ $pair.Repo.FullName }}</a>
+        </td>
+        <td>
+          {{ if $pair.Project }}
+          <a target="_blank" , href='{{ $pair.Project.WebURL }}'>{{ $pair.Project.PathWithNamespace }}</a>
+          {{end }}
+        </td>
+      </tr>
+      {{end }}
+    </tbody>
   </table>
 </body>
+
 </html>
 {{end}}

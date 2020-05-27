@@ -15,6 +15,7 @@ schema:
   watcher:
     extensions:
     - go
+    - html
     paths:
     - /
     ignored_paths:

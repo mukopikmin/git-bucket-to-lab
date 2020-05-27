@@ -69,6 +69,39 @@ func (c *Client) GetProjects() ([]Project, error) {
 	return projects, nil
 }
 
+// GetProject ...
+func (c *Client) GetProject(owner string, name string) (*Project, error) {
+	url := c.endpoint + "/projects/" + owner + "%2F" + name
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.token)
+
+	res, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var project Project
+	if err = json.Unmarshal([]byte(body), &project); err != nil {
+		return nil, err
+	}
+
+	return &project, nil
+}
+
 // CreateProject ...
 func (c *Client) CreateProject(name string, description string) (*Project, error) {
 	url := c.endpoint + "/projects"
@@ -91,7 +124,7 @@ func (c *Client) CreateProject(name string, description string) (*Project, error
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode != 204 {
+	if res.StatusCode != 201 {
 		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
 	}
 

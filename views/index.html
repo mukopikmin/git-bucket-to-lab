@@ -1,0 +1,45 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Document</title>
+</head>
+<body>
+  <h1>Tools for migrating from GitBucket to GitLab</h1>
+  <p>
+    <a target='_blank' href='http://localhost:8080/root/_application'>GitBucket personal access token</a>
+    <a target='_blank' href='http://localhost/profile/personal_access_tokens'>GitLab personal access token</a>
+  </p>
+
+  <h2>Repositories</h2>
+  <table>
+    <thead>
+      <tr>
+        <td></td>
+        <td>GitBucket</td>
+        <td>GitLab</td>
+      </tr>
+    </thead>
+    <tbody>
+    {{ range $pair := .RepoProject }}
+    <tr>
+      <td>
+        <a href='{{ $pair.Repo.FullName }}'>Migration</a>
+      </td>
+      <td>
+        <a target="_blank", href='{{ $pair.Repo.HTTPURL }}'>{{ $pair.Repo.FullName }}</a>
+      </td>
+      <td>
+        {{ if $pair.Project }}
+          <a target="_blank", href='{{ $pair.Project.WebURL }}'>{{ $pair.Project.PathWithNamespace }}</a>
+        {{end }}
+      </td>
+    </tr>
+    {{end }}
+  </tbody>
+  </table>
+</body>
+</html>
+{{end}}

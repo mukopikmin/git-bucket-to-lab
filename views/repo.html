@@ -1,0 +1,29 @@
+{{define "repo"}}
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>{{ .Repo.Name }}</title>
+</head>
+<body>
+  <h1>Tools for migrating from GitBucket to GitLab</h1>
+  <h2>{{ .Repo.Name }}</h2>
+  <p>{{ .Repo.Description }}</p>
+
+  <h3>Issues</h3>
+  <ul>
+    {{ range $issue  := .Issues }}
+    <li>#{{$issue.Number}} {{ $issue.Title }} ({{ $issue.State }})</li>
+    {{end }}
+  </ul>
+
+  <h3>Pull Requests</h3>
+  <ul>
+    {{ range $pull  := .Pulls }}
+    <li>#{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})</li>
+    {{end }}
+  </ul>
+</body>
+</html>
+{{end}}

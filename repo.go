@@ -65,27 +65,12 @@ func migrateRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	issues, err := b.GetIssues(repo)
+	_, err = l.CreateProject(name, repo.Description)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	pulls, err := b.GetPulls(repo)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	repo.Issues = issues
-	repo.Pulls = pulls
-
-	project, err := l.CreateProject(name, repo.Description)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	params := RepoParam{repo, project}
-
-	return c.Render(http.StatusOK, "repo", params)
+	return c.Redirect(http.StatusFound, "/"+owner+"/"+name)
 }
 
 func migrateIssues(c echo.Context) error {

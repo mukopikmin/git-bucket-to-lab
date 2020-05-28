@@ -31,12 +31,27 @@ func (c *Client) GetUsers() ([]User, error) {
 		return nil, err
 	}
 
-	var repos []User
-	if err = json.Unmarshal([]byte(body), &repos); err != nil {
+	var users []User
+	if err = json.Unmarshal([]byte(body), &users); err != nil {
 		return nil, err
 	}
 
-	return repos, nil
+	return users, nil
+}
+
+// GetGroups ...
+func (c *Client) GetGroups() ([]User, error) {
+	body, err := c.authGet("/api/v3/user/orgs")
+	if err != nil {
+		return nil, err
+	}
+
+	var orgs []User
+	if err = json.Unmarshal([]byte(body), &orgs); err != nil {
+		return nil, err
+	}
+
+	return orgs, nil
 }
 
 // func (c *Client) CreateUser(login string, email string) (*User, error) {

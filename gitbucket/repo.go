@@ -24,6 +24,8 @@ type Repo struct {
 	HTTPURL       string `json:"http_url"`
 	CloneURL      string `json:"clone_url"`
 	HTMLURL       string `json:"html_url"`
+	Issues        []Issue
+	Pulls         []Pull
 }
 
 // RepoRequest ...

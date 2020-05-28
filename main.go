@@ -4,9 +4,11 @@ import (
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/gitlab"
 	"io"
+	"log"
 	"net/http"
 	"text/template"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -33,6 +35,11 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -45,7 +52,8 @@ func main() {
 
 	e.GET("/", index)
 	e.GET("/:owner/:name", showRepo)
-	e.POST("/:owner/:name", migrateRepo)
+	e.POST("/:owner/:name/repo", migrateRepo)
+	e.POST("/:owner/:name/issues", migrateIssues)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

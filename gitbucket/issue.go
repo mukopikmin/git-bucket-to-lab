@@ -21,6 +21,7 @@ type Issue struct {
 	ID          int           `json:"id"`
 	CommentsURL string        `json:"comments_url"`
 	HTMLURL     string        `json:"html_url"`
+	Comments    []Comment
 }
 
 // IssueRequest ...

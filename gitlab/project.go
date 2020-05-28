@@ -28,6 +28,8 @@ type Project struct {
 	ForksCount        int         `json:"forks_count"`
 	AvatarURL         string      `json:"avatar_url"`
 	StarCount         int         `json:"star_count"`
+	Issues            []Issue
+	Merges            []Merge
 }
 
 // ProjectRequest ...

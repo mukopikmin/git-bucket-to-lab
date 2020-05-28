@@ -7,6 +7,7 @@ require (
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-siris/siris v7.4.0+incompatible // indirect
+	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/labstack/echo/v4 v4.1.16
 	github.com/oxequa/interact v0.0.0-20171114182912-f8fb5795b5d7 // indirect

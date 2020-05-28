@@ -5,17 +5,17 @@
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-  <title>{{ .Repo.Name }}</title>
+  <title>{{ .Repo.FullName }}</title>
 </head>
 
 <body>
   <h1>
     <a href='/'>Tools for migrating from GitBucket to GitLab</a>
   </h1>
-  <h2>{{ .Repo.Name }}</h2>
+  <h2>{{ .Repo.FullName }}</h2>
   <p>{{ .Repo.Description }}</p>
 
-  <form method='POST'>
+  <form method='POST' action="/{{ .Repo.FullName }}/project">
     <button>Migrate</button>
   </form>
 
@@ -25,18 +25,40 @@
   {{ end }}
 
   <h3>Issues</h3>
+  <h4>GitBucket</h4>
   <ul>
-    {{ range $issue  := .Issues }}
+    {{ range $issue := .Repo.Issues }}
     <li>#{{$issue.Number}} {{ $issue.Title }} ({{ $issue.State }})</li>
     {{end }}
   </ul>
+  <h4>GitLab</h4>
+  <ul>
+    {{ range $issue := .Project.Issues }}
+    <li>#{{$issue.ID}} {{ $issue.Title }} ({{ $issue.State }})</li>
+    {{end }}
+  </ul>
+
+  <form method='POST' action="/{{ .Repo.FullName }}/issues">
+    <button>Migrate</button>
+  </form>
 
   <h3>Pull Requests</h3>
+  <h4>GitBucket</h4>
   <ul>
-    {{ range $pull  := .Pulls }}
+    {{ range $pull  := .Repo.Pulls }}
     <li>#{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})</li>
     {{end }}
   </ul>
+  <h4>GitLab</h4>
+  <ul>
+    {{ range $pull  := .Project.Merges }}
+    <li>#{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})</li>
+    {{end }}
+  </ul>
+
+  <form method='POST' action="/{{ .Repo.FullName }}/pulls">
+    <button>Migrate</button>
+  </form>
 </body>
 
 </html>

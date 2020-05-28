@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Merge ...
 type Merge struct {
 	ID             int         `json:"id"`
 	Iid            int         `json:"iid"`

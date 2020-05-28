@@ -2,10 +2,6 @@ package gitlab
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
 	"time"
 )
 
@@ -40,25 +36,7 @@ type ProjectRequest struct {
 
 // GetProjects ...
 func (c *Client) GetProjects() ([]Project, error) {
-	url := c.endpoint + "/projects"
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "Bearer "+c.token)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.authGet(("/projects"))
 	if err != nil {
 		return nil, err
 	}
@@ -73,25 +51,8 @@ func (c *Client) GetProjects() ([]Project, error) {
 
 // GetProject ...
 func (c *Client) GetProject(owner string, name string) (*Project, error) {
-	url := c.endpoint + "/projects/" + owner + "%2F" + name
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "Bearer "+c.token)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	path := "/projects/" + owner + "%2F" + name
+	body, err := c.authGet(path)
 	if err != nil {
 		return nil, err
 	}
@@ -106,33 +67,13 @@ func (c *Client) GetProject(owner string, name string) (*Project, error) {
 
 // CreateProject ...
 func (c *Client) CreateProject(name string, description string) (*Project, error) {
-	url := c.endpoint + "/projects"
 	proReq := ProjectRequest{name, description}
-
 	jsonBody, err := json.Marshal(proReq)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonBody)))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+c.token)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if res.StatusCode != 201 {
-		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.authPost("/projects", jsonBody)
 	if err != nil {
 		return nil, err
 	}

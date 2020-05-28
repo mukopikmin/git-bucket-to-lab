@@ -2,9 +2,6 @@ package gitbucket
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
-	"strings"
 )
 
 // Repo in GitBucket
@@ -41,22 +38,7 @@ type RepoRequest struct {
 
 // GetRepos ...
 func (c *Client) GetRepos() ([]Repo, error) {
-	url := c.endpoint + "/api/v3/user/repos"
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "token "+c.apikey)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.authGet("/api/v3/user/repos")
 	if err != nil {
 		return nil, err
 	}
@@ -71,22 +53,8 @@ func (c *Client) GetRepos() ([]Repo, error) {
 
 // GetRepo ...
 func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
-	url := c.endpoint + "/api/v3/repos/" + owner + "/" + name
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "token "+c.apikey)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	path := "/api/v3/repos/" + owner + "/" + name
+	body, err := c.authGet(path)
 	if err != nil {
 		return nil, err
 	}
@@ -101,29 +69,13 @@ func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
 
 // CreateRepo ...
 func (c *Client) CreateRepo(name string, description string, private bool) (*Repo, error) {
-	url := c.endpoint + "/api/v3/user/repos"
 	repoReq := RepoRequest{name, description, private}
-
 	jsonBody, err := json.Marshal(repoReq)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonBody)))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "token "+c.apikey)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.authPost("/api/v3/user/repos", jsonBody)
 	if err != nil {
 		return nil, err
 	}

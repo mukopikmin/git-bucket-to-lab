@@ -2,9 +2,6 @@ package gitbucket
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
-	"strings"
 	"time"
 )
 
@@ -28,29 +25,11 @@ type Issue struct {
 type IssueRequest struct {
 	Title string `json:"title"`
 	Body  string `json:"body"`
-	// Assignees []string `json:"assignees"`
-	// Milestone int      `json:"milestone"`
-	// Labels    []string `json:"labels"`
 }
 
 // GetIssues ...
 func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
-	url := c.endpoint + "/api/v3/repos/" + repo.FullName + "/issues"
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "token "+c.apikey)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.authGet("/api/v3/repos/" + repo.FullName + "/issues")
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +44,7 @@ func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
 
 // CreateIssue ...
 func (c *Client) CreateIssue(repo *Repo, title string, body string) (*Issue, error) {
-	url := c.endpoint + "/api/v3/repos/" + repo.FullName + "/issues"
+	path := "/api/v3/repos/" + repo.FullName + "/issues"
 	issueReq := IssueRequest{title, body}
 
 	jsonBody, err := json.Marshal(issueReq)
@@ -73,21 +52,7 @@ func (c *Client) CreateIssue(repo *Repo, title string, body string) (*Issue, err
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonBody)))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "token "+c.apikey)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	resBody, err := ioutil.ReadAll(res.Body)
+	resBody, err := c.authPost(path, jsonBody)
 	if err != nil {
 		return nil, err
 	}

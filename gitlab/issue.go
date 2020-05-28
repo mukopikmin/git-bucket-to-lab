@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Issue ...
 type Issue struct {
 	ID          int           `json:"id"`
 	Iid         int           `json:"iid"`
@@ -62,6 +63,7 @@ type Issue struct {
 	MovedToID interface{} `json:"moved_to_id"`
 }
 
+// IssueRequest ...
 type IssueRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`

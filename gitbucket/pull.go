@@ -2,8 +2,6 @@ package gitbucket
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 )
 
@@ -44,22 +42,8 @@ type Pull struct {
 
 // GetPulls ...
 func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
-	url := c.endpoint + "/api/v3/repos/" + repo.FullName + "/pulls"
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "token "+c.apikey)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	path := "/api/v3/repos/" + repo.FullName + "/pulls"
+	body, err := c.authGet(path)
 	if err != nil {
 		return nil, err
 	}

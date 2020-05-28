@@ -2,8 +2,6 @@ package gitlab
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 )
 
@@ -45,22 +43,7 @@ type User struct {
 
 // GetSelf ...
 func (c *Client) GetSelf() (*User, error) {
-	url := c.endpoint + "/user"
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "Bearer "+c.token)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.authGet("/user")
 	if err != nil {
 		return nil, err
 	}

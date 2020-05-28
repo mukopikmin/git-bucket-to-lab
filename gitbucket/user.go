@@ -2,8 +2,6 @@ package gitbucket
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 )
 
@@ -28,22 +26,7 @@ type UserRequest struct {
 
 // GetUsers ...
 func (c *Client) GetUsers() ([]User, error) {
-	url := c.endpoint + "/api/v3/admin/users"
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", "token "+c.apikey)
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.authGet("/api/v3/admin/users")
 	if err != nil {
 		return nil, err
 	}

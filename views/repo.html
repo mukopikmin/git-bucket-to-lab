@@ -28,13 +28,22 @@
   <h4>GitBucket</h4>
   <ul>
     {{ range $issue := .Repo.Issues }}
-    <li>#{{$issue.Number}} {{ $issue.Title }} ({{ $issue.State }})</li>
+    <li>
+      <a target='_blank' href='{{ $issue.HTMLURL }}'>
+        #{{$issue.Number}} {{ $issue.Title }} ({{ $issue.State }})
+      </a>
+      <ul>
+        {{ range $comment := $issue.Comments }}
+          <li>{{ $comment.Body }}</li>
+        {{ end }}
+      </ul>
+    </li>
     {{end }}
   </ul>
   <h4>GitLab</h4>
   <ul>
     {{ range $issue := .Project.Issues }}
-    <li>#{{$issue.ID}} {{ $issue.Title }} ({{ $issue.State }})</li>
+    <li>#{{$issue.Iid}} {{ $issue.Title }} ({{ $issue.State }})</li>
     {{end }}
   </ul>
 

@@ -39,7 +39,17 @@ func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
 		return nil, err
 	}
 
-	return issues, nil
+	var commentIssues []Issue
+	for _, issue := range issues {
+		comments, err := c.GetComments(repo, issue.Number)
+		if err != nil {
+			return nil, err
+		}
+		issue.Comments = comments
+		commentIssues = append(commentIssues, issue)
+	}
+
+	return commentIssues, nil
 }
 
 // CreateIssue ...

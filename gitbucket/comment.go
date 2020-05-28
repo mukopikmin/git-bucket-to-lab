@@ -1,6 +1,10 @@
 package gitbucket
 
-import "time"
+import (
+	"encoding/json"
+	"fmt"
+	"time"
+)
 
 // Comment ...
 type Comment struct {
@@ -20,4 +24,20 @@ type Comment struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	HTMLURL   string    `json:"html_url"`
+}
+
+// GetComments ...
+func (c *Client) GetComments(r *Repo, id int) ([]Comment, error) {
+	path := fmt.Sprintf("/api/v3/repos/%s/issues/%d/comments", r.FullName, id)
+	body, err := c.authGet(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var comments []Comment
+	if err = json.Unmarshal([]byte(body), &comments); err != nil {
+		return nil, err
+	}
+
+	return comments, nil
 }

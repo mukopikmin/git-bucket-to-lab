@@ -9,9 +9,15 @@ import (
 
 // Client for GitLab
 type Client struct {
-	endpoint string
-	token    string
+	Endpoint   string
+	apiversion string
+	token      string
 	*http.Client
+}
+
+// APIEndpoint ...
+func (c *Client) APIEndpoint() string {
+	return c.Endpoint + "/api/" + c.apiversion
 }
 
 type errorsResult struct {
@@ -20,14 +26,16 @@ type errorsResult struct {
 
 // NewClient is constructor for client
 func NewClient(endpoint string, token string) *Client {
-	return &Client{endpoint, token, http.DefaultClient}
+	return &Client{endpoint, "v4", token, http.DefaultClient}
 }
 
 func (c *Client) authGet(path string) ([]byte, error) {
-	req, err := http.NewRequest("GET", c.endpoint+path, nil)
+	req, err := http.NewRequest("GET", c.APIEndpoint()+path, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println(c.APIEndpoint() + path)
 
 	req.Header.Set("Authorization", "Bearer "+c.token)
 
@@ -50,7 +58,7 @@ func (c *Client) authGet(path string) ([]byte, error) {
 }
 
 func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
-	req, err := http.NewRequest("POST", c.endpoint+path, strings.NewReader(string(jsonBody)))
+	req, err := http.NewRequest("POST", c.APIEndpoint()+path, strings.NewReader(string(jsonBody)))
 	if err != nil {
 		return nil, err
 	}

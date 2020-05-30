@@ -4,6 +4,7 @@ import (
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/gitlab"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,8 +16,8 @@ type RepoParam struct {
 }
 
 func showRepo(c echo.Context) error {
-	b := gitbucket.NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	l := gitlab.NewClient("http://localhost/api/v4", "8vJG_YxuJ5K1xTt5xeM-")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
 	owner := c.Param("owner")
 	name := c.Param("name")
 
@@ -57,8 +58,8 @@ func migrateRepo(c echo.Context) error {
 	owner := c.Param("owner")
 	name := c.Param("name")
 
-	b := gitbucket.NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	l := gitlab.NewClient("http://localhost/api/v4", "8vJG_YxuJ5K1xTt5xeM-")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {
@@ -77,8 +78,8 @@ func migrateIssues(c echo.Context) error {
 	owner := c.Param("owner")
 	name := c.Param("name")
 
-	b := gitbucket.NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	l := gitlab.NewClient("http://localhost/api/v4", "8vJG_YxuJ5K1xTt5xeM-")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {
@@ -96,9 +97,16 @@ func migrateIssues(c echo.Context) error {
 	}
 
 	for _, i := range issues {
-		_, err := l.CreateIssue(project, i.Title, i.Body)
+		issue, err := l.CreateIssue(project, i.Title, i.Body)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+
+		for _, comment := range i.Comments {
+			_, err := l.CreateComment(project, issue, comment.Body, comment.CreatedAt)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			}
 		}
 	}
 

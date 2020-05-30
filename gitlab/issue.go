@@ -61,6 +61,7 @@ type Issue struct {
 		Full     string `json:"full"`
 	} `json:"references"`
 	MovedToID interface{} `json:"moved_to_id"`
+	Comments  []Comment
 }
 
 // IssueRequest ...
@@ -82,7 +83,17 @@ func (c *Client) GetIssues(p *Project) ([]Issue, error) {
 		return nil, err
 	}
 
-	return issues, nil
+	var commentIssues []Issue
+	for _, issue := range issues {
+		comments, err := c.GetComments(p, &issue)
+		if err != nil {
+			return nil, err
+		}
+		issue.Comments = comments
+		commentIssues = append(commentIssues, issue)
+	}
+
+	return commentIssues, nil
 }
 
 // CreateIssue ...

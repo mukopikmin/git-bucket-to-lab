@@ -38,7 +38,7 @@ type RepoRequest struct {
 
 // GetRepos ...
 func (c *Client) GetRepos() ([]Repo, error) {
-	body, err := c.authGet("/api/v3/user/repos")
+	body, err := c.authGet("/user/repos")
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *Client) GetRepos() ([]Repo, error) {
 
 // GetRepo ...
 func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
-	path := "/api/v3/repos/" + owner + "/" + name
+	path := "/repos/" + owner + "/" + name
 	body, err := c.authGet(path)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (c *Client) CreateRepo(name string, description string, private bool) (*Rep
 		return nil, err
 	}
 
-	body, err := c.authPost("/api/v3/user/repos", jsonBody)
+	body, err := c.authPost("/user/repos", jsonBody)
 	if err != nil {
 		return nil, err
 	}

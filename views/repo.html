@@ -61,8 +61,8 @@
                 </a>
                 <ul>
                   {{ range $comment := $issue.Comments }}
-                  <li>
-                    <a href='{{ $comment.HTMLURL }}'>{{ $comment.ID }}</a>
+                  <li class="text-truncate">
+                    <a target='_blank' href='{{ $comment.HTMLURL }}'>#{{ $comment.ID }} {{ $comment.Body }}</a>
                   </li>
                   {{ end }}
                 </ul>
@@ -75,16 +75,27 @@
             </form>
           </div>
 
-        <div class="col">
-          <h5 class='card-title'>GitLab</h5>
-          <ul>
-            {{ if .Project }}
-            {{ range $issue := .Project.Issues }}
-            <li>#{{$issue.Iid}} {{ $issue.Title }} ({{ $issue.State }})</li>
-            {{end }}
-            {{end }}
-          </ul>
-        </div>
+          <div class="col">
+            <h5 class='card-title'>GitLab</h5>
+            <ul>
+              {{ if .Project }}
+              {{ range $issue := .Project.Issues }}
+              <li>
+                <a target='_blank' href='{{ $issue.WebURL }}'>
+                  #{{$issue.Iid}} {{ $issue.Title }} ({{ $issue.State }})
+                </a>
+                <ul>
+                  {{ range $comment := $issue.Comments }}
+                  <li class="text-truncate">
+                    <a target='_blank' href='{{ $comment.HTMLURL }}'>#{{ $comment.ID }} {{ $comment.Body }}</a>
+                  </li>
+                  {{ end }}
+                </ul>
+              </li>
+              {{end }}
+              {{end }}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

@@ -17,8 +17,7 @@
     </div>
   </nav>
 
-  <div class='container mt-3'>
-    <!-- <p>
+  <div class='container'>
     <div class='row'>
       <div class='col'>
         <div class="form-group">
@@ -44,34 +43,6 @@
           personal access token</a>
       </div>
     </div>
-    </p> -->
-
-    <table class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <th></th>
-          <th>GitBucket</th>
-          <th>GitLab</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{ range $pair := .RepoProject }}
-        <tr>
-          <td>
-            <a href='{{ $pair.Repo.FullName }}'>Migration</a>
-          </td>
-          <td>
-            <a target="_blank" , href='{{ $pair.Repo.HTTPURL }}'>{{ $pair.Repo.FullName }}</a>
-          </td>
-          <td>
-            {{ if $pair.Project }}
-            <a target="_blank" , href='{{ $pair.Project.WebURL }}'>{{ $pair.Project.PathWithNamespace }}</a>
-            {{end }}
-          </td>
-        </tr>
-        {{end }}
-      </tbody>
-    </table>
   </div>
 </body>
 

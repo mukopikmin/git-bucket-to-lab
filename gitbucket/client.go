@@ -8,18 +8,24 @@ import (
 
 // Client for GitBucket
 type Client struct {
-	endpoint string
-	apikey   string
+	Endpoint   string
+	apiversion string
+	apikey     string
 	*http.Client
+}
+
+// APIEndpoint ...
+func (c *Client) APIEndpoint() string {
+	return c.Endpoint + "/api/" + c.apiversion
 }
 
 // NewClient is constructor fot client
 func NewClient(endpoint string, apikey string) *Client {
-	return &Client{endpoint, apikey, http.DefaultClient}
+	return &Client{endpoint, "v3", apikey, http.DefaultClient}
 }
 
 func (c *Client) authGet(path string) ([]byte, error) {
-	req, err := http.NewRequest("GET", c.endpoint+path, nil)
+	req, err := http.NewRequest("GET", c.APIEndpoint()+path, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +48,7 @@ func (c *Client) authGet(path string) ([]byte, error) {
 }
 
 func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
-	req, err := http.NewRequest("POST", c.endpoint+path, strings.NewReader(string(jsonBody)))
+	req, err := http.NewRequest("POST", c.APIEndpoint()+path, strings.NewReader(string(jsonBody)))
 	if err != nil {
 		return nil, err
 	}

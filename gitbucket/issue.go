@@ -29,7 +29,7 @@ type IssueRequest struct {
 
 // GetIssues ...
 func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
-	body, err := c.authGet("/api/v3/repos/" + repo.FullName + "/issues")
+	body, err := c.authGet("/repos/" + repo.FullName + "/issues")
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
 
 // CreateIssue ...
 func (c *Client) CreateIssue(repo *Repo, title string, body string) (*Issue, error) {
-	path := "/api/v3/repos/" + repo.FullName + "/issues"
+	path := "/repos/" + repo.FullName + "/issues"
 	issueReq := IssueRequest{title, body}
 
 	jsonBody, err := json.Marshal(issueReq)

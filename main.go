@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/gitlab"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 
 	"github.com/joho/godotenv"
@@ -26,7 +28,9 @@ type RepoProject struct {
 
 // IndexParam ...
 type IndexParam struct {
-	RepoProject []RepoProject
+	GitBucketURL string
+	GitLabURL    string
+	RepoProject  []RepoProject
 }
 
 // Render acts as renderer of templates
@@ -59,20 +63,22 @@ func main() {
 }
 
 func index(c echo.Context) error {
-	b := gitbucket.NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	l := gitlab.NewClient("http://localhost/api/v4", "8vJG_YxuJ5K1xTt5xeM-")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
+
+	fmt.Println(c.Request().Header)
 
 	repos, err := b.GetRepos()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	projects, err := l.GetProjects()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	params := IndexParam{}
+	params := IndexParam{b.Endpoint, l.Endpoint, []RepoProject{}}
 	for i, r := range repos {
 		var project *gitlab.Project
 		for _, p := range projects {

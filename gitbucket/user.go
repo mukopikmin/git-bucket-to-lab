@@ -26,7 +26,7 @@ type UserRequest struct {
 
 // GetUsers ...
 func (c *Client) GetUsers() ([]User, error) {
-	body, err := c.authGet("/api/v3/admin/users")
+	body, err := c.authGet("/admin/users")
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c *Client) GetUsers() ([]User, error) {
 
 // GetGroups ...
 func (c *Client) GetGroups() ([]User, error) {
-	body, err := c.authGet("/api/v3/user/orgs")
+	body, err := c.authGet("/user/orgs")
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (c *Client) GetGroups() ([]User, error) {
 }
 
 // func (c *Client) CreateUser(login string, email string) (*User, error) {
-// 	url := c.endpoint + "/api/v3/admin/users"
+// 	url := c.Endpoint + "/admin/users"
 // 	userReq := UserRequest{login, email}
 
 // 	jsonBody, err := json.Marshal(userReq)

@@ -28,7 +28,7 @@ type Comment struct {
 
 // GetComments ...
 func (c *Client) GetComments(r *Repo, id int) ([]Comment, error) {
-	path := fmt.Sprintf("/api/v3/repos/%s/issues/%d/comments", r.FullName, id)
+	path := fmt.Sprintf("/repos/%s/issues/%d/comments", r.FullName, id)
 	body, err := c.authGet(path)
 	if err != nil {
 		return nil, err

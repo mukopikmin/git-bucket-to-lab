@@ -42,7 +42,7 @@ type Pull struct {
 
 // GetPulls ...
 func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
-	path := "/api/v3/repos/" + repo.FullName + "/pulls"
+	path := "/repos/" + repo.FullName + "/pulls"
 	body, err := c.authGet(path)
 	if err != nil {
 		return nil, err

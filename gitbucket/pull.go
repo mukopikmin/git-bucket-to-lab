@@ -38,6 +38,7 @@ type Pull struct {
 	ReviewCommentURL  string        `json:"review_comment_url"`
 	CommentsURL       string        `json:"comments_url"`
 	StatusesURL       string        `json:"statuses_url"`
+	Comments          []Comment
 }
 
 // GetPulls ...
@@ -48,9 +49,20 @@ func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
 		return nil, err
 	}
 
-	var pulls []Pull
-	if err = json.Unmarshal([]byte(body), &pulls); err != nil {
+	var _pulls []Pull
+	if err = json.Unmarshal([]byte(body), &_pulls); err != nil {
 		return nil, err
+	}
+
+	var pulls []Pull
+	for _, pull := range _pulls {
+		comments, err := c.GetComments(repo, pull.Number)
+		if err != nil {
+			return nil, err
+		}
+
+		pull.Comments = comments
+		pulls = append(pulls, pull)
 	}
 
 	return pulls, nil

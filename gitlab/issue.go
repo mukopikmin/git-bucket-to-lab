@@ -85,7 +85,7 @@ func (c *Client) GetIssues(p *Project) ([]Issue, error) {
 
 	var commentIssues []Issue
 	for _, issue := range issues {
-		comments, err := c.GetComments(p, &issue)
+		comments, err := c.GetIssueComments(p, &issue)
 		if err != nil {
 			return nil, err
 		}

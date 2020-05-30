@@ -68,6 +68,16 @@ type Merge struct {
 	} `json:"task_completion_status"`
 	HasConflicts                bool `json:"has_conflicts"`
 	BlockingDiscussionsResolved bool `json:"blocking_discussions_resolved"`
+	Comments                    []Comment
+}
+
+// MergeRequest ...
+type MergeRequest struct {
+	SourceBranch string `json:"source_branch"`
+	TargetBrach  string `json:"target_branch"`
+	Title        string `json:"title"`
+	Description  string `json:"description"`
+	StateEvent   string `json:"state_event"`
 }
 
 // GetMerges ...
@@ -75,10 +85,46 @@ func (c *Client) GetMerges(p *Project) ([]Merge, error) {
 	path := fmt.Sprintf("/projects/%d/merge_requests", p.ID)
 	body, err := c.authGet(path)
 
-	var merges []Merge
-	if err = json.Unmarshal([]byte(body), &merges); err != nil {
+	var _merges []Merge
+	if err = json.Unmarshal([]byte(body), &_merges); err != nil {
 		return nil, err
 	}
 
+	var merges []Merge
+	for _, m := range _merges {
+		comments, err := c.GetMergeComments(p, &m)
+		fmt.Println(comments)
+		if err != nil {
+			return nil, err
+		}
+
+		m.Comments = comments
+		merges = append(merges, m)
+	}
+
 	return merges, nil
+}
+
+// CreateMerge ...
+func (c *Client) CreateMerge(p *Project, title string, sb string, tb string, description string) (*Merge, error) {
+	path := fmt.Sprintf("/projects/%d/merge_requests", p.ID)
+	mergeReq := &MergeRequest{sb, tb, title, description, "close"}
+	jsonBody, err := json.Marshal(mergeReq)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(mergeReq)
+
+	body, err := c.authPost(path, jsonBody)
+	if err != nil {
+		return nil, err
+	}
+
+	var merge Merge
+	if err = json.Unmarshal([]byte(body), &merge); err != nil {
+		return nil, err
+	}
+
+	return &merge, nil
 }

@@ -30,7 +30,6 @@ type Comment struct {
 	NoteableIid     int       `json:"noteable_iid"`
 	CommandsChanges struct {
 	} `json:"commands_changes"`
-	HTMLURL string
 }
 
 // CommentRequest ...
@@ -39,23 +38,26 @@ type CommentRequest struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// GetComments ...
-func (c *Client) GetComments(p *Project, i *Issue) ([]Comment, error) {
-	path := fmt.Sprintf("/projects/%d/issues/%d/notes", p.ID, i.Iid)
+// GetIssueComments ...
+func (c *Client) GetIssueComments(p *Project, i *Issue) ([]Comment, error) {
+	return c.getComments(p, "issues", i.Iid)
+}
+
+// GetMergeComments ...
+func (c *Client) GetMergeComments(p *Project, m *Merge) ([]Comment, error) {
+	return c.getComments(p, "merge_requests", m.Iid)
+}
+
+func (c *Client) getComments(p *Project, target string, id int) ([]Comment, error) {
+	path := fmt.Sprintf("/projects/%d/%s/%d/notes", p.ID, target, id)
 	body, err := c.authGet(path)
 	if err != nil {
 		return nil, err
 	}
 
-	var _comments []Comment
-	if err = json.Unmarshal([]byte(body), &_comments); err != nil {
-		return nil, err
-	}
-
 	var comments []Comment
-	for _, comment := range _comments {
-		comment.HTMLURL = fmt.Sprintf("%s/%s/-/issues/%d#note_%d", c.Endpoint, p.PathWithNamespace, i.Iid, comment.ID)
-		comments = append(comments, comment)
+	if err = json.Unmarshal([]byte(body), &comments); err != nil {
+		return nil, err
 	}
 
 	return comments, nil

@@ -35,8 +35,6 @@ func (c *Client) authGet(path string) ([]byte, error) {
 		return nil, err
 	}
 
-	fmt.Println(c.APIEndpoint() + path)
-
 	req.Header.Set("Authorization", "Bearer "+c.token)
 
 	res, err := c.Do(req)
@@ -71,6 +69,33 @@ func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
 		return nil, err
 	}
 	if res.StatusCode != 201 {
+		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func (c *Client) authPut(path string, jsonBody []byte) ([]byte, error) {
+	req, err := http.NewRequest("`PUT", c.APIEndpoint()+path, strings.NewReader(string(jsonBody)))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.token)
+
+	res, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != 204 {
 		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
 	}
 

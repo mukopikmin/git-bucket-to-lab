@@ -62,7 +62,7 @@
                 <ul>
                   {{ range $comment := $issue.Comments }}
                   <li class="text-truncate">
-                    <a target='_blank' href='{{ $comment.HTMLURL }}'>#{{ $comment.ID }} {{ $comment.Body }}</a>
+                    #{{ $comment.ID }} {{ $comment.Body }}
                   </li>
                   {{ end }}
                 </ul>
@@ -82,12 +82,12 @@
               {{ range $issue := .Project.Issues }}
               <li>
                 <a target='_blank' href='{{ $issue.WebURL }}'>
-                  #{{$issue.Iid}} {{ $issue.Title }} ({{ $issue.State }})
+                  #{{ $issue.Iid }} {{ $issue.Title }} ({{ $issue.State }})
                 </a>
                 <ul>
                   {{ range $comment := $issue.Comments }}
                   <li class="text-truncate">
-                    <a target='_blank' href='{{ $comment.HTMLURL }}'>#{{ $comment.ID }} {{ $comment.Body }}</a>
+                    #{{ $comment.ID }} {{ $comment.Body }}
                   </li>
                   {{ end }}
                 </ul>
@@ -110,7 +110,18 @@
             <h5 class='card-title'>GitBucket</h5>
             <ul>
               {{ range $pull  := .Repo.Pulls }}
-              <li>#{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})</li>
+              <li>
+                <a target='_blank' href='{{ $pull.HTMLURL }}'>
+                  #{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})
+                </a>
+                <ul>
+                  {{ range $comment := $pull.Comments }}
+                  <li class="text-truncate">
+                    #{{ $comment.ID }} {{ $comment.Body }}
+                  </li>
+                  {{ end }}
+                </ul>
+              </li>
               {{end }}
             </ul>
 
@@ -124,7 +135,18 @@
             <ul>
               {{ if .Project }}
               {{ range $pull  := .Project.Merges }}
-              <li>#{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})</li>
+              <li>
+                <a target='_blank' href='{{ $pull.WebURL }}'>
+                  #{{$pull.Iid}} {{ $pull.Title }} ({{ $pull.State }})
+                </a>
+                  <ul>
+                  {{ range $comment := $pull.Comments }}
+                  <li class="text-truncate">
+                    #{{ $comment.ID }} {{ $comment.Body }}
+                  </li>
+                  {{ end }}
+                </ul>
+              </li>
               {{end }}
               {{end }}
             </ul>

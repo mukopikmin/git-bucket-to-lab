@@ -77,18 +77,6 @@ func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
 	return &repo, nil
 }
 
-// Clone ...
-func (repo *Repo) Clone() error {
-	_, err := git.PlainClone("tmp/"+repo.FullName, false, &git.CloneOptions{
-		URL: repo.CloneURL,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // CreateRepo ...
 func (c *Client) CreateRepo(name string, description string, private bool) (*Repo, error) {
 	repoReq := RepoRequest{name, description, private}
@@ -108,4 +96,17 @@ func (c *Client) CreateRepo(name string, description string, private bool) (*Rep
 	}
 
 	return &repo, nil
+}
+
+// Clone ...
+func (repo *Repo) Clone() error {
+	_, err := git.PlainClone("tmp/"+repo.FullName, false, &git.CloneOptions{
+		URL:          repo.CloneURL,
+		SingleBranch: false,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

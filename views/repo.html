@@ -27,6 +27,11 @@
           <div class="col">
             <h5 class='card-title'>GitBucket</h5>
             <h5>{{ .Repo.FullName }}</h5>
+            <ul>
+              {{ range $branch := .Repo.Branches }}
+              <li>{{ $branch.Name }}</li>
+              {{ end }}
+            </ul>
             <p>{{ .Repo.Description }}</p>
 
             <form method='POST' action="/{{ .Repo.FullName }}/repo">
@@ -38,6 +43,11 @@
             <h5 class='card-title'>GitLab</h5>
             {{ if .Project }}
             <h5>{{ .Project.PathWithNamespace }}</h5>
+            <ul>
+              {{ range $branch := .Project.Branches }}
+              <li>{{ $branch.Name }}</li>
+              {{ end }}
+            </ul>
             <p>{{ .Project.Description }}</p>
             {{ end }}
           </div>

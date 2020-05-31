@@ -30,6 +30,7 @@ type Project struct {
 	StarCount         int         `json:"star_count"`
 	Issues            []Issue
 	Merges            []Merge
+	Branches          []Branch
 }
 
 // ProjectRequest ...
@@ -65,6 +66,13 @@ func (c *Client) GetProject(owner string, name string) (*Project, error) {
 	if err = json.Unmarshal([]byte(body), &project); err != nil {
 		return nil, err
 	}
+
+	branches, err := c.GetBranches(&project)
+	if err != nil {
+		return nil, err
+	}
+
+	project.Branches = branches
 
 	return &project, nil
 }

@@ -2,6 +2,8 @@ package gitbucket
 
 import (
 	"encoding/json"
+
+	"github.com/go-git/go-git/v5"
 )
 
 // Repo in GitBucket
@@ -23,6 +25,7 @@ type Repo struct {
 	HTMLURL       string `json:"html_url"`
 	Issues        []Issue
 	Pulls         []Pull
+	Branches      []Branch
 }
 
 // RepoRequest ...
@@ -64,7 +67,26 @@ func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
 		return nil, err
 	}
 
+	branches, err := c.GetBranches(&repo)
+	if err != nil {
+		return nil, err
+	}
+
+	repo.Branches = branches
+
 	return &repo, nil
+}
+
+// Clone ...
+func (repo *Repo) Clone() error {
+	_, err := git.PlainClone("tmp/"+repo.FullName, false, &git.CloneOptions{
+		URL: repo.CloneURL,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // CreateRepo ...

@@ -7,6 +7,7 @@ services:
       - 8080:8080
   gitlab:
     image: gitlab/gitlab-ce:12.10.6-ce.0
+    hostname: localhost
     ports:
       - 80:80
 

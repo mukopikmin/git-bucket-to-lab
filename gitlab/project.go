@@ -3,6 +3,10 @@ package gitlab
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 )
 
 // Project ...
@@ -84,4 +88,34 @@ func (c *Client) CreateProject(name string, description string) (*Project, error
 	}
 
 	return &project, nil
+}
+
+// Push ...
+func (p *Project) Push() error {
+	remote := "lab"
+	r, err := git.PlainOpen("tmp/" + p.PathWithNamespace)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.CreateRemote(&config.RemoteConfig{
+		Name: remote,
+		URLs: []string{p.HTTPURLToRepo},
+	})
+	if err != nil {
+		return err
+	}
+
+	err = r.Push(&git.PushOptions{
+		RemoteName: remote,
+		Auth: &http.BasicAuth{
+			Username: "root",
+			Password: "rootroot",
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

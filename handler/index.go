@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/gitlab"
 	"net/http"
@@ -28,7 +27,7 @@ func Index(c echo.Context) error {
 	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
 	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
 
-	fmt.Println(c.Request().Header)
+	// fmt.Println(c.Request().Header)
 
 	repos, err := b.GetRepos()
 	if err != nil {

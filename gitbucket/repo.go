@@ -2,6 +2,7 @@ package gitbucket
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -80,6 +81,8 @@ func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
 
 // CreateRepo ...
 func (c *Client) CreateRepo(name string, description string, private bool) (*Repo, error) {
+	fmt.Println(name)
+
 	repoReq := RepoRequest{name, description, private}
 	jsonBody, err := json.Marshal(repoReq)
 	if err != nil {

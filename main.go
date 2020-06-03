@@ -1,11 +1,16 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/handler"
 	"io"
 	"log"
+	"os"
 	"text/template"
 
+	"github.com/bxcodec/faker/v3"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -27,6 +32,19 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	fixture := flag.Bool("fixture", false, "Generate fixture data")
+	flag.Parse()
+
+	if *fixture {
+		err := generateFixtures()
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+
+		os.Exit(0)
+	}
+
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -44,4 +62,37 @@ func main() {
 	e.POST("/:owner/:name/pulls", handler.MigratePulls)
 
 	e.Logger.Fatal(e.Start(":1323"))
+}
+
+func generateFixtures() error {
+	fmt.Println("Generating fixture data in GitBucket ...")
+
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+
+	repo, err := b.CreateRepo(faker.Word(), faker.Sentence(), false)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Created repository : %s\n", repo.Name)
+
+	for i := 0; i < 5; i++ {
+		issue, err := b.CreateIssue(repo, faker.Sentence(), faker.Paragraph())
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("Created issue : #%d %s\n", issue.Number, issue.Title)
+
+		for i := 0; i < 5; i++ {
+			comment, err := b.CreateComment(repo, issue.Number, faker.Sentence())
+			if err != nil {
+				return err
+			}
+
+			fmt.Printf("Created issue comment : %d\n", comment.ID)
+		}
+	}
+
+	return nil
 }

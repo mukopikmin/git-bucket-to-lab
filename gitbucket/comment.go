@@ -26,6 +26,11 @@ type Comment struct {
 	HTMLURL   string    `json:"html_url"`
 }
 
+// CommentRequest ...
+type CommentRequest struct {
+	Body string `json:"body"`
+}
+
 // GetComments ...
 func (c *Client) GetComments(r *Repo, id int) ([]Comment, error) {
 	path := fmt.Sprintf("/repos/%s/issues/%d/comments", r.FullName, id)
@@ -40,4 +45,27 @@ func (c *Client) GetComments(r *Repo, id int) ([]Comment, error) {
 	}
 
 	return comments, nil
+}
+
+// CreateComment ...
+func (c *Client) CreateComment(r *Repo, id int, message string) (*Comment, error) {
+	path := fmt.Sprintf("/repos/%s/issues/%d/comments", r.FullName, id)
+	reqBody := CommentRequest{message}
+
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, err
+	}
+
+	resBody, err := c.authPost(path, jsonBody)
+	if err != nil {
+		return nil, err
+	}
+
+	var comment Comment
+	if err = json.Unmarshal([]byte(resBody), &comment); err != nil {
+		return nil, err
+	}
+
+	return &comment, nil
 }

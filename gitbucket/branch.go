@@ -1,6 +1,8 @@
 package gitbucket
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // Branch ...
 type Branch struct {

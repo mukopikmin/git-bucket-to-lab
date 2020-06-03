@@ -29,7 +29,7 @@
             <h5>{{ .Repo.FullName }}</h5>
             <ul>
               {{ range $branch := .Repo.Branches }}
-              <li>{{ $branch.Name }}</li>
+              <li>{{ $branch.Name }} ({{ $branch.Commit.Sha }})</li>
               {{ end }}
             </ul>
             <p>{{ .Repo.Description }}</p>
@@ -45,7 +45,7 @@
             <h5>{{ .Project.PathWithNamespace }}</h5>
             <ul>
               {{ range $branch := .Project.Branches }}
-              <li>{{ $branch.Name }}</li>
+              <li>{{ $branch.Name }} ({{ $branch.Commit.ID }})</li>
               {{ end }}
             </ul>
             <p>{{ .Project.Description }}</p>

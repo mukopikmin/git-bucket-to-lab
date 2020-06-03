@@ -2,10 +2,12 @@ package gitlab
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 )
 
@@ -114,8 +116,50 @@ func (p *Project) Push() error {
 		return err
 	}
 
+	w, err := r.Worktree()
+	if err != nil {
+		return err
+	}
+
+	refs, err := r.References()
+	if err != nil {
+		return err
+	}
+
+	err = refs.ForEach(func(ref *plumbing.Reference) error {
+		s := strings.Split(ref.Name().String(), "/")
+		branch := s[len(s)-1]
+
+		if !(len(s) > 1 && s[1] == "remotes") {
+			return nil
+		}
+
+		err = w.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.ReferenceName("refs/remotes/origin/" + branch),
+		})
+		if err != nil {
+			return err
+		}
+
+		head, err := r.Head()
+		if err != nil {
+			return err
+		}
+
+		href := plumbing.NewHashReference(plumbing.ReferenceName("refs/heads/"+branch), head.Hash())
+		err = r.Storer.SetReference(href)
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
 	err = r.Push(&git.PushOptions{
 		RemoteName: remote,
+		RefSpecs: []config.RefSpec{
+			config.RefSpec("+refs/heads/*:refs/heads/*"),
+		},
 		Auth: &http.BasicAuth{
 			Username: "root",
 			Password: "rootroot",

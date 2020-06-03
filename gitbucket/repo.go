@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 // Repo in GitBucket
@@ -100,12 +101,26 @@ func (c *Client) CreateRepo(name string, description string, private bool) (*Rep
 
 // Clone ...
 func (repo *Repo) Clone() error {
-	_, err := git.PlainClone("tmp/"+repo.FullName, false, &git.CloneOptions{
+	r, err := git.PlainClone("tmp/"+repo.FullName, false, &git.CloneOptions{
 		URL:          repo.CloneURL,
 		SingleBranch: false,
 	})
 	if err != nil {
 		return err
+	}
+
+	w, err := r.Worktree()
+	if err != nil {
+		return err
+	}
+
+	for _, branch := range repo.Branches {
+		err = w.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.ReferenceName("refs/remotes/origin/" + branch.Name),
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

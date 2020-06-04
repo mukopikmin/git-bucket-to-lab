@@ -1,6 +1,7 @@
 package gitbucket
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -36,6 +37,9 @@ func (c *Client) authGet(path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
+	}
 
 	defer res.Body.Close()
 
@@ -53,11 +57,15 @@ func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "token "+c.apikey)
 
 	res, err := c.Do(req)
 	if err != nil {
 		return nil, err
+	}
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
 	}
 
 	defer res.Body.Close()

@@ -11,6 +11,9 @@ import (
 	"text/template"
 
 	"github.com/bxcodec/faker/v3"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -69,12 +72,23 @@ func generateFixtures() error {
 
 	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
 
-	repo, err := b.CreateRepo(faker.Word(), faker.Sentence(), false)
+	name := faker.Word()
+	repo, err := b.CreateRepo(name, faker.Sentence(), false)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Created repository : %s\n", repo.Name)
+	err = clone(repo.FullName, "https://github.com/mukopikmin/git-bucket-to-lab.git")
+	if err != nil {
+		return err
+	}
+
+	err = push(repo.FullName, repo.CloneURL)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Created repository : %s\n", repo.FullName)
 
 	for i := 0; i < 5; i++ {
 		issue, err := b.CreateIssue(repo, faker.Sentence(), faker.Paragraph())
@@ -92,6 +106,103 @@ func generateFixtures() error {
 
 			fmt.Printf("Created issue comment : %d\n", comment.ID)
 		}
+	}
+
+	return nil
+}
+
+func clone(name string, url string) error {
+	_, err := git.PlainClone("tmp/"+name, false, &git.CloneOptions{
+		URL:          url,
+		SingleBranch: false,
+	})
+	if err != nil {
+		return err
+	}
+
+	// w, err := r.Worktree()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// for _, branch := range repo.Branches {
+	// 	err = w.Checkout(&git.CheckoutOptions{
+	// 		Branch: plumbing.ReferenceName("refs/remotes/origin/" + branch.Name),
+	// 	})
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	return nil
+}
+
+func push(name string, url string) error {
+	remote := "bucket"
+	r, err := git.PlainOpen("tmp/" + name)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.CreateRemote(&config.RemoteConfig{
+		Name: remote,
+		URLs: []string{url},
+	})
+	if err != nil {
+		return err
+	}
+
+	// w, err := r.Worktree()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// refs, err := r.References()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// err = refs.ForEach(func(ref *plumbing.Reference) error {
+	// 	s := strings.Split(ref.Name().String(), "/")
+	// 	branch := s[len(s)-1]
+
+	// 	if !(len(s) > 1 && s[1] == "remotes") {
+	// 		return nil
+	// 	}
+
+	// 	err = w.Checkout(&git.CheckoutOptions{
+	// 		Branch: plumbing.ReferenceName("refs/remotes/origin/" + branch),
+	// 	})
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	head, err := r.Head()
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	href := plumbing.NewHashReference(plumbing.ReferenceName("refs/heads/"+branch), head.Hash())
+	// 	err = r.Storer.SetReference(href)
+
+	// 	return nil
+	// })
+	// if err != nil {
+	// 	return err
+	// }
+
+	err = r.Push(&git.PushOptions{
+		RemoteName: remote,
+		RefSpecs: []config.RefSpec{
+			config.RefSpec("+refs/heads/*:refs/heads/*"),
+		},
+		Auth: &http.BasicAuth{
+			Username: "root",
+			Password: "root",
+		},
+	})
+	if err != nil {
+		return err
 	}
 
 	return nil

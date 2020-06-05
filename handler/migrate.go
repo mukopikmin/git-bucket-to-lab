@@ -15,8 +15,8 @@ func MigrateRepo(c echo.Context) error {
 	owner := c.Param("owner")
 	name := c.Param("name")
 
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {
@@ -46,8 +46,8 @@ func MigrateIssues(c echo.Context) error {
 	owner := c.Param("owner")
 	name := c.Param("name")
 
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {
@@ -86,8 +86,8 @@ func MigratePulls(c echo.Context) error {
 	owner := c.Param("owner")
 	name := c.Param("name")
 
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), "855a9c623ef34a433f9118c0ddc52ec79b956d54")
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), "8vJG_YxuJ5K1xTt5xeM-")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {

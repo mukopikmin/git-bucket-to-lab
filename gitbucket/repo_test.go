@@ -1,13 +1,14 @@
 package gitbucket
 
 import (
+	"os"
 	"testing"
 
 	"github.com/bxcodec/faker/v3"
 )
 
 func TestCreateRepo(t *testing.T) {
-	c := NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+	c := NewClient("http://localhost:8080", os.Getenv("GITBUCKE_TOKEN"))
 
 	name := faker.Word()
 	description := "descriptipn"

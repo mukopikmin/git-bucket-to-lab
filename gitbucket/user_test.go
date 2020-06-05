@@ -3,11 +3,12 @@ package gitbucket
 import (
 	"fmt"
 	"log"
+	"os"
 	"testing"
 )
 
 func TestGetUsers(t *testing.T) {
-	c := NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+	c := NewClient("http://localhost:8080", os.Getenv("GITBUCKE_TOKEN"))
 
 	users, err := c.GetUsers()
 	if err != nil {
@@ -18,7 +19,7 @@ func TestGetUsers(t *testing.T) {
 }
 
 // func TestCreateUser(t *testing.T) {
-// 	c := NewClient("http://localhost:8080", "855a9c623ef34a433f9118c0ddc52ec79b956d54")
+// 	c := NewClient("http://localhost:8080", os.Getenv("GITBUCKE_TOKEN"))
 
 // 	login := faker.FirstNameMale()
 // 	email := faker.Email()

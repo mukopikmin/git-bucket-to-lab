@@ -3,6 +3,7 @@ package gitlab
 import (
 	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/bxcodec/faker/v3"
@@ -10,7 +11,7 @@ import (
 
 func TestGetProjects(t *testing.T) {
 	endpoint := "http://localhost/api/v4"
-	token := "8vJG_YxuJ5K1xTt5xeM-"
+	token := os.Getenv("GITLAB_TOKEN")
 	c := NewClient(endpoint, token)
 
 	projects, err := c.GetProjects()
@@ -23,7 +24,7 @@ func TestGetProjects(t *testing.T) {
 
 func TestCreateProject(t *testing.T) {
 	endpoint := "http://localhost/api/v4"
-	token := "8vJG_YxuJ5K1xTt5xeM-"
+	token := os.Getenv("GITLAB_TOKEN")
 	c := NewClient(endpoint, token)
 
 	project, err := c.CreateProject(faker.Word(), faker.Sentence())

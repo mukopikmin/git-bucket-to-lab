@@ -3,6 +3,7 @@ package gitlab
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -60,18 +61,31 @@ func (c *Client) getComments(p *Project, target string, id int) ([]Comment, erro
 		return nil, err
 	}
 
+	sort.Slice(comments, func(i, j int) bool {
+		return comments[i].ID < comments[j].ID
+	})
+
 	return comments, nil
 }
 
-// CreateComment ...
-func (c *Client) CreateComment(p *Project, i *Issue, message string, timestamp time.Time) (*Comment, error) {
+// CreateIssueComment ...
+func (c *Client) CreateIssueComment(p *Project, i *Issue, message string, timestamp time.Time) (*Comment, error) {
+	return c.createComment(p, "issues", i.Iid, message, timestamp)
+}
+
+// CreateMergeComment ...
+func (c *Client) CreateMergeComment(p *Project, m *Merge, message string, timestamp time.Time) (*Comment, error) {
+	return c.createComment(p, "merge_requests", m.Iid, message, timestamp)
+}
+
+func (c *Client) createComment(p *Project, target string, id int, message string, timestamp time.Time) (*Comment, error) {
 	reqBody := &CommentRequest{message, timestamp}
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
 		return nil, err
 	}
 
-	path := fmt.Sprintf("/projects/%d/issues/%d/notes", p.ID, i.Iid)
+	path := fmt.Sprintf("/projects/%d/%s/%d/notes", p.ID, target, id)
 	body, err := c.authPost(path, jsonBody)
 	if err != nil {
 		return nil, err

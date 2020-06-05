@@ -3,6 +3,7 @@ package gitbucket
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -43,6 +44,10 @@ func (c *Client) GetComments(r *Repo, id int) ([]Comment, error) {
 	if err = json.Unmarshal([]byte(body), &comments); err != nil {
 		return nil, err
 	}
+
+	sort.Slice(comments, func(i, j int) bool {
+		return comments[i].ID < comments[j].ID
+	})
 
 	return comments, nil
 }

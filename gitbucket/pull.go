@@ -2,6 +2,7 @@ package gitbucket
 
 import (
 	"encoding/json"
+	"sort"
 	"time"
 )
 
@@ -72,6 +73,10 @@ func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
 		pull.Comments = comments
 		pulls = append(pulls, pull)
 	}
+
+	sort.Slice(pulls, func(i, j int) bool {
+		return pulls[i].Number < pulls[j].Number
+	})
 
 	return pulls, nil
 }

@@ -3,6 +3,7 @@ package gitlab
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -78,22 +79,26 @@ func (c *Client) GetIssues(p *Project) ([]Issue, error) {
 		return nil, err
 	}
 
-	var issues []Issue
-	if err = json.Unmarshal([]byte(body), &issues); err != nil {
+	var _issues []Issue
+	if err = json.Unmarshal([]byte(body), &_issues); err != nil {
 		return nil, err
 	}
 
-	var commentIssues []Issue
-	for _, issue := range issues {
+	var issues []Issue
+	for _, issue := range _issues {
 		comments, err := c.GetIssueComments(p, &issue)
 		if err != nil {
 			return nil, err
 		}
 		issue.Comments = comments
-		commentIssues = append(commentIssues, issue)
+		issues = append(issues, issue)
 	}
 
-	return commentIssues, nil
+	sort.Slice(issues, func(i, j int) bool {
+		return issues[i].Iid < issues[j].Iid
+	})
+
+	return issues, nil
 }
 
 // CreateIssue ...

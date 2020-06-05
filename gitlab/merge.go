@@ -3,6 +3,7 @@ package gitlab
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -93,7 +94,6 @@ func (c *Client) GetMerges(p *Project) ([]Merge, error) {
 	var merges []Merge
 	for _, m := range _merges {
 		comments, err := c.GetMergeComments(p, &m)
-		fmt.Println(comments)
 		if err != nil {
 			return nil, err
 		}
@@ -101,6 +101,10 @@ func (c *Client) GetMerges(p *Project) ([]Merge, error) {
 		m.Comments = comments
 		merges = append(merges, m)
 	}
+
+	sort.Slice(merges, func(i, j int) bool {
+		return merges[i].Iid < merges[j].Iid
+	})
 
 	return merges, nil
 }
@@ -113,8 +117,6 @@ func (c *Client) CreateMerge(p *Project, title string, sb string, tb string, des
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(mergeReq)
 
 	body, err := c.authPost(path, jsonBody)
 	if err != nil {

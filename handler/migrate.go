@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/gitlab"
 	"net/http"
@@ -71,7 +70,7 @@ func MigrateIssues(c echo.Context) error {
 		}
 
 		for _, comment := range i.Comments {
-			_, err := l.CreateComment(project, issue, comment.Body, comment.CreatedAt)
+			_, err := l.CreateIssueComment(project, issue, comment.Body, comment.CreatedAt)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 			}
@@ -93,7 +92,6 @@ func MigratePulls(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	fmt.Println(repo)
 
 	pulls, err := b.GetPulls(repo)
 	if err != nil {
@@ -106,18 +104,17 @@ func MigratePulls(c echo.Context) error {
 	}
 
 	for _, p := range pulls {
-		fmt.Println(p)
-		_, err := l.CreateMerge(project, p.Title, p.Head.Ref, p.Base.Ref, p.Body)
+		m, err := l.CreateMerge(project, p.Title, p.Head.Ref, p.Base.Ref, p.Body)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
-		// for _, comment := range p.Comments {
-		// 	_, err := l.CreateComment(project, p, comment.Body, comment.CreatedAt)
-		// 	if err != nil {
-		// 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-		// 	}
-		// }
+		for _, comment := range p.Comments {
+			_, err := l.CreateMergeComment(project, m, comment.Body, comment.CreatedAt)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			}
+		}
 	}
 
 	return c.Redirect(http.StatusFound, "/"+owner+"/"+name)

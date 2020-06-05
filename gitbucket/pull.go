@@ -41,6 +41,14 @@ type Pull struct {
 	Comments          []Comment
 }
 
+// PullRequest ...
+type PullRequest struct {
+	Title string `json:"title"`
+	Head  string `json:"head"`
+	Base  string `json:"base"`
+	Body  string `json:"body"`
+}
+
 // GetPulls ...
 func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
 	path := "/repos/" + repo.FullName + "/pulls"
@@ -66,4 +74,27 @@ func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
 	}
 
 	return pulls, nil
+}
+
+// CreatePull ...
+func (c *Client) CreatePull(repo *Repo, title string, head string, base string, body string) (*Pull, error) {
+	path := "/repos/" + repo.FullName + "/pulls"
+
+	reqBody := PullRequest{title, head, base, body}
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, err
+	}
+
+	resBody, err := c.authPost(path, jsonBody)
+	if err != nil {
+		return nil, err
+	}
+
+	var pull Pull
+	if err = json.Unmarshal([]byte(resBody), &pull); err != nil {
+		return nil, err
+	}
+
+	return &pull, nil
 }

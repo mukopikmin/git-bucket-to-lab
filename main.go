@@ -112,6 +112,27 @@ func generateFixtures() error {
 		}
 	}
 
+	// err = createPulls(repo)
+	// if err != nil {
+	// 	return err
+	// }
+	fmt.Println(repo.Owner.Login)
+	fmt.Println(repo.Name)
+	repo, err = b.GetRepo(repo.Owner.Login, repo.Name)
+	if err != nil {
+		return err
+	}
+
+	for _, branch := range repo.Branches {
+		p, err := b.CreatePull(repo, faker.Sentence(), branch.Name, "master", faker.Sentence())
+		if err != nil {
+			fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!")
+			return err
+		}
+
+		fmt.Printf("Created pull request : #%d\n", p.ID)
+	}
+
 	return nil
 }
 
@@ -225,6 +246,52 @@ func push(name string, url string) error {
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func createPulls(repo *gitbucket.Repo) error {
+	r, err := git.PlainOpen("tmp/" + repo.FullName)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.Worktree()
+	if err != nil {
+		return err
+	}
+
+	refs, err := r.References()
+	if err != nil {
+		return err
+	}
+
+	err = refs.ForEach(func(ref *plumbing.Reference) error {
+		s := strings.Split(ref.Name().String(), "/")
+		// branch := s[len(s)-1]
+
+		if !(len(s) > 1 && s[1] == "remotes") {
+			return nil
+		}
+
+		fmt.Println(ref.Hash())
+
+		// p, err := b.CreatePull(faker.Sentence(), faker.Sentence())
+
+		// err = w.Checkout(&git.CheckoutOptions{
+		// 	Branch: plumbing.ReferenceName("refs/remotes/origin/" + branch),
+		// })
+		// if err != nil {
+		// 	return err
+		// }
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(repo.Branches)
 
 	return nil
 }

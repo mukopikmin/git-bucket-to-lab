@@ -24,10 +24,14 @@ type IndexParam struct {
 
 // Index ...
 func Index(c echo.Context) error {
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
+	h := c.Request().Header
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
 
-	// fmt.Println(c.Request().Header)
+	_, err := b.GetAuthorizedUser()
+	if err != nil {
+		return c.Redirect(http.StatusFound, "/auth")
+	}
 
 	repos, err := b.GetRepos()
 	if err != nil {
@@ -52,5 +56,5 @@ func Index(c echo.Context) error {
 		params.RepoProject = append(params.RepoProject, RepoProject{&repos[i], project})
 	}
 
-	return c.Render(http.StatusOK, "index", params)
+	return c.JSON(http.StatusOK, params)
 }

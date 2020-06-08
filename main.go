@@ -56,13 +56,16 @@ func main() {
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	t := &Template{
 		templates: template.Must(template.ParseGlob("views/*.html")),
 	}
 	e.Renderer = t
 
+	e.Static("/static", "assets")
 	e.GET("/", handler.Index)
+	e.GET("/auth", handler.Auth)
 	e.GET("/:owner/:name", handler.ShowRepo)
 	e.POST("/:owner/:name/repo", handler.MigrateRepo)
 	e.POST("/:owner/:name/issues", handler.MigrateIssues)

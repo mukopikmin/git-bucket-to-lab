@@ -11,68 +11,45 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class='container'>
-      <a class="navbar-brand" href='/'>Tools for migrating from GitBucket to GitLab</a>
-    </div>
-  </nav>
+  <div id='app'>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class='container'>
+        <a class="navbar-brand" href='/'>Tools for migrating from GitBucket to GitLab</a>
+      </div>
+    </nav>
 
-  <div class='container mt-3'>
-    <!-- <p>
-    <div class='row'>
-      <div class='col'>
-        <div class="form-group">
-          <label>GitBucket personal access token</label>
-          <input type='text' class="form-control">
-        </div>
-      </div>
-      <div class='col'>
-        <a class="btn btn-outline-primary" target='_blank' href='http://localhost:8080/root/_application'>GitBucket
-          personal access token</a>
-      </div>
+    <div class='container mt-3'>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th></th>
+            <th>GitBucket</th>
+            <th>GitLab</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range $pair := .RepoProject }}
+          <tr>
+            <td>
+              <a href='{{ $pair.Repo.FullName }}'>Migration</a>
+            </td>
+            <td>
+              <a target="_blank" href='{{ $pair.Repo.HTTPURL }}'>{{ $pair.Repo.FullName }}</a>
+            </td>
+            <td>
+              {{ if $pair.Project }}
+              <a target="_blank" href='{{ $pair.Project.WebURL }}'>{{ $pair.Project.PathWithNamespace }}</a>
+              {{ end }}
+            </td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
     </div>
-
-    <div class='row'>
-      <div class='col'>
-        <div class="form-group">
-          <label>GitLab personal access token</label>
-          <input type='text' class="form-control">
-        </div>
-      </div>
-      <div class='col'>
-        <a class="btn btn-outline-primary" target='_blank' href='http://localhost/profile/personal_access_tokens'>GitLab
-          personal access token</a>
-      </div>
-    </div>
-    </p> -->
-
-    <table class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <th></th>
-          <th>GitBucket</th>
-          <th>GitLab</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{ range $pair := .RepoProject }}
-        <tr>
-          <td>
-            <a href='{{ $pair.Repo.FullName }}'>Migration</a>
-          </td>
-          <td>
-            <a target="_blank" , href='{{ $pair.Repo.HTTPURL }}'>{{ $pair.Repo.FullName }}</a>
-          </td>
-          <td>
-            {{ if $pair.Project }}
-            <a target="_blank" , href='{{ $pair.Project.WebURL }}'>{{ $pair.Project.PathWithNamespace }}</a>
-            {{end }}
-          </td>
-        </tr>
-        {{end }}
-      </tbody>
-    </table>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script src="/static/index.js"></script>
 </body>
 
 </html>

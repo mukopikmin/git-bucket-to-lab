@@ -1,4 +1,4 @@
-{{define "index"}}
+{{define "auth"}}
 <!DOCTYPE html>
 <html lang='en'>
 
@@ -11,39 +11,47 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class='container'>
-      <a class="navbar-brand" href='/'>Tools for migrating from GitBucket to GitLab</a>
-    </div>
-  </nav>
+  <div id='app'>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class='container'>
+        <a class="navbar-brand" href='/'>Tools for migrating from GitBucket to GitLab</a>
+      </div>
+    </nav>
 
-  <div class='container'>
-    <div class='row'>
-      <div class='col'>
-        <div class="form-group">
-          <label>GitBucket personal access token</label>
-          <input type='text' class="form-control">
+    <div class='container mt-3'>
+      <div class='row'>
+        <div class='col'>
+          <div class="form-group">
+            <label>GitBucket personal access token</label>
+            <input type='text' v-model="gitbucketToken" class="form-control" required>
+          </div>
+        </div>
+        <div class='col'>
+          <a class="btn btn-outline-primary" target='_blank' href='http://localhost:8080/root/_application'>GitBucket
+            personal access token</a>
         </div>
       </div>
-      <div class='col'>
-        <a class="btn btn-outline-primary" target='_blank' href='http://localhost:8080/root/_application'>GitBucket
-          personal access token</a>
-      </div>
-    </div>
 
-    <div class='row'>
-      <div class='col'>
-        <div class="form-group">
-          <label>GitLab personal access token</label>
-          <input type='text' class="form-control">
+      <div class='row'>
+        <div class='col'>
+          <div class="form-group">
+            <label>GitLab personal access token</label>
+            <input type='text' v-model="gitlabToken" class="form-control" required>
+          </div>
+        </div>
+        <div class='col'>
+          <a class="btn btn-outline-primary" target='_blank'
+            href='http://localhost/profile/personal_access_tokens'>GitLab
+            personal access token</a>
         </div>
       </div>
-      <div class='col'>
-        <a class="btn btn-outline-primary" target='_blank' href='http://localhost/profile/personal_access_tokens'>GitLab
-          personal access token</a>
-      </div>
+
+      <button @click="auth" class='btn btn-outline-primary'>Submit</button>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+  <script src="/static/auth.js"></script>
 </body>
 
 </html>

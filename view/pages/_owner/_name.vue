@@ -1,0 +1,157 @@
+<template>
+  <div>
+    <div class="card mt-3 mb-3">
+      <div class="card-header">Repository / Project</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title">GitBucket</h5>
+            <!-- <h5>{{ .Repo.FullName }}</h5>
+          <ul>
+            {{ range $branch := .Repo.Branches }}
+            <li>{{ $branch.Name }} ({{ $branch.Commit.Sha }})</li>
+            {{ end }}
+          </ul>
+          <p>{{ .Repo.Description }}</p> -->
+
+            <!-- <form method="POST" action="/{{ .Repo.FullName }}/repo">
+              <button type="submit" class="btn btn-outline-primary">
+                Migrate
+              </button>
+            </form> -->
+          </div>
+
+          <div class="col">
+            <h5 class="card-title">GitLab</h5>
+            <!-- {{ if .Project }}
+          <h5>{{ .Project.PathWithNamespace }}</h5>
+          <ul>
+            {{ range $branch := .Project.Branches }}
+            <li>{{ $branch.Name }} ({{ $branch.Commit.ID }})</li>
+            {{ end }}
+          </ul>
+          <p>{{ .Project.Description }}</p>
+          {{ end }} -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">Issues</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title">GitBucket</h5>
+            <!-- <ul>
+            {{ range $issue := .Repo.Issues }}
+            <li>
+              <a
+                target="_blank"
+                href="{{ $issue.HTMLURL }}"
+              >#{{$issue.Number}} {{ $issue.Title }} ({{ $issue.State }})</a>
+              <ul>
+                {{ range $comment := $issue.Comments }}
+                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
+                {{ end }}
+              </ul>
+            </li>
+            {{end }}
+          </ul> -->
+
+            <!-- <form method="POST" action="/{{ .Repo.FullName }}/issues">
+              <button type="submit" class="btn btn-outline-primary">
+                Migrate
+              </button>
+            </form> -->
+          </div>
+
+          <div class="col">
+            <h5 class="card-title">GitLab</h5>
+            <!-- <ul>
+            {{ if .Project }}
+            {{ range $issue := .Project.Issues }}
+            <li>
+              <a
+                target="_blank"
+                href="{{ $issue.WebURL }}"
+              >#{{ $issue.Iid }} {{ $issue.Title }} ({{ $issue.State }})</a>
+              <ul>
+                {{ range $comment := $issue.Comments }}
+                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
+                {{ end }}
+              </ul>
+            </li>
+            {{end }}
+            {{end }}
+          </ul> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">Pull Requests / Merge Requests</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title">GitBucket</h5>
+            <!-- <ul>
+            {{ range $pull := .Repo.Pulls }}
+            <li>
+              <a
+                target="_blank"
+                href="{{ $pull.HTMLURL }}"
+              >#{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})</a>
+              <ul>
+                {{ range $comment := $pull.Comments }}
+                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
+                {{ end }}
+              </ul>
+            </li>
+            {{end }}
+          </ul> -->
+
+            <!-- <form method="POST" action="/{{ .Repo.FullName }}/pulls">
+              <button type="submit" class="btn btn-outline-primary">
+                Migrate
+              </button>
+            </form> -->
+          </div>
+
+          <div class="col">
+            <h5 class="card-title">GitLab</h5>
+            <!-- <ul>
+            {{ if .Project }}
+            {{ range $pull := .Project.Merges }}
+            <li>
+              <a
+                target="_blank"
+                href="{{ $pull.WebURL }}"
+              >#{{$pull.Iid}} {{ $pull.Title }} ({{ $pull.State }})</a>
+              <ul>
+                {{ range $comment := $pull.Comments }}
+                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
+                {{ end }}
+              </ul>
+            </li>
+            {{end }}
+            {{end }}
+          </ul> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    repo: Object,
+    project: Object
+  }
+}
+</script>
+
+<style></style>

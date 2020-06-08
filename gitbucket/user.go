@@ -54,6 +54,21 @@ func (c *Client) GetGroups() ([]User, error) {
 	return orgs, nil
 }
 
+// GetAuthorizedUser ...
+func (c *Client) GetAuthorizedUser() (*User, error) {
+	body, err := c.authGet("/user")
+	if err != nil {
+		return nil, err
+	}
+
+	var user User
+	if err = json.Unmarshal([]byte(body), &user); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // func (c *Client) CreateUser(login string, email string) (*User, error) {
 // 	url := c.Endpoint + "/admin/users"
 // 	userReq := UserRequest{login, email}

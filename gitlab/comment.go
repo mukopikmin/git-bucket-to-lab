@@ -50,15 +50,24 @@ func (c *Client) GetMergeComments(p *Project, m *Merge) ([]Comment, error) {
 }
 
 func (c *Client) getComments(p *Project, target string, id int) ([]Comment, error) {
-	path := fmt.Sprintf("/projects/%d/%s/%d/notes", p.ID, target, id)
-	body, err := c.authGet(path)
-	if err != nil {
-		return nil, err
-	}
-
 	var comments []Comment
-	if err = json.Unmarshal([]byte(body), &comments); err != nil {
-		return nil, err
+	for i := range make([]int, c.maxPage) {
+		path := fmt.Sprintf("/projects/%d/%s/%d/notes?per_page=%d&page=%d", p.ID, target, id, c.perPage, i+1)
+		body, total, err := c.authGet(path)
+		if err != nil {
+			return nil, err
+		}
+
+		var _comments []Comment
+		if err = json.Unmarshal([]byte(body), &_comments); err != nil {
+			return nil, err
+		}
+
+		comments = append(comments, _comments...)
+
+		if total == i+1 {
+			break
+		}
 	}
 
 	sort.Slice(comments, func(i, j int) bool {

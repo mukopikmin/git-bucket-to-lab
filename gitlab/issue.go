@@ -73,25 +73,31 @@ type IssueRequest struct {
 
 // GetIssues ...
 func (c *Client) GetIssues(p *Project) ([]Issue, error) {
-	path := fmt.Sprintf("/projects/%d/issues", p.ID)
-	body, err := c.authGet(path)
-	if err != nil {
-		return nil, err
-	}
-
-	var _issues []Issue
-	if err = json.Unmarshal([]byte(body), &_issues); err != nil {
-		return nil, err
-	}
-
 	var issues []Issue
-	for _, issue := range _issues {
-		comments, err := c.GetIssueComments(p, &issue)
+	for i := range make([]int, c.maxPage) {
+		path := fmt.Sprintf("/projects/%d/issues?per_page=%d&page=%d", p.ID, c.perPage, i+1)
+		body, total, err := c.authGet(path)
 		if err != nil {
 			return nil, err
 		}
-		issue.Comments = comments
-		issues = append(issues, issue)
+
+		var _issues []Issue
+		if err = json.Unmarshal([]byte(body), &_issues); err != nil {
+			return nil, err
+		}
+
+		for _, issue := range _issues {
+			comments, err := c.GetIssueComments(p, &issue)
+			if err != nil {
+				return nil, err
+			}
+			issue.Comments = comments
+			issues = append(issues, issue)
+		}
+
+		if total == i+1 {
+			break
+		}
 	}
 
 	sort.Slice(issues, func(i, j int) bool {

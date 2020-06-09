@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -12,6 +13,8 @@ type Client struct {
 	Endpoint   string
 	apiversion string
 	token      string
+	maxPage    int
+	perPage    int
 	*http.Client
 }
 
@@ -26,33 +29,38 @@ type errorsResult struct {
 
 // NewClient is constructor for client
 func NewClient(endpoint string, token string) *Client {
-	return &Client{endpoint, "v4", token, http.DefaultClient}
+	return &Client{endpoint, "v4", token, 100, 50, http.DefaultClient}
 }
 
-func (c *Client) authGet(path string) ([]byte, error) {
+func (c *Client) authGet(path string) ([]byte, int, error) {
 	req, err := http.NewRequest("GET", c.APIEndpoint()+path, nil)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.token)
 
 	res, err := c.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
+		return nil, 0, fmt.Errorf("error with status: %d", res.StatusCode)
 	}
 
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, 1, err
 	}
 
-	return body, nil
+	total, err := strconv.Atoi(res.Header.Get("X-TOTAL-PAGES"))
+	if err != nil {
+		return body, 0, nil
+	}
+
+	return body, total, nil
 }
 
 func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {

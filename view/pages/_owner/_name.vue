@@ -48,28 +48,7 @@
         <div class="row">
           <div class="col">
             <div v-if="repo">
-              <h5 class="card-title">GitBucket</h5>
-              <ul>
-                <li
-                  v-for="issue in repo.issues"
-                  :key="`repo-issue-${issue.number}`"
-                >
-                  <a target="_blank" :href="issue.html_url"
-                    >#{{ issue.number }} {{ issue.title }} ({{
-                      issue.state
-                    }})</a
-                  >
-                  <ul>
-                    <li
-                      v-for="comment in issue.comments"
-                      :key="comment.id"
-                      class="text-truncate"
-                    >
-                      #{{ comment.id }} {{ comment.body }}
-                    </li>
-                  </ul>
-                </li>
-              </ul>
+              <Issues title="GitBucket" :issues="repo.issues" />
 
               <button class="btn btn-outline-primary" @click="migrateIssues">
                 Migrate
@@ -161,8 +140,12 @@
 
 <script>
 import axios from 'axios'
+import Issues from '@/components/issues'
 
 export default {
+  components: {
+    Issues
+  },
   data: () => {
     return {
       repo: null,

@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -43,14 +44,24 @@ type ProjectRequest struct {
 
 // GetProjects ...
 func (c *Client) GetProjects() ([]Project, error) {
-	body, err := c.authGet(("/projects"))
-	if err != nil {
-		return nil, err
-	}
-
 	var projects []Project
-	if err = json.Unmarshal([]byte(body), &projects); err != nil {
-		return nil, err
+	for i := range make([]int, c.maxPage) {
+		path := fmt.Sprintf("/projects?per_page=%d&page=%d", c.perPage, i+1)
+		body, total, err := c.authGet(path)
+		if err != nil {
+			return nil, err
+		}
+
+		var _projects []Project
+		if err = json.Unmarshal([]byte(body), &_projects); err != nil {
+			return nil, err
+		}
+
+		projects = append(projects, _projects...)
+
+		if total == i+1 {
+			break
+		}
 	}
 
 	return projects, nil
@@ -59,7 +70,7 @@ func (c *Client) GetProjects() ([]Project, error) {
 // GetProject ...
 func (c *Client) GetProject(owner string, name string) (*Project, error) {
 	path := "/projects/" + owner + "%2F" + name
-	body, err := c.authGet(path)
+	body, _, err := c.authGet(path)
 	if err != nil {
 		return nil, err
 	}

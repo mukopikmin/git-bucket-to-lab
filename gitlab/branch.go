@@ -32,15 +32,24 @@ type Branch struct {
 
 // GetBranches ...
 func (c *Client) GetBranches(p *Project) ([]Branch, error) {
-	path := fmt.Sprintf("/projects/%d/repository/branches", p.ID)
-	body, err := c.authGet(path)
-	if err != nil {
-		return nil, err
-	}
-
 	var branches []Branch
-	if err = json.Unmarshal([]byte(body), &branches); err != nil {
-		return nil, err
+	for i := range make([]int, c.maxPage) {
+		path := fmt.Sprintf("/projects/%d/repository/branches?per_page=%d&page=%d", p.ID, c.perPage, i+1)
+		body, total, err := c.authGet(path)
+		if err != nil {
+			return nil, err
+		}
+
+		var _branches []Branch
+		if err = json.Unmarshal([]byte(body), &_branches); err != nil {
+			return nil, err
+		}
+
+		branches = append(branches, _branches...)
+
+		if total == i+1 {
+			break
+		}
 	}
 
 	return branches, nil

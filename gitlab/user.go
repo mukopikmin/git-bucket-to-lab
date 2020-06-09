@@ -43,7 +43,7 @@ type User struct {
 
 // GetSelf ...
 func (c *Client) GetSelf() (*User, error) {
-	body, err := c.authGet("/user")
+	body, _, err := c.authGet("/user")
 	if err != nil {
 		return nil, err
 	}

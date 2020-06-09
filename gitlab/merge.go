@@ -83,23 +83,32 @@ type MergeRequest struct {
 
 // GetMerges ...
 func (c *Client) GetMerges(p *Project) ([]Merge, error) {
-	path := fmt.Sprintf("/projects/%d/merge_requests", p.ID)
-	body, err := c.authGet(path)
-
-	var _merges []Merge
-	if err = json.Unmarshal([]byte(body), &_merges); err != nil {
-		return nil, err
-	}
-
 	var merges []Merge
-	for _, m := range _merges {
-		comments, err := c.GetMergeComments(p, &m)
+	for i := range make([]int, c.maxPage) {
+		path := fmt.Sprintf("/projects/%d/merge_requests?per_page=%d&page=%d", p.ID, c.perPage, i+1)
+		body, total, err := c.authGet(path)
 		if err != nil {
 			return nil, err
 		}
 
-		m.Comments = comments
-		merges = append(merges, m)
+		var _merges []Merge
+		if err = json.Unmarshal([]byte(body), &_merges); err != nil {
+			return nil, err
+		}
+
+		for _, m := range _merges {
+			comments, err := c.GetMergeComments(p, &m)
+			if err != nil {
+				return nil, err
+			}
+
+			m.Comments = comments
+			merges = append(merges, m)
+		}
+
+		if total == i+1 {
+			break
+		}
 	}
 
 	sort.Slice(merges, func(i, j int) bool {

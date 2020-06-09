@@ -39,7 +39,7 @@ type Pull struct {
 	ReviewCommentURL  string        `json:"review_comment_url"`
 	CommentsURL       string        `json:"comments_url"`
 	StatusesURL       string        `json:"statuses_url"`
-	Comments          []Comment
+	Comments          []Comment     `json:"comments"`
 }
 
 // PullRequest ...

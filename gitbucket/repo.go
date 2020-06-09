@@ -2,6 +2,7 @@ package gitbucket
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -9,24 +10,24 @@ import (
 
 // Repo in GitBucket
 type Repo struct {
-	Name          string `json:"name"`
-	FullName      string `json:"full_name"`
-	Description   string `json:"description"`
-	Watchers      int    `json:"watchers"`
-	Forks         int    `json:"forks"`
-	Private       bool   `json:"private"`
-	DefaultBranch string `json:"default_branch"`
-	Owner         User   `json:"owner"`
-	ID            int    `json:"id"`
-	ForksCount    int    `json:"forks_count"`
-	WatchersCount int    `json:"watchers_count"`
-	URL           string `json:"url"`
-	HTTPURL       string `json:"http_url"`
-	CloneURL      string `json:"clone_url"`
-	HTMLURL       string `json:"html_url"`
-	Issues        []Issue
-	Pulls         []Pull
-	Branches      []Branch
+	Name          string   `json:"name"`
+	FullName      string   `json:"full_name"`
+	Description   string   `json:"description"`
+	Watchers      int      `json:"watchers"`
+	Forks         int      `json:"forks"`
+	Private       bool     `json:"private"`
+	DefaultBranch string   `json:"default_branch"`
+	Owner         User     `json:"owner"`
+	ID            int      `json:"id"`
+	ForksCount    int      `json:"forks_count"`
+	WatchersCount int      `json:"watchers_count"`
+	URL           string   `json:"url"`
+	HTTPURL       string   `json:"http_url"`
+	CloneURL      string   `json:"clone_url"`
+	HTMLURL       string   `json:"html_url"`
+	Issues        []Issue  `json:"issues"`
+	Pulls         []Pull   `json:"pulls"`
+	Branches      []Branch `json:"branches"`
 }
 
 // RepoRequest ...
@@ -62,6 +63,9 @@ func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println(path)
+	fmt.Println(c.apikey)
 
 	var repo Repo
 	if err = json.Unmarshal([]byte(body), &repo); err != nil {

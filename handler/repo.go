@@ -17,8 +17,9 @@ type RepoParam struct {
 
 // ShowRepo ...
 func ShowRepo(c echo.Context) error {
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
+	h := c.Request().Header
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
 	owner := c.Param("owner")
 	name := c.Param("name")
 
@@ -58,5 +59,5 @@ func ShowRepo(c echo.Context) error {
 
 	params := RepoParam{repo, project}
 
-	return c.Render(http.StatusOK, "repo", params)
+	return c.JSON(http.StatusOK, params)
 }

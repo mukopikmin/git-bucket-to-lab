@@ -11,11 +11,11 @@ import (
 
 // MigrateRepo ...
 func MigrateRepo(c echo.Context) error {
+	h := c.Request().Header
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
 	owner := c.Param("owner")
 	name := c.Param("name")
-
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {
@@ -42,11 +42,11 @@ func MigrateRepo(c echo.Context) error {
 
 // MigrateIssues ...
 func MigrateIssues(c echo.Context) error {
+	h := c.Request().Header
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
 	owner := c.Param("owner")
 	name := c.Param("name")
-
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {
@@ -82,11 +82,11 @@ func MigrateIssues(c echo.Context) error {
 
 // MigratePulls ..
 func MigratePulls(c echo.Context) error {
+	h := c.Request().Header
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
 	owner := c.Param("owner")
 	name := c.Param("name")
-
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), os.Getenv("GITLAB_TOKEN"))
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {

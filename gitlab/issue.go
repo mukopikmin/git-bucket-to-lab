@@ -62,7 +62,7 @@ type Issue struct {
 		Full     string `json:"full"`
 	} `json:"references"`
 	MovedToID interface{} `json:"moved_to_id"`
-	Comments  []Comment
+	Comments  []Comment   `json:"comments"`
 }
 
 // IssueRequest ...

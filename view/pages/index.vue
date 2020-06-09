@@ -67,7 +67,6 @@ export default {
       }
     })
     this.repoProject = res.data.RepoProject
-    console.log(this.repoProject)
   }
 }
 </script>

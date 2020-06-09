@@ -5,33 +5,38 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <h5 class="card-title">GitBucket</h5>
-            <!-- <h5>{{ .Repo.FullName }}</h5>
-          <ul>
-            {{ range $branch := .Repo.Branches }}
-            <li>{{ $branch.Name }} ({{ $branch.Commit.Sha }})</li>
-            {{ end }}
-          </ul>
-          <p>{{ .Repo.Description }}</p> -->
+            <div v-if="repo">
+              <h5 class="card-title">GitBucket</h5>
+              <h5>{{ repo.full_name }}</h5>
 
-            <!-- <form method="POST" action="/{{ .Repo.FullName }}/repo">
-              <button type="submit" class="btn btn-outline-primary">
-                Migrate
-              </button>
-            </form> -->
+              <p v-if="repo.branches.length === 0">
+                No branches
+              </p>
+
+              <ul>
+                <li v-for="branch in repo.branches" :key="branch.commit.sha">
+                  {{ branch.name }} ({{ branch.commit.sha }})
+                </li>
+              </ul>
+              <p>{{ repo.description }}</p>
+            </div>
+
+            <button class="btn btn-outline-primary" @click="migrateRepo">
+              Migrate
+            </button>
           </div>
 
           <div class="col">
-            <h5 class="card-title">GitLab</h5>
-            <!-- {{ if .Project }}
-          <h5>{{ .Project.PathWithNamespace }}</h5>
-          <ul>
-            {{ range $branch := .Project.Branches }}
-            <li>{{ $branch.Name }} ({{ $branch.Commit.ID }})</li>
-            {{ end }}
-          </ul>
-          <p>{{ .Project.Description }}</p>
-          {{ end }} -->
+            <div v-if="project">
+              <h5 class="card-title">GitLab</h5>
+              <h5>{{ project.path_with_namespace }}</h5>
+              <ul>
+                <li v-for="branch in project.branches" :key="branch.commit.id">
+                  {{ branch.name }} ({{ branch.commit.id }})
+                </li>
+              </ul>
+              <p>{{ project.description }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -42,49 +47,56 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <h5 class="card-title">GitBucket</h5>
-            <!-- <ul>
-            {{ range $issue := .Repo.Issues }}
-            <li>
-              <a
-                target="_blank"
-                href="{{ $issue.HTMLURL }}"
-              >#{{$issue.Number}} {{ $issue.Title }} ({{ $issue.State }})</a>
+            <div v-if="repo">
+              <h5 class="card-title">GitBucket</h5>
               <ul>
-                {{ range $comment := $issue.Comments }}
-                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
-                {{ end }}
+                <li
+                  v-for="issue in repo.issues"
+                  :key="`repo-issue-${issue.number}`"
+                >
+                  <a target="_blank" :href="issue.html_url"
+                    >#{{ issue.number }} {{ issue.title }} ({{
+                      issue.state
+                    }})</a
+                  >
+                  <ul>
+                    <li
+                      v-for="comment in issue.comments"
+                      :key="comment.id"
+                      class="text-truncate"
+                    >
+                      #{{ comment.id }} {{ comment.body }}
+                    </li>
+                  </ul>
+                </li>
               </ul>
-            </li>
-            {{end }}
-          </ul> -->
 
-            <!-- <form method="POST" action="/{{ .Repo.FullName }}/issues">
-              <button type="submit" class="btn btn-outline-primary">
+              <button class="btn btn-outline-primary" @click="migrateIssues">
                 Migrate
               </button>
-            </form> -->
+            </div>
           </div>
 
           <div class="col">
-            <h5 class="card-title">GitLab</h5>
-            <!-- <ul>
-            {{ if .Project }}
-            {{ range $issue := .Project.Issues }}
-            <li>
-              <a
-                target="_blank"
-                href="{{ $issue.WebURL }}"
-              >#{{ $issue.Iid }} {{ $issue.Title }} ({{ $issue.State }})</a>
+            <div v-if="project">
+              <h5 class="card-title">GitLab</h5>
               <ul>
-                {{ range $comment := $issue.Comments }}
-                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
-                {{ end }}
+                <li v-for="issue in project.issues" :key="issue.id">
+                  <a target="_blank" :href="issue.web_url"
+                    >#{{ issue.iid }} {{ issue.title }} ({{ issue.state }})</a
+                  >
+                  <ul>
+                    <li
+                      v-for="comment in issue.comments"
+                      :key="comment.id"
+                      class="text-truncate"
+                    >
+                      #{{ comment.id }} {{ comment.body }}
+                    </li>
+                  </ul>
+                </li>
               </ul>
-            </li>
-            {{end }}
-            {{end }}
-          </ul> -->
+            </div>
           </div>
         </div>
       </div>
@@ -95,49 +107,51 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <h5 class="card-title">GitBucket</h5>
-            <!-- <ul>
-            {{ range $pull := .Repo.Pulls }}
-            <li>
-              <a
-                target="_blank"
-                href="{{ $pull.HTMLURL }}"
-              >#{{$pull.Number}} {{ $pull.Title }} ({{ $pull.State }})</a>
+            <div v-if="repo">
+              <h5 class="card-title">GitBucket</h5>
               <ul>
-                {{ range $comment := $pull.Comments }}
-                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
-                {{ end }}
+                <li v-for="pull in repo.pulls" :key="pull.id">
+                  <a target="_blank" :href="pull.html_url"
+                    >#{{ pull.number }} {{ pull.title }} ({{ pull.state }})</a
+                  >
+                  <ul>
+                    <li
+                      v-for="comment in pull.comments"
+                      :key="comment.id"
+                      class="text-truncate"
+                    >
+                      #{{ comment.id }} {{ comment.body }}
+                    </li>
+                  </ul>
+                </li>
               </ul>
-            </li>
-            {{end }}
-          </ul> -->
 
-            <!-- <form method="POST" action="/{{ .Repo.FullName }}/pulls">
-              <button type="submit" class="btn btn-outline-primary">
+              <button class="btn btn-outline-primary" @click="migratePulls">
                 Migrate
               </button>
-            </form> -->
+            </div>
           </div>
 
           <div class="col">
-            <h5 class="card-title">GitLab</h5>
-            <!-- <ul>
-            {{ if .Project }}
-            {{ range $pull := .Project.Merges }}
-            <li>
-              <a
-                target="_blank"
-                href="{{ $pull.WebURL }}"
-              >#{{$pull.Iid}} {{ $pull.Title }} ({{ $pull.State }})</a>
+            <div v-if="project">
+              <h5 class="card-title">GitLab</h5>
               <ul>
-                {{ range $comment := $pull.Comments }}
-                <li class="text-truncate">#{{ $comment.ID }} {{ $comment.Body }}</li>
-                {{ end }}
+                <li v-for="merge in project.merges" :key="merge.id">
+                  <a target="_blank" :href="merge.web_url"
+                    >#{{ merge.iid }} {{ merge.title }} ({{ merge.state }})</a
+                  >
+                  <ul>
+                    <li
+                      v-for="comment in merge.comments"
+                      :key="comment.id"
+                      class="text-truncate"
+                    >
+                      #{{ comment.id }} {{ comment.body }}
+                    </li>
+                  </ul>
+                </li>
               </ul>
-            </li>
-            {{end }}
-            {{end }}
-          </ul> -->
+            </div>
           </div>
         </div>
       </div>
@@ -146,10 +160,83 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-  props: {
-    repo: Object,
-    project: Object
+  data: () => {
+    return {
+      repo: null,
+      project: null
+    }
+  },
+  async mounted() {
+    const { owner, name } = this.$nuxt.$route.params
+
+    try {
+      this.gitbucketToken = localStorage.getItem('gitbucketToken')
+      this.gitlabToken = localStorage.getItem('gitlabToken')
+    } catch (e) {
+      localStorage.removeItem('gitbucketToken')
+      localStorage.removeItem('gitlabToken')
+    }
+
+    if (!(this.gitbucketToken && this.gitlabToken)) {
+      this.$router.push('/auth')
+    }
+
+    const res = await axios.get(`http://localhost:1323/${owner}/${name}`, {
+      headers: {
+        'X-GITBUCKET-TOKEN': this.gitbucketToken,
+        'X-GITLAB-TOKEN': this.gitlabToken
+      }
+    })
+
+    this.repo = res.data.Repo
+    this.project = res.data.Project
+  },
+  methods: {
+    async migrateRepo() {
+      const res = await axios.post(
+        `http://localhost:1323/${this.repo.owner.login}/${this.repo.name}/repo`,
+        null,
+        {
+          headers: {
+            'X-GITBUCKET-TOKEN': this.gitbucketToken,
+            'X-GITLAB-TOKEN': this.gitlabToken
+          }
+        }
+      )
+
+      this.project = res.data.Project
+    },
+    async migrateIssues() {
+      const res = await axios.post(
+        `http://localhost:1323/${this.repo.owner.login}/${this.repo.name}/issues`,
+        null,
+        {
+          headers: {
+            'X-GITBUCKET-TOKEN': this.gitbucketToken,
+            'X-GITLAB-TOKEN': this.gitlabToken
+          }
+        }
+      )
+
+      this.project = res.data.Project
+    },
+    async migratePulls() {
+      const res = await axios.post(
+        `http://localhost:1323/${this.repo.owner.login}/${this.repo.name}/pulls`,
+        null,
+        {
+          headers: {
+            'X-GITBUCKET-TOKEN': this.gitbucketToken,
+            'X-GITLAB-TOKEN': this.gitlabToken
+          }
+        }
+      )
+
+      this.project = res.data.Project
+    }
   }
 }
 </script>

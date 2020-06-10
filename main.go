@@ -57,13 +57,20 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	e.Static("/static", "view/dist")
+	e.Static("/", "view/dist")
 	e.GET("/api", handler.Index)
 	e.GET("/api/:owner/:name", handler.ShowRepo)
 	e.POST("/api/:owner/:name/repo", handler.MigrateRepo)
 	e.POST("/api/:owner/:name/issues", handler.MigrateIssues)
 	e.POST("/api/:owner/:name/pulls", handler.MigratePulls)
-	e.File("/*", "view/dist/index.html")
+
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		if he, ok := err.(*echo.HTTPError); ok {
+			if he.Code == 404 {
+				c.File("view/dist/index.html")
+			}
+		}
+	}
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

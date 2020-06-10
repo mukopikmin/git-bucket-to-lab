@@ -37,7 +37,7 @@ func MigrateRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return c.Redirect(http.StatusFound, "/"+owner+"/"+name)
+	return ShowRepo(c)
 }
 
 // MigrateIssues ...
@@ -77,7 +77,7 @@ func MigrateIssues(c echo.Context) error {
 		}
 	}
 
-	return c.Redirect(http.StatusFound, "/"+owner+"/"+name)
+	return ShowRepo(c)
 }
 
 // MigratePulls ..
@@ -117,5 +117,5 @@ func MigratePulls(c echo.Context) error {
 		}
 	}
 
-	return c.Redirect(http.StatusFound, "/"+owner+"/"+name)
+	return ShowRepo(c)
 }

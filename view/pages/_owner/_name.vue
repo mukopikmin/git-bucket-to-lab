@@ -167,7 +167,7 @@ export default {
       this.$router.push('/auth')
     }
 
-    const res = await axios.get(`http://localhost:1323/${owner}/${name}`, {
+    const res = await axios.get(`http://localhost:1323/api/${owner}/${name}`, {
       headers: {
         'X-GITBUCKET-TOKEN': this.gitbucketToken,
         'X-GITLAB-TOKEN': this.gitlabToken
@@ -180,7 +180,7 @@ export default {
   methods: {
     async migrateRepo() {
       const res = await axios.post(
-        `http://localhost:1323/${this.repo.owner.login}/${this.repo.name}/repo`,
+        `http://localhost:1323/api/${this.repo.owner.login}/${this.repo.name}/repo`,
         null,
         {
           headers: {
@@ -194,7 +194,7 @@ export default {
     },
     async migrateIssues() {
       const res = await axios.post(
-        `http://localhost:1323/${this.repo.owner.login}/${this.repo.name}/issues`,
+        `http://localhost:1323/api/${this.repo.owner.login}/${this.repo.name}/issues`,
         null,
         {
           headers: {
@@ -208,7 +208,7 @@ export default {
     },
     async migratePulls() {
       const res = await axios.post(
-        `http://localhost:1323/${this.repo.owner.login}/${this.repo.name}/pulls`,
+        `http://localhost:1323/api/${this.repo.owner.login}/${this.repo.name}/pulls`,
         null,
         {
           headers: {

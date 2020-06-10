@@ -8,7 +8,6 @@ import (
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/handler"
 	"io"
-	"log"
 	"os"
 	"strings"
 	"text/template"
@@ -36,7 +35,7 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	fixture := flag.Bool("fixture", false, "Generate fixture data")
@@ -58,18 +57,13 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	t := &Template{
-		templates: template.Must(template.ParseGlob("views/*.html")),
-	}
-	e.Renderer = t
-
-	e.Static("/static", "assets")
-	e.GET("/", handler.Index)
-	e.GET("/auth", handler.Auth)
-	e.GET("/:owner/:name", handler.ShowRepo)
-	e.POST("/:owner/:name/repo", handler.MigrateRepo)
-	e.POST("/:owner/:name/issues", handler.MigrateIssues)
-	e.POST("/:owner/:name/pulls", handler.MigratePulls)
+	e.Static("/static", "view/dist")
+	e.GET("/api", handler.Index)
+	e.GET("/api/:owner/:name", handler.ShowRepo)
+	e.POST("/api/:owner/:name/repo", handler.MigrateRepo)
+	e.POST("/api/:owner/:name/issues", handler.MigrateIssues)
+	e.POST("/api/:owner/:name/pulls", handler.MigratePulls)
+	e.File("/*", "view/dist/index.html")
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

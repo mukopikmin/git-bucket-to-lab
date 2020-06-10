@@ -60,7 +60,7 @@ export default {
       this.$router.push('/auth')
     }
 
-    const res = await axios.get('http://localhost:1323', {
+    const res = await axios.get('http://localhost:1323/api', {
       headers: {
         'X-GITBUCKET-TOKEN': this.gitbucketToken,
         'X-GITLAB-TOKEN': this.gitlabToken

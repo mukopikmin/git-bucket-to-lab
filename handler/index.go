@@ -28,10 +28,10 @@ func Index(c echo.Context) error {
 	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
 	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
 
-	_, err := b.GetAuthorizedUser()
-	if err != nil {
-		return c.Redirect(http.StatusFound, "/auth")
-	}
+	// _, err := b.GetAuthorizedUser()
+	// if err != nil {
+	// 	return c.Redirect(http.StatusFound, "/auth")
+	// }
 
 	repos, err := b.GetRepos()
 	if err != nil {

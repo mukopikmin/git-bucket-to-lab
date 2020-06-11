@@ -2,11 +2,7 @@
 version: "3"
 services:
   app:
-    build:
-      context: .
-      args:
-        - HTTP_PROXY
-        - HTTPS_PROXY
+    image: mukopikmin/git-bucket-to-lab:latest
     ports:
       - 1323:1323
     environment:

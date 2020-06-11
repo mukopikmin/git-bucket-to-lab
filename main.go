@@ -45,6 +45,7 @@ func main() {
 	e.Use(middleware.CORS())
 
 	e.GET("/api", handler.Index)
+	e.GET("/api/auth", handler.Auth)
 	e.GET("/api/:owner/:name", handler.ShowRepo)
 	e.POST("/api/:owner/:name/repo", handler.MigrateRepo)
 	e.POST("/api/:owner/:name/issues", handler.MigrateIssues)

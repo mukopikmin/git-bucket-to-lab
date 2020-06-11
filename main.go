@@ -1,36 +1,23 @@
 package main
 
-// This is unused comment for creating test branch 2
-
 import (
 	"flag"
 	"fmt"
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/handler"
-	"io"
 	"os"
 	"strings"
-	"text/template"
 
 	"github.com/bxcodec/faker/v3"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
-
-// Template is templates of views
-type Template struct {
-	templates *template.Template
-}
-
-// Render acts as renderer of templates
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
-}
 
 func main() {
 	err := godotenv.Load()
@@ -57,19 +44,15 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	e.Static("/", "view/dist")
 	e.GET("/api", handler.Index)
 	e.GET("/api/:owner/:name", handler.ShowRepo)
 	e.POST("/api/:owner/:name/repo", handler.MigrateRepo)
 	e.POST("/api/:owner/:name/issues", handler.MigrateIssues)
 	e.POST("/api/:owner/:name/pulls", handler.MigratePulls)
+	e.Static("*", "view/dist")
 
-	e.HTTPErrorHandler = func(err error, c echo.Context) {
-		if he, ok := err.(*echo.HTTPError); ok {
-			if he.Code == 404 {
-				c.File("view/dist/index.html")
-			}
-		}
+	echo.NotFoundHandler = func(c echo.Context) error {
+		return c.File("view/dist/index.html")
 	}
 
 	e.Logger.Fatal(e.Start(":1323"))
@@ -138,7 +121,7 @@ func generateFixtures() error {
 }
 
 func clone(name string, url string) error {
-	r, err := git.PlainClone("tmp/"+name, false, &git.CloneOptions{
+	r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
 		URL:          url,
 		SingleBranch: false,
 	})

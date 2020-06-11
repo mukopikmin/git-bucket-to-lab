@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/labstack/echo/v4"
 )
 
@@ -16,13 +18,15 @@ func MigrateRepo(c echo.Context) error {
 	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
 	owner := c.Param("owner")
 	name := c.Param("name")
+	storage := memory.NewStorage()
+	worktree := memfs.New()
 
 	repo, err := b.GetRepo(owner, name)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err = repo.Clone()
+	err = repo.Clone(storage, worktree)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -32,7 +36,7 @@ func MigrateRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err = project.Push()
+	err = project.Push(storage, worktree)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

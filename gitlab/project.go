@@ -6,10 +6,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/storage"
 )
 
 // Project ...
@@ -112,9 +114,9 @@ func (c *Client) CreateProject(name string, description string) (*Project, error
 }
 
 // Push ...
-func (p *Project) Push() error {
+func (p *Project) Push(storage storage.Storer, worktree billy.Filesystem) error {
 	remote := "lab"
-	r, err := git.PlainOpen("tmp/" + p.PathWithNamespace)
+	r, err := git.Open(storage, worktree)
 	if err != nil {
 		return err
 	}

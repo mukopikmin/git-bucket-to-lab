@@ -3,8 +3,10 @@ package gitbucket
 import (
 	"encoding/json"
 
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/storage"
 )
 
 // Repo in GitBucket
@@ -100,8 +102,8 @@ func (c *Client) CreateRepo(name string, description string, private bool) (*Rep
 }
 
 // Clone ...
-func (repo *Repo) Clone() error {
-	r, err := git.PlainClone("tmp/"+repo.FullName, false, &git.CloneOptions{
+func (repo *Repo) Clone(storage storage.Storer, worktree billy.Filesystem) error {
+	r, err := git.Clone(storage, worktree, &git.CloneOptions{
 		URL:          repo.CloneURL,
 		SingleBranch: false,
 	})

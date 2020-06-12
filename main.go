@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/bxcodec/faker/v3"
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -64,7 +66,9 @@ func main() {
 func generateFixtures() error {
 	fmt.Println("Generating fixture data in GitBucket ...")
 
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKE_TOKEN"))
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), os.Getenv("GITBUCKET_TOKEN"))
+	storage := memory.NewStorage()
+	worktree := memfs.New()
 
 	name := faker.Word()
 	repo, err := b.CreateRepo(name, faker.Sentence(), false)
@@ -72,12 +76,12 @@ func generateFixtures() error {
 		return err
 	}
 
-	err = clone(repo.FullName, "https://github.com/mukopikmin/git-bucket-to-lab.git")
+	err = clone(storage, worktree, "https://github.com/mukopikmin/git-bucket-to-lab.git")
 	if err != nil {
 		return err
 	}
 
-	err = push(repo.FullName, repo.CloneURL)
+	err = push(storage, worktree, repo.CloneURL)
 	if err != nil {
 		return err
 	}
@@ -123,8 +127,8 @@ func generateFixtures() error {
 	return nil
 }
 
-func clone(name string, url string) error {
-	r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
+func clone(storage *memory.Storage, worktree billy.Filesystem, url string) error {
+	r, err := git.Clone(storage, worktree, &git.CloneOptions{
 		URL:          url,
 		SingleBranch: false,
 	})
@@ -166,9 +170,9 @@ func clone(name string, url string) error {
 	return nil
 }
 
-func push(name string, url string) error {
+func push(storage *memory.Storage, worktree billy.Filesystem, url string) error {
 	remote := "bucket"
-	r, err := git.PlainOpen("tmp/" + name)
+	r, err := git.Open(storage, worktree)
 	if err != nil {
 		return err
 	}

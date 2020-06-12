@@ -1,5 +1,5 @@
-.git
 .env
 node_modules
 dist
 tmp
+git-bucket-to-lab

@@ -40,7 +40,7 @@
 import axios from 'axios'
 
 export default {
-  data: () => {
+  data() {
     return {
       gitbucketToken: null,
       gitlabToken: null,

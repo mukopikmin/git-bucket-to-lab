@@ -16,7 +16,7 @@
         <a
           class="btn btn-outline-primary"
           target="_blank"
-          :href="`${gitbucket_url}/root/_application`"
+          :href="`${gitbucketUrl}/root/_application`"
         >
           GitBucket personal access token
         </a>
@@ -39,7 +39,7 @@
         <a
           class="btn btn-outline-primary"
           target="_blank"
-          :href="`${gitlab_url}/profile/personal_access_tokens`"
+          :href="`${gitlabUrl}/profile/personal_access_tokens`"
         >
           GitLab personal access token
         </a>
@@ -62,8 +62,8 @@ export default {
       gitlabToken: ''
     }
   },
-  mounted() {
-    const res = axios.get('/api/auth')
+  async mounted() {
+    const res = await axios.get('/api/auth')
 
     this.gitbucketUrl = res.data.gitbucket_url
     this.gitlabUrl = res.data.gitlab_url

@@ -52,8 +52,10 @@ func main() {
 	e.POST("/api/:owner/:name/pulls", handler.MigratePulls)
 	e.Static("*", "view/dist")
 
-	echo.NotFoundHandler = func(c echo.Context) error {
-		return c.File("view/dist/index.html")
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		if err := c.File("index.html"); err != nil {
+			c.Logger().Error(err)
+		}
 	}
 
 	e.Logger.Fatal(e.Start(":1323"))

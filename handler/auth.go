@@ -9,8 +9,8 @@ import (
 
 // AuthParam ...
 type AuthParam struct {
-	GitBucketURL string `json:"gitbucket_url`
-	GitLabURL    string `json:"gitlab_url`
+	GitBucketURL string `json:"gitbucket_url"`
+	GitLabURL    string `json:"gitlab_url"`
 }
 
 // Auth ...

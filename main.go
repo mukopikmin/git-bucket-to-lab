@@ -21,6 +21,12 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// APIError Status:...
+type APIError struct {
+	Status  int    `json:status`
+	Message string `json:message`
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -55,8 +61,21 @@ func main() {
 	e.Static("*", "view/dist")
 
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
-		if err := c.File("index.html"); err != nil {
-			c.Logger().Error(err)
+		path := c.Request().URL.Path
+
+		if strings.HasPrefix(path, "/api") {
+			if he, ok := err.(*echo.HTTPError); ok {
+				code := he.Code
+				message := he.Message
+				c.JSON(code, APIError{
+					Status:  code,
+					Message: message.(string),
+				})
+			}
+		} else {
+			if err := c.File("index.html"); err != nil {
+				c.Logger().Error(err)
+			}
 		}
 	}
 

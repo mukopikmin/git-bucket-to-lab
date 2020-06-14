@@ -1,3 +1,6 @@
+const envSet = require(`./config/env.${process.env.NODE_ENV ||
+  'development'}.js`)
+
 export default {
   mode: 'spa',
   /*
@@ -27,7 +30,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: [{ src: '~plugins/persistedstate.js', ssr: false }],
   /*
    ** Nuxt.js dev-modules
    */
@@ -48,7 +51,9 @@ export default {
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    baseURL: envSet.apiBaseUrl
+  },
   /*
    ** Build configuration
    */
@@ -57,5 +62,6 @@ export default {
      ** You can extend webpack config here
      */
     extend(config, ctx) {}
-  }
+  },
+  env: envSet
 }

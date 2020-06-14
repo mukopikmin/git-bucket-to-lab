@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapState } from 'vuex'
 import Issues from '@/components/issues'
 
 export default {
@@ -152,35 +152,30 @@ export default {
       project: null
     }
   },
+  computed: {
+    ...mapState(['gitbucketToken', 'gitlabToken'])
+  },
   async mounted() {
     const { owner, name } = this.$nuxt.$route.params
-
-    try {
-      this.gitbucketToken = localStorage.getItem('gitbucketToken')
-      this.gitlabToken = localStorage.getItem('gitlabToken')
-    } catch (e) {
-      localStorage.removeItem('gitbucketToken')
-      localStorage.removeItem('gitlabToken')
-    }
 
     if (!(this.gitbucketToken && this.gitlabToken)) {
       this.$router.push('/auth')
     }
 
-    const res = await axios.get(`http://localhost:1323/api/${owner}/${name}`, {
+    const res = await this.$axios.$get(`/${owner}/${name}`, {
       headers: {
         'X-GITBUCKET-TOKEN': this.gitbucketToken,
         'X-GITLAB-TOKEN': this.gitlabToken
       }
     })
 
-    this.repo = res.data.Repo
-    this.project = res.data.Project
+    this.repo = res.Repo
+    this.project = res.Project
   },
   methods: {
     async migrateRepo() {
-      const res = await axios.post(
-        `http://localhost:1323/api/${this.repo.owner.login}/${this.repo.name}/repo`,
+      const res = await this.$axios.$post(
+        `/${this.repo.owner.login}/${this.repo.name}/repo`,
         null,
         {
           headers: {
@@ -190,11 +185,11 @@ export default {
         }
       )
 
-      this.project = res.data.Project
+      this.project = res.Project
     },
     async migrateIssues() {
-      const res = await axios.post(
-        `http://localhost:1323/api/${this.repo.owner.login}/${this.repo.name}/issues`,
+      const res = await this.$axios.$post(
+        `/${this.repo.owner.login}/${this.repo.name}/issues`,
         null,
         {
           headers: {
@@ -204,11 +199,11 @@ export default {
         }
       )
 
-      this.project = res.data.Project
+      this.project = res.Project
     },
     async migratePulls() {
-      const res = await axios.post(
-        `http://localhost:1323/api/${this.repo.owner.login}/${this.repo.name}/pulls`,
+      const res = await this.$axios.$post(
+        `/${this.repo.owner.login}/${this.repo.name}/pulls`,
         null,
         {
           headers: {
@@ -218,7 +213,7 @@ export default {
         }
       )
 
-      this.project = res.data.Project
+      this.project = res.Project
     }
   }
 }

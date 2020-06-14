@@ -5,7 +5,7 @@
         <div class="form-group">
           <label>GitBucket personal access token</label>
           <input
-            v-model="gitbucketToken"
+            v-model="gitbucketTokenInput"
             type="text"
             class="form-control"
             required
@@ -28,7 +28,7 @@
         <div class="form-group">
           <label>GitLab personal access token</label>
           <input
-            v-model="gitlabToken"
+            v-model="gitlabTokenInput"
             type="text"
             class="form-control"
             required
@@ -51,27 +51,33 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   data() {
     return {
       gitbucketUrl: '',
       gitlabUrl: '',
-      gitbucketToken: '',
-      gitlabToken: ''
+      gitbucketTokenInput: '',
+      gitlabTokenInput: ''
     }
   },
+  computed: {
+    ...mapState(['gitbucketToken', 'gitlabToken'])
+  },
   async mounted() {
-    const res = await axios.get('/api/auth')
+    const res = await this.$axios.$get('/auth')
 
-    this.gitbucketUrl = res.data.gitbucket_url
-    this.gitlabUrl = res.data.gitlab_url
+    this.gitbucketUrl = res.gitbucket_url
+    this.gitlabUrl = res.gitlab_url
+    this.gitbucketTokenInput = this.gitbucketToken
+    this.gitlabTokenInput = this.gitlabToken
   },
   methods: {
+    ...mapActions(['setGitbucketToken', 'setGitlabToken']),
     auth() {
-      localStorage.setItem('gitbucketToken', this.gitbucketToken)
-      localStorage.setItem('gitlabToken', this.gitlabToken)
+      this.setGitbucketToken(this.gitbucketTokenInput)
+      this.setGitlabToken(this.gitlabTokenInput)
 
       this.$router.push('/')
     }

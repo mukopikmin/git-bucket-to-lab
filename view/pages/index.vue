@@ -37,36 +37,29 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapState } from 'vuex'
 
 export default {
   data() {
     return {
-      gitbucketToken: null,
-      gitlabToken: null,
       repoProject: []
     }
   },
+  computed: {
+    ...mapState(['gitbucketToken', 'gitlabToken'])
+  },
   async mounted() {
-    try {
-      this.gitbucketToken = localStorage.getItem('gitbucketToken')
-      this.gitlabToken = localStorage.getItem('gitlabToken')
-    } catch (e) {
-      localStorage.removeItem('gitbucketToken')
-      localStorage.removeItem('gitlabToken')
-    }
-
     if (!(this.gitbucketToken && this.gitlabToken)) {
       this.$router.push('/auth')
     }
 
-    const res = await axios.get('http://localhost:1323/api', {
+    const res = await this.$axios.$get('', {
       headers: {
         'X-GITBUCKET-TOKEN': this.gitbucketToken,
         'X-GITLAB-TOKEN': this.gitlabToken
       }
     })
-    this.repoProject = res.data.RepoProject
+    this.repoProject = res.RepoProject
   }
 }
 </script>

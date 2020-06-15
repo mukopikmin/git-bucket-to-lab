@@ -46,20 +46,31 @@ export default {
     }
   },
   computed: {
-    ...mapState(['gitbucketToken', 'gitlabToken'])
-  },
-  async mounted() {
-    if (!(this.gitbucketToken && this.gitlabToken)) {
-      this.$router.push('/auth')
+    ...mapState(['gitbucketToken', 'gitlabToken']),
+    isAuthoirized() {
+      return !this.gitbucketToken || !this.gitlabToken
     }
-
-    const res = await this.$axios.$get('', {
-      headers: {
-        'X-GITBUCKET-TOKEN': this.gitbucketToken,
-        'X-GITLAB-TOKEN': this.gitlabToken
+  },
+  mounted() {
+    setTimeout(async () => {
+      if (this.isAuthoirized) {
+        this.$router.push('/auth')
       }
-    })
-    this.repoProject = res.RepoProject
+
+      this.repoProject = await this.getPairs()
+    }, 0)
+  },
+  methods: {
+    async getPairs() {
+      const res = await this.$axios.$get('', {
+        headers: {
+          'X-GITBUCKET-TOKEN': this.gitbucketToken,
+          'X-GITLAB-TOKEN': this.gitlabToken
+        }
+      })
+
+      return res.RepoProject
+    }
   }
 }
 </script>

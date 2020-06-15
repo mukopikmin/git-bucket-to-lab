@@ -153,24 +153,29 @@ export default {
     }
   },
   computed: {
-    ...mapState(['gitbucketToken', 'gitlabToken'])
+    ...mapState(['gitbucketToken', 'gitlabToken']),
+    isAuthoirized() {
+      return !this.gitbucketToken || !this.gitlabToken
+    }
   },
-  async mounted() {
+  mounted() {
     const { owner, name } = this.$nuxt.$route.params
 
-    if (!(this.gitbucketToken && this.gitlabToken)) {
-      this.$router.push('/auth')
-    }
-
-    const res = await this.$axios.$get(`/${owner}/${name}`, {
-      headers: {
-        'X-GITBUCKET-TOKEN': this.gitbucketToken,
-        'X-GITLAB-TOKEN': this.gitlabToken
+    setTimeout(async () => {
+      if (this.isAuthoirized) {
+        this.$router.push('/auth')
       }
-    })
 
-    this.repo = res.Repo
-    this.project = res.Project
+      const res = await this.$axios.$get(`/${owner}/${name}`, {
+        headers: {
+          'X-GITBUCKET-TOKEN': this.gitbucketToken,
+          'X-GITLAB-TOKEN': this.gitlabToken
+        }
+      })
+
+      this.repo = res.Repo
+      this.project = res.Project
+    })
   },
   methods: {
     async migrateRepo() {

@@ -2,6 +2,7 @@ package gitbucket
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
 	"time"
 )
@@ -52,26 +53,34 @@ type PullRequest struct {
 
 // GetPulls ...
 func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
-	path := "/repos/" + repo.FullName + "/pulls"
-	body, err := c.authGet(path)
-	if err != nil {
-		return nil, err
-	}
-
-	var _pulls []Pull
-	if err = json.Unmarshal([]byte(body), &_pulls); err != nil {
-		return nil, err
-	}
-
 	var pulls []Pull
-	for _, pull := range _pulls {
-		comments, err := c.GetComments(repo, pull.Number)
-		if err != nil {
-			return nil, err
-		}
+	for _, s := range []string{"open", "closed"} {
+		for i := range make([]int, c.maxPage) {
+			path := fmt.Sprintf("/repos/%s/pulls?state=%s&per_page=%d&page=%d", repo.FullName, s, c.perPage, i+1)
+			body, err := c.authGet(path)
+			if err != nil {
+				return nil, err
+			}
 
-		pull.Comments = comments
-		pulls = append(pulls, pull)
+			var _pulls []Pull
+			if err = json.Unmarshal([]byte(body), &_pulls); err != nil {
+				return nil, err
+			}
+
+			if len(_pulls) == 0 {
+				break
+			}
+
+			for _, pull := range _pulls {
+				comments, err := c.GetComments(repo, pull.Number)
+				if err != nil {
+					return nil, err
+				}
+
+				pull.Comments = comments
+				pulls = append(pulls, pull)
+			}
+		}
 	}
 
 	sort.Slice(pulls, func(i, j int) bool {

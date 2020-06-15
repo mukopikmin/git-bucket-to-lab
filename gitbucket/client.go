@@ -12,6 +12,8 @@ type Client struct {
 	Endpoint   string
 	apiversion string
 	apikey     string
+	maxPage    int
+	perPage    int
 	*http.Client
 }
 
@@ -22,7 +24,7 @@ func (c *Client) APIEndpoint() string {
 
 // NewClient is constructor fot client
 func NewClient(endpoint string, apikey string) *Client {
-	return &Client{endpoint, "v3", apikey, http.DefaultClient}
+	return &Client{endpoint, "v3", apikey, 100, 50, http.DefaultClient}
 }
 
 func (c *Client) authGet(path string) ([]byte, error) {

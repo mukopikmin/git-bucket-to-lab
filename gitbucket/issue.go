@@ -2,6 +2,7 @@ package gitbucket
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
 	"time"
 )
@@ -30,24 +31,33 @@ type IssueRequest struct {
 
 // GetIssues ...
 func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
-	body, err := c.authGet("/repos/" + repo.FullName + "/issues")
-	if err != nil {
-		return nil, err
-	}
-
-	var _issues []Issue
-	if err = json.Unmarshal([]byte(body), &_issues); err != nil {
-		return nil, err
-	}
-
 	var issues []Issue
-	for _, issue := range _issues {
-		comments, err := c.GetComments(repo, issue.Number)
-		if err != nil {
-			return nil, err
+	for _, s := range []string{"open", "closed"} {
+		for i := range make([]int, c.maxPage) {
+			path := fmt.Sprintf("/repos/%s/issues?state=%s&per_page=%d&page=%d", repo.FullName, s, c.perPage, i+1)
+			body, err := c.authGet(path)
+			if err != nil {
+				return nil, err
+			}
+
+			var _issues []Issue
+			if err = json.Unmarshal([]byte(body), &_issues); err != nil {
+				return nil, err
+			}
+
+			if len(_issues) == 0 {
+				break
+			}
+
+			for _, issue := range _issues {
+				comments, err := c.GetComments(repo, issue.Number)
+				if err != nil {
+					return nil, err
+				}
+				issue.Comments = comments
+				issues = append(issues, issue)
+			}
 		}
-		issue.Comments = comments
-		issues = append(issues, issue)
 	}
 
 	sort.Slice(issues, func(i, j int) bool {

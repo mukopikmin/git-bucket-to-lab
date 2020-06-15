@@ -1,48 +1,33 @@
 <template>
   <div>
-    <table class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <th></th>
-          <th>GitBucket</th>
-          <th>GitLab</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(pair, i) in repoProject" :key="i">
-          <td>
-            <nuxt-link
-              :to="{
-                name: 'owner-name',
-                params: { owner: pair.Repo.owner.login, name: pair.Repo.name }
-              }"
-              >Migration</nuxt-link
-            >
-          </td>
-          <td>
-            <a target="_blank" :href="pair.Repo.http_url">{{
-              pair.Repo.full_name
-            }}</a>
-          </td>
-          <td v-if="pair.Project">
-            <a target="_blank" :href="pair.Project.web_url">{{
-              pair.Project.path_with_namespace
-            }}</a>
-          </td>
-          <td v-else></td>
-        </tr>
-      </tbody>
-    </table>
+    <AuhorizedUser
+      :loading="loading"
+      :gitbucket-user="gitbucketUser"
+      :gitlab-user="gitlabUser"
+    />
+
+    <div class="mt-3">
+      <RepoTable :loading="loading" :pairs="pairs" />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import AuhorizedUser from '@/components/authorized_user'
+import RepoTable from '@/components/repo_table'
 
 export default {
+  components: {
+    AuhorizedUser,
+    RepoTable
+  },
   data() {
     return {
-      repoProject: []
+      gitbucketUser: null,
+      gitlabUser: null,
+      pairs: [],
+      loading: true
     }
   },
   computed: {
@@ -57,20 +42,18 @@ export default {
         this.$router.push('/auth')
       }
 
-      this.repoProject = await this.getPairs()
-    }, 0)
-  },
-  methods: {
-    async getPairs() {
       const res = await this.$axios.$get('', {
         headers: {
           'X-GITBUCKET-TOKEN': this.gitbucketToken,
           'X-GITLAB-TOKEN': this.gitlabToken
         }
       })
+      this.loading = false
 
-      return res.RepoProject
-    }
+      this.gitbucketUser = res.gitbucket_user
+      this.gitlabUser = res.gitlab_user
+      this.pairs = res.pairs
+    }, 0)
   }
 }
 </script>

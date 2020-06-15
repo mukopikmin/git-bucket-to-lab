@@ -41,8 +41,8 @@ type User struct {
 	IsAdmin          bool          `json:"is_admin"`
 }
 
-// GetSelf ...
-func (c *Client) GetSelf() (*User, error) {
+// GetAuthorizedUser ...
+func (c *Client) GetAuthorizedUser() (*User, error) {
 	body, _, err := c.authGet("/user")
 	if err != nil {
 		return nil, err

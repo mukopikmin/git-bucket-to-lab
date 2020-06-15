@@ -7,12 +7,12 @@ import (
 	"testing"
 )
 
-func TestGetSelf(t *testing.T) {
+func TestGetAuthorizedUser(t *testing.T) {
 	endpoint := "http://localhost/api/v4"
 	token := os.Getenv("GITLAB_TOKEN")
 	c := NewClient(endpoint, token)
 
-	user, err := c.GetSelf()
+	user, err := c.GetAuthorizedUser()
 	if err != nil {
 		log.Fatal(err)
 	}

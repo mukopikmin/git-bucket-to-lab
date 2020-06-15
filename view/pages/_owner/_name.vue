@@ -60,7 +60,10 @@
             <div v-if="project">
               <h5 class="card-title">GitLab</h5>
               <ul>
-                <li v-for="issue in project.issues" :key="issue.id">
+                <li
+                  v-for="issue in project.issues"
+                  :key="`gitkab-issue-${issue.id}`"
+                >
                   <a target="_blank" :href="issue.web_url"
                     >#{{ issue.iid }} {{ issue.title }} ({{ issue.state }})</a
                   >
@@ -89,7 +92,7 @@
             <div v-if="repo">
               <h5 class="card-title">GitBucket</h5>
               <ul>
-                <li v-for="pull in repo.pulls" :key="pull.id">
+                <li v-for="pull in repo.pulls" :key="`pull-${pull.number}`">
                   <a target="_blank" :href="pull.html_url"
                     >#{{ pull.number }} {{ pull.title }} ({{ pull.state }})</a
                   >
@@ -115,7 +118,7 @@
             <div v-if="project">
               <h5 class="card-title">GitLab</h5>
               <ul>
-                <li v-for="merge in project.merges" :key="merge.id">
+                <li v-for="merge in project.merges" :key="`merge-${merge.id}`">
                   <a target="_blank" :href="merge.web_url"
                     >#{{ merge.iid }} {{ merge.title }} ({{ merge.state }})</a
                   >

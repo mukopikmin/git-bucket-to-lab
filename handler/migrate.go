@@ -14,8 +14,11 @@ import (
 // MigrateRepo ...
 func MigrateRepo(c echo.Context) error {
 	h := c.Request().Header
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
+	user := h.Get("X-GITBUCKET-USER")
+	btoken := h.Get("X-GITBUCKET-TOKEN")
+	ltoken := h.Get("X-GITLAB-TOKEN")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), btoken)
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), ltoken)
 	owner := c.Param("owner")
 	name := c.Param("name")
 	storage := memory.NewStorage()
@@ -26,7 +29,7 @@ func MigrateRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err = repo.Clone(storage, worktree)
+	err = repo.Clone(storage, worktree, user, btoken)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -36,7 +39,7 @@ func MigrateRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err = project.Push(storage, worktree)
+	err = project.Push(storage, worktree, ltoken)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

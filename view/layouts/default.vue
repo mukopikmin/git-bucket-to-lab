@@ -4,7 +4,7 @@
       <b-navbar type="light" variant="light">
         <b-container>
           <b-container>
-            <b-navbar-brand href="/"
+            <b-navbar-brand to="/"
               >Migration from GitBucket to GitLab</b-navbar-brand
             >
           </b-container>

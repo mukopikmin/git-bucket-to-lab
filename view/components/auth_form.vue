@@ -2,46 +2,68 @@
   <div>
     <b-row>
       <b-col offset-sm="2" sm="8">
-        <p class="mt-3">
-          Generate personal access token for GitBucket and GitLab. You need to
-          generate token for GitLab with API permission.
+        <p>
+          Set username of GitBucket and GitLab. This application can be used
+          when same user exists on both services. If there is no user which has
+          same login name, set up before start migration.
         </p>
+        <b-input-group prepend="Username" class="mt-3">
+          <b-form-input v-model="gitbucketUserInput"></b-form-input>
+        </b-input-group>
 
-        <div v-if="loading" class="text-center">
-          <b-spinner variant="primary"></b-spinner>
-        </div>
+        <b-button
+          class="mt-3 mb-5"
+          block
+          variant="outline-primary"
+          @click="setUser"
+          >Save</b-button
+        >
 
-        <div v-else>
-          <b-input-group prepend="GitBucket" class="mt-3">
-            <b-form-input v-model="gitbucketTokenInput"></b-form-input>
-            <b-input-group-append>
-              <b-button
-                variant="outline-primary"
-                @click="generateGitbucketToken"
-              >
-                <b-icon-box-arrow-up-right
-                  class="mr-1"
-                ></b-icon-box-arrow-up-right>
-                Generate
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
+        <div v-if="isUserSet">
+          <p class="mt-3">
+            Generate personal access token for GitBucket and GitLab. You need to
+            generate token for GitLab with API permission.
+          </p>
 
-          <b-input-group prepend="GitLab" class="mt-3">
-            <b-form-input v-model="gitlabTokenInput"></b-form-input>
-            <b-input-group-append>
-              <b-button variant="outline-primary" @click="generateGitlabToken">
-                <b-icon-box-arrow-up-right
-                  class="mr-1"
-                ></b-icon-box-arrow-up-right>
-                Generate
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
+          <div v-if="loading" class="text-center">
+            <b-spinner variant="primary"></b-spinner>
+          </div>
 
-          <b-button class="mt-5" block variant="outline-primary" @click="auth"
-            >Authorize</b-button
-          >
+          <div v-else>
+            <b-input-group prepend="GitBucket" class="mt-3">
+              <b-form-input v-model="gitbucketTokenInput"></b-form-input>
+              <b-input-group-append>
+                <b-button
+                  variant="outline-primary"
+                  @click="generateGitbucketToken"
+                >
+                  <b-icon-box-arrow-up-right
+                    class="mr-1"
+                  ></b-icon-box-arrow-up-right>
+                  Generate
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+
+            <b-input-group prepend="GitLab" class="mt-3">
+              <b-form-input v-model="gitlabTokenInput"></b-form-input>
+              <b-input-group-append>
+                <b-button
+                  variant="outline-primary"
+                  @click="generateGitlabToken"
+                >
+                  <b-icon-box-arrow-up-right
+                    class="mr-1"
+                  ></b-icon-box-arrow-up-right>
+                  Generate
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+
+            <b-button class="my-3" block variant="outline-primary" @click="auth"
+              >Authorize</b-button
+            >
+          </div>
         </div>
       </b-col>
     </b-row>
@@ -55,14 +77,24 @@ export default {
   props: ['gitbucketUrl', 'gitlabUrl', 'loading'],
   data() {
     return {
+      gitbucketUserInput: '',
       gitbucketTokenInput: '',
       gitlabTokenInput: ''
     }
   },
   computed: {
-    ...mapState(['gitbucketToken', 'gitlabToken'])
+    ...mapState(['gitbucketUser', 'gitbucketToken', 'gitlabToken']),
+    isUserSet() {
+      return this.gitbucketUser !== ''
+    }
   },
   watch: {
+    gitbucketUser: {
+      immediate: true,
+      handler() {
+        this.gitbucketUserInput = this.gitbucketUser
+      }
+    },
     gitbucketToken: {
       immediate: true,
       handler() {
@@ -77,7 +109,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setGitbucketToken', 'setGitlabToken']),
+    ...mapActions(['setGitbucketUser', 'setGitbucketToken', 'setGitlabToken']),
+    setUser() {
+      this.setGitbucketUser(this.gitbucketUserInput)
+    },
     auth() {
       this.setGitbucketToken(this.gitbucketTokenInput)
       this.setGitlabToken(this.gitlabTokenInput)
@@ -85,7 +120,10 @@ export default {
       this.$router.push('/')
     },
     generateGitbucketToken() {
-      window.open(`${this.gitbucketUrl}/root/_application`, '_blank')
+      window.open(
+        `${this.gitbucketUrl}/${this.gitbucketUser}/_application`,
+        '_blank'
+      )
     },
     generateGitlabToken() {
       window.open(`${this.gitlabUrl}/profile/personal_access_tokens`, '_blank')

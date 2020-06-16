@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   props: ['repo', 'pulls', 'loading'],
@@ -48,6 +48,7 @@ export default {
     ...mapState(['gitbucketToken', 'gitlabToken'])
   },
   methods: {
+    ...mapActions(['setRepo', 'setProject']),
     async migratePulls() {
       const res = await this.$axios.$post(
         `/${this.repo.owner.login}/${this.repo.name}/pulls`,
@@ -60,7 +61,8 @@ export default {
         }
       )
 
-      this.project = res.Project
+      this.setRepo(res.repo)
+      this.setProject(res.project)
     }
   }
 }

@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import Repo from '@/components/repo'
 import Project from '@/components/project'
 import RepoIssues from '@/components/repo_issues'
@@ -51,13 +51,11 @@ export default {
   },
   data() {
     return {
-      repo: null,
-      project: null,
       loading: true
     }
   },
   computed: {
-    ...mapState(['gitbucketToken', 'gitlabToken']),
+    ...mapState(['gitbucketToken', 'gitlabToken', 'repo', 'project']),
     isAuthoirized() {
       return !this.gitbucketToken || !this.gitlabToken
     },
@@ -89,10 +87,13 @@ export default {
         }
       })
 
-      this.repo = res.repo
-      this.project = res.project
+      this.setRepo(res.repo)
+      this.setProject(res.project)
       this.loading = false
     })
+  },
+  methods: {
+    ...mapActions(['setRepo', 'setProject'])
   }
 }
 </script>

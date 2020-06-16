@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   props: ['repo', 'loading'],
@@ -37,22 +37,25 @@ export default {
     isNoBranches() {
       return this.repo.branches.length === 0
     },
-    ...mapState(['gitbucketToken', 'gitlabToken'])
+    ...mapState(['gitbucketUser', 'gitbucketToken', 'gitlabToken'])
   },
   methods: {
+    ...mapActions(['setRepo', 'setProject']),
     async migrateRepo() {
       const res = await this.$axios.$post(
         `/${this.repo.owner.login}/${this.repo.name}/repo`,
         null,
         {
           headers: {
+            'X-GITBUCKET-USER': this.gitbucketUser,
             'X-GITBUCKET-TOKEN': this.gitbucketToken,
             'X-GITLAB-TOKEN': this.gitlabToken
           }
         }
       )
 
-      this.project = res.Project
+      this.setRepo(res.repo)
+      this.setProject(res.project)
     }
   }
 }

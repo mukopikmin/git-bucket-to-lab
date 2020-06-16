@@ -114,7 +114,7 @@ func (c *Client) CreateProject(name string, description string) (*Project, error
 }
 
 // Push ...
-func (p *Project) Push(storage storage.Storer, worktree billy.Filesystem) error {
+func (p *Project) Push(storage storage.Storer, worktree billy.Filesystem, token string) error {
 	remote := "lab"
 	r, err := git.Open(storage, worktree)
 	if err != nil {
@@ -174,8 +174,8 @@ func (p *Project) Push(storage storage.Storer, worktree billy.Filesystem) error 
 			config.RefSpec("+refs/heads/*:refs/heads/*"),
 		},
 		Auth: &http.BasicAuth{
-			Username: "root",
-			Password: "rootroot",
+			Username: "oauth2",
+			Password: token,
 		},
 	})
 	if err != nil {

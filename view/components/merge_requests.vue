@@ -5,7 +5,7 @@
     </div>
 
     <div v-else>
-      <b-list-group>
+      <b-list-group flush>
         <b-list-group-item
           v-for="merge in merges"
           :key="`merge-${merge.iid}`"

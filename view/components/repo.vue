@@ -1,37 +1,62 @@
 <template>
-  <div class="card">
-    <div class="card-header">Repository</div>
-    <div class="card-body">
+  <b-card no-body>
+    <b-card-header header-tag="nav">
+      <span class="title">Repository</span>
+      <b-button
+        class="migrate-button"
+        size="sm"
+        variant="primary"
+        @click="migrateRepo"
+      >
+        <b-icon-box-seam class="mr-1"></b-icon-box-seam>
+        Migrate</b-button
+      >
+    </b-card-header>
+
+    <b-card-body>
       <div v-if="loading" class="text-center my-2">
         <b-spinner variant="primary"></b-spinner>
       </div>
 
       <div v-else-if="repo">
-        <h4 class="card-title">{{ repo.full_name }}</h4>
-        <p>{{ repo.description }}</p>
+        <b-card-title>{{ repo.full_name }}</b-card-title>
+        <b-card-text>{{ repo.description }}</b-card-text>
+      </div>
+    </b-card-body>
 
-        <p v-if="isNoBranches">No branches</p>
-        <div v-else>
-          <h5>Branches</h5>
-          <ul>
-            <li v-for="branch in repo.branches" :key="branch.commit.sha">
-              {{ branch.name }} ({{ branch.commit.sha }})
-            </li>
-          </ul>
-        </div>
+    <div v-if="repo">
+      <b-card-body v-if="isNoBranches">
+        <b-card-text>No branches</b-card-text>
+      </b-card-body>
 
-        <button class="btn btn-outline-primary" @click="migrateRepo">
-          Migrate
-        </button>
+      <div v-else>
+        <b-list-group flush>
+          <b-list-group-item>Branches</b-list-group-item>
+          <b-list-group-item
+            v-for="branch in repo.branches"
+            :key="branch.commit.sha"
+            class="d-flex justify-content-between align-items-center text-align-left"
+          >
+            <Branch
+              class="branch"
+              :name="branch.name"
+              :sha="branch.commit.sha"
+            />
+          </b-list-group-item>
+        </b-list-group>
       </div>
     </div>
-  </div>
+  </b-card>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import Branch from '@/components/branch'
 
 export default {
+  components: {
+    Branch
+  },
   props: ['repo', 'loading'],
   computed: {
     isNoBranches() {
@@ -61,4 +86,19 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card-header {
+  padding-top: 8.5px;
+  padding-bottom: 8.5px;
+}
+.title {
+  height: 100%;
+  vertical-align: middle;
+}
+.migrate-button {
+  float: right;
+}
+.branch {
+  width: 100%;
+}
+</style>

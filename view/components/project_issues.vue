@@ -5,7 +5,7 @@
     </div>
 
     <div v-else>
-      <b-list-group>
+      <b-list-group flush>
         <b-list-group-item
           v-for="issue in issues"
           :key="`gitlab-issue-${issue.id}`"

@@ -1,11 +1,24 @@
 <template>
-  <b-card no-body header="Issues">
+  <b-card no-body>
+    <b-card-header header-tag="nav">
+      <span class="title">Issues</span>
+      <b-button
+        class="migrate-button"
+        size="sm"
+        variant="primary"
+        @click="migrateIssues"
+      >
+        <b-icon-box-seam class="mr-1"></b-icon-box-seam>
+        Migrate</b-button
+      >
+    </b-card-header>
+
     <div v-if="loading" class="text-center my-2">
       <b-spinner variant="primary"></b-spinner>
     </div>
 
     <div v-else>
-      <b-list-group>
+      <b-list-group flush>
         <b-list-group-item
           v-for="issue in issues"
           :key="`gitbcket-issue-${issue.number}`"
@@ -28,12 +41,6 @@
             issue.comments.length
           }}</b-badge>
         </b-list-group-item>
-
-        <b-card-body>
-          <b-button variant="outline-primary" @click="migrateIssues">
-            Migrate
-          </b-button>
-        </b-card-body>
       </b-list-group>
     </div>
   </b-card>
@@ -67,3 +74,17 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.card-header {
+  padding-top: 8.5px;
+  padding-bottom: 8.5px;
+}
+.title {
+  height: 100%;
+  vertical-align: middle;
+}
+.migrate-button {
+  float: right;
+}
+</style>

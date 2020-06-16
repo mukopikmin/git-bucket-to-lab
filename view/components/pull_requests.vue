@@ -1,5 +1,18 @@
 <template>
-  <b-card no-body header="Pull Requests">
+  <b-card no-body>
+    <b-card-header header-tag="nav">
+      <span class="title">Pull Requests</span>
+      <b-button
+        class="migrate-button"
+        size="sm"
+        variant="primary"
+        @click="migratePulls"
+      >
+        <b-icon-box-seam class="mr-1"></b-icon-box-seam>
+        Migrate</b-button
+      >
+    </b-card-header>
+
     <div v-if="loading" class="text-center my-2">
       <b-spinner variant="primary"></b-spinner>
     </div>
@@ -28,12 +41,6 @@
             pull.comments.length
           }}</b-badge>
         </b-list-group-item>
-
-        <b-card-body>
-          <b-button variant="outline-primary" @click="migratePulls">
-            Migrate
-          </b-button>
-        </b-card-body>
       </b-list-group>
     </div>
   </b-card>
@@ -68,4 +75,16 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card-header {
+  padding-top: 8.5px;
+  padding-bottom: 8.5px;
+}
+.title {
+  height: 100%;
+  vertical-align: middle;
+}
+.migrate-button {
+  float: right;
+}
+</style>

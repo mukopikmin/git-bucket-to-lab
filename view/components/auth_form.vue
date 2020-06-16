@@ -19,7 +19,10 @@
                 variant="outline-primary"
                 @click="generateGitbucketToken"
               >
-                <b-icon-plus-circle class="mr-1"></b-icon-plus-circle> Generate
+                <b-icon-box-arrow-up-right
+                  class="mr-1"
+                ></b-icon-box-arrow-up-right>
+                Generate
               </b-button>
             </b-input-group-append>
           </b-input-group>
@@ -28,7 +31,10 @@
             <b-form-input v-model="gitlabTokenInput"></b-form-input>
             <b-input-group-append>
               <b-button variant="outline-primary" @click="generateGitlabToken">
-                <b-icon-plus-circle class="mr-1"></b-icon-plus-circle> Generate
+                <b-icon-box-arrow-up-right
+                  class="mr-1"
+                ></b-icon-box-arrow-up-right>
+                Generate
               </b-button>
             </b-input-group-append>
           </b-input-group>

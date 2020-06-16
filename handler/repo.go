@@ -11,8 +11,8 @@ import (
 
 // RepoParam ...
 type RepoParam struct {
-	Repo    *gitbucket.Repo
-	Project *gitlab.Project
+	Repo    *gitbucket.Repo `json:"repo"`
+	Project *gitlab.Project `json:"project"`
 }
 
 // ShowRepo ...

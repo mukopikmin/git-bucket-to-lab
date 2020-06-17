@@ -73,7 +73,7 @@ type IssueRequest struct {
 
 // GetIssues ...
 func (c *Client) GetIssues(p *Project) ([]Issue, error) {
-	var issues []Issue
+	issues := make([]Issue, 0)
 	for i := range make([]int, c.maxPage) {
 		path := fmt.Sprintf("/projects/%d/issues?per_page=%d&page=%d", p.ID, c.perPage, i+1)
 		body, total, err := c.authGet(path)

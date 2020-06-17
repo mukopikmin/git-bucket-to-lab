@@ -46,7 +46,7 @@ type ProjectRequest struct {
 
 // GetProjects ...
 func (c *Client) GetProjects() ([]Project, error) {
-	var projects []Project
+	projects := make([]Project, 0)
 	for i := range make([]int, c.maxPage) {
 		path := fmt.Sprintf("/projects?per_page=%d&page=%d", c.perPage, i+1)
 		body, total, err := c.authGet(path)

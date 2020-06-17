@@ -83,7 +83,7 @@ type MergeRequest struct {
 
 // GetMerges ...
 func (c *Client) GetMerges(p *Project) ([]Merge, error) {
-	var merges []Merge
+	merges := make([]Merge, 0)
 	for i := range make([]int, c.maxPage) {
 		path := fmt.Sprintf("/projects/%d/merge_requests?per_page=%d&page=%d", p.ID, c.perPage, i+1)
 		body, total, err := c.authGet(path)

@@ -50,7 +50,7 @@ func (c *Client) GetMergeComments(p *Project, m *Merge) ([]Comment, error) {
 }
 
 func (c *Client) getComments(p *Project, target string, id int) ([]Comment, error) {
-	var comments []Comment
+	comments := make([]Comment, 0)
 	for i := range make([]int, c.maxPage) {
 		path := fmt.Sprintf("/projects/%d/%s/%d/notes?per_page=%d&page=%d", p.ID, target, id, c.perPage, i+1)
 		body, total, err := c.authGet(path)

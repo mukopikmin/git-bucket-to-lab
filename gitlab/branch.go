@@ -32,7 +32,7 @@ type Branch struct {
 
 // GetBranches ...
 func (c *Client) GetBranches(p *Project) ([]Branch, error) {
-	var branches []Branch
+	branches := make([]Branch, 0)
 	for i := range make([]int, c.maxPage) {
 		path := fmt.Sprintf("/projects/%d/repository/branches?per_page=%d&page=%d", p.ID, c.perPage, i+1)
 		body, total, err := c.authGet(path)

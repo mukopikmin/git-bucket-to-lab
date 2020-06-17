@@ -1,5 +1,5 @@
 <template>
-  <b-button class="migrate-button" size="sm" variant="primary" @click="action">
+  <b-button size="sm" variant="primary" @click="action">
     <b-icon-box-seam class="mr-1"></b-icon-box-seam>
     Migrate</b-button
   >

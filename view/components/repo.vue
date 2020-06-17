@@ -2,7 +2,7 @@
   <b-card no-body>
     <b-card-header header-tag="nav">
       <span class="title">Repository</span>
-      <MigrateButton :action="migrateRepo" />
+      <MigrateButton class="migrate-button" :action="migrateRepo" />
     </b-card-header>
 
     <b-card-body>

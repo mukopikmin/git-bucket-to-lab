@@ -1,8 +1,8 @@
 <template>
   <b-card no-body header="Issues">
-    <div v-if="loading" class="text-center my-2">
+    <b-card-body v-if="loading" class="text-center my-2">
       <b-spinner variant="primary"></b-spinner>
-    </div>
+    </b-card-body>
 
     <div v-else>
       <b-list-group flush>

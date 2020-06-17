@@ -2,15 +2,16 @@
   <b-card no-body>
     <b-card-header header-tag="nav">
       <span class="title">Pull Requests</span>
-      <MigrateButton :action="migratePulls" />
+      <MigrateButton class="migrate-button" :action="migratePulls" />
     </b-card-header>
 
-    <div v-if="loading" class="text-center my-2">
+    <b-card-body v-if="loading" class="text-center my-2">
       <b-spinner variant="primary"></b-spinner>
-    </div>
+    </b-card-body>
 
     <div v-else>
       <b-list-group flush>
+        <b-list-group-item v-if="noPulls">No pull requests</b-list-group-item>
         <b-list-group-item
           v-for="pull in pulls"
           :key="`pull-${pull.number}`"
@@ -34,6 +35,13 @@
           }}</b-badge>
         </b-list-group-item>
       </b-list-group>
+
+      <Pagination
+        v-if="paginationEnabled"
+        :page="page"
+        :page-size="pageSize"
+        @change="onPageChange"
+      />
     </div>
   </b-card>
 </template>
@@ -41,17 +49,43 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import MigrateButton from '@/components/migrate_button'
+import Pagination from '@/components/pagination'
 
 export default {
   components: {
-    MigrateButton
+    MigrateButton,
+    Pagination
   },
   props: ['repo', 'pulls', 'loading'],
+  data() {
+    return {
+      page: 1,
+      perPage: 4
+    }
+  },
   computed: {
-    ...mapState(['gitbucketToken', 'gitlabToken'])
+    ...mapState(['gitbucketToken', 'gitlabToken']),
+    pagedIssues() {
+      return this.pulls.slice(
+        this.perPage * (this.page - 1),
+        this.perPage * this.page
+      )
+    },
+    pageSize() {
+      return Math.ceil(this.pulls.length / this.perPage)
+    },
+    paginationEnabled() {
+      return this.pageSize > 1
+    },
+    noPulls() {
+      return this.pulls.length === 0
+    }
   },
   methods: {
     ...mapActions(['setRepo', 'setProject']),
+    onPageChange(e) {
+      this.page = e
+    },
     async migratePulls() {
       const res = await this.$axios.$post(
         `/${this.repo.owner.login}/${this.repo.name}/pulls`,

@@ -66,7 +66,7 @@ export default {
       return this.project ? this.project.issues : []
     },
     pulls() {
-      return this.repp ? this.repo.pulls : []
+      return this.repo ? this.repo.pulls : []
     },
     merges() {
       return this.project ? this.project.merges : []

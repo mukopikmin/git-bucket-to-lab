@@ -2,15 +2,7 @@
   <b-card no-body>
     <b-card-header header-tag="nav">
       <span class="title">Issues</span>
-      <b-button
-        class="migrate-button"
-        size="sm"
-        variant="primary"
-        @click="migrateIssues"
-      >
-        <b-icon-box-seam class="mr-1"></b-icon-box-seam>
-        Migrate</b-button
-      >
+      <MigrateButton :action="migrateIssues" />
     </b-card-header>
 
     <div v-if="loading" class="text-center my-2">
@@ -48,8 +40,12 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import MigrateButton from '@/components/migrate_button'
 
 export default {
+  components: {
+    MigrateButton
+  },
   props: ['repo', 'issues', 'loading'],
   computed: {
     ...mapState(['gitbucketToken', 'gitlabToken'])

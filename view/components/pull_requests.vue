@@ -2,15 +2,7 @@
   <b-card no-body>
     <b-card-header header-tag="nav">
       <span class="title">Pull Requests</span>
-      <b-button
-        class="migrate-button"
-        size="sm"
-        variant="primary"
-        @click="migratePulls"
-      >
-        <b-icon-box-seam class="mr-1"></b-icon-box-seam>
-        Migrate</b-button
-      >
+      <MigrateButton :action="migratePulls" />
     </b-card-header>
 
     <div v-if="loading" class="text-center my-2">
@@ -18,7 +10,7 @@
     </div>
 
     <div v-else>
-      <b-list-group>
+      <b-list-group flush>
         <b-list-group-item
           v-for="pull in pulls"
           :key="`pull-${pull.number}`"
@@ -48,8 +40,12 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import MigrateButton from '@/components/migrate_button'
 
 export default {
+  components: {
+    MigrateButton
+  },
   props: ['repo', 'pulls', 'loading'],
   computed: {
     ...mapState(['gitbucketToken', 'gitlabToken'])

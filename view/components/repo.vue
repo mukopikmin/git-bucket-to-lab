@@ -2,15 +2,7 @@
   <b-card no-body>
     <b-card-header header-tag="nav">
       <span class="title">Repository</span>
-      <b-button
-        class="migrate-button"
-        size="sm"
-        variant="primary"
-        @click="migrateRepo"
-      >
-        <b-icon-box-seam class="mr-1"></b-icon-box-seam>
-        Migrate</b-button
-      >
+      <MigrateButton :action="migrateRepo" />
     </b-card-header>
 
     <b-card-body>
@@ -52,10 +44,12 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import Branch from '@/components/branch'
+import MigrateButton from '@/components/migrate_button'
 
 export default {
   components: {
-    Branch
+    Branch,
+    MigrateButton
   },
   props: ['repo', 'loading'],
   computed: {

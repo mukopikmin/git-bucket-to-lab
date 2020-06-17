@@ -31,7 +31,7 @@ func (c *Client) GetUsers() ([]User, error) {
 		return nil, err
 	}
 
-	var users []User
+	users := make([]User, 0)
 	if err = json.Unmarshal([]byte(body), &users); err != nil {
 		return nil, err
 	}

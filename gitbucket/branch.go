@@ -30,7 +30,7 @@ func (c *Client) GetBranches(r *Repo) ([]Branch, error) {
 		return nil, err
 	}
 
-	var branches []Branch
+	branches := make([]Branch, 0)
 	if err = json.Unmarshal([]byte(body), &branches); err != nil {
 		return nil, err
 	}

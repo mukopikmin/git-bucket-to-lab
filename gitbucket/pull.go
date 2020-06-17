@@ -53,7 +53,7 @@ type PullRequest struct {
 
 // GetPulls ...
 func (c *Client) GetPulls(repo *Repo) ([]Pull, error) {
-	var pulls []Pull
+	pulls := make([]Pull, 0)
 	for _, s := range []string{"open", "closed"} {
 		for i := range make([]int, c.maxPage) {
 			path := fmt.Sprintf("/repos/%s/pulls?state=%s&per_page=%d&page=%d", repo.FullName, s, c.perPage, i+1)

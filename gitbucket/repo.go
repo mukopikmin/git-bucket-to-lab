@@ -50,7 +50,7 @@ func (c *Client) GetRepos() ([]Repo, error) {
 		return nil, err
 	}
 
-	var repos []Repo
+	repos := make([]Repo, 0)
 	if err = json.Unmarshal([]byte(body), &repos); err != nil {
 		return nil, err
 	}

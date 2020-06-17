@@ -40,7 +40,7 @@ func (c *Client) GetComments(r *Repo, id int) ([]Comment, error) {
 		return nil, err
 	}
 
-	var comments []Comment
+	comments := make([]Comment, 0)
 	if err = json.Unmarshal([]byte(body), &comments); err != nil {
 		return nil, err
 	}

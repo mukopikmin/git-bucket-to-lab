@@ -31,7 +31,7 @@ type IssueRequest struct {
 
 // GetIssues ...
 func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
-	var issues []Issue
+	issues := make([]Issue, 0)
 	for _, s := range []string{"open", "closed"} {
 		for i := range make([]int, c.maxPage) {
 			path := fmt.Sprintf("/repos/%s/issues?state=%s&per_page=%d&page=%d", repo.FullName, s, c.perPage, i+1)

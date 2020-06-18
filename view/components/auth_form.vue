@@ -8,19 +8,11 @@
           same login name, set up before start migration.
         </p>
         <b-input-group prepend="Username" class="mt-3">
-          <b-form-input v-model="gitbucketUserInput"></b-form-input>
+          <b-form-input v-model="username"></b-form-input>
         </b-input-group>
 
-        <b-button
-          class="mt-3 mb-5"
-          block
-          variant="outline-primary"
-          @click="setUser"
-          >Save</b-button
-        >
-
         <div v-if="isUserSet">
-          <p class="mt-3">
+          <p class="mt-5">
             Generate personal access token for GitBucket and GitLab. You need to
             generate token for GitLab with API permission.
           </p>
@@ -74,27 +66,21 @@
 import { mapActions, mapState } from 'vuex'
 
 export default {
-  props: ['gitbucketUrl', 'gitlabUrl', 'loading'],
+  props: ['loading'],
   data() {
     return {
-      gitbucketUserInput: '',
+      username: '',
       gitbucketTokenInput: '',
       gitlabTokenInput: ''
     }
   },
   computed: {
-    ...mapState(['gitbucketUser', 'gitbucketToken', 'gitlabToken']),
+    ...mapState(['gitbucketUrl', 'gitlabUrl', 'gitbucketToken', 'gitlabToken']),
     isUserSet() {
-      return this.gitbucketUser !== ''
+      return this.username !== ''
     }
   },
   watch: {
-    gitbucketUser: {
-      immediate: true,
-      handler() {
-        this.gitbucketUserInput = this.gitbucketUser
-      }
-    },
     gitbucketToken: {
       immediate: true,
       handler() {
@@ -109,10 +95,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setGitbucketUser', 'setGitbucketToken', 'setGitlabToken']),
-    setUser() {
-      this.setGitbucketUser(this.gitbucketUserInput)
-    },
+    ...mapActions(['setGitbucketToken', 'setGitlabToken']),
     auth() {
       this.setGitbucketToken(this.gitbucketTokenInput)
       this.setGitlabToken(this.gitlabTokenInput)
@@ -121,7 +104,7 @@ export default {
     },
     generateGitbucketToken() {
       window.open(
-        `${this.gitbucketUrl}/${this.gitbucketUser}/_application`,
+        `${this.gitbucketUrl}/${this.username}/_application`,
         '_blank'
       )
     },

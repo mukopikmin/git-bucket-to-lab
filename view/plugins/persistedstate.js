@@ -10,7 +10,7 @@ export default ({ store, isHMR }) => {
   if (process.client) {
     window.onNuxtReady((nuxt) => {
       createPersistedState({
-        paths: ['gitbucketUser', 'gitbucketToken', 'gitlabToken']
+        paths: ['gitbucketToken', 'gitlabToken']
       })(store) // vuex plugins can be connected to store, even after creation
     })
   }

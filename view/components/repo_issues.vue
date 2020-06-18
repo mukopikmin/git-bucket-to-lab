@@ -84,24 +84,29 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setRepo', 'setProject']),
+    ...mapActions(['setRepo', 'setProject', 'setError']),
     onPageChange(e) {
       this.page = e
     },
     async migrateIssues() {
-      const res = await this.$axios.$post(
-        `/${this.repo.owner.login}/${this.repo.name}/issues`,
-        null,
-        {
-          headers: {
-            'X-GITBUCKET-TOKEN': this.gitbucketToken,
-            'X-GITLAB-TOKEN': this.gitlabToken
+      try {
+        const res = await this.$axios.$post(
+          `/${this.repo.owner.login}/${this.repo.name}/issues`,
+          null,
+          {
+            headers: {
+              'X-GITBUCKET-TOKEN': this.gitbucketToken,
+              'X-GITLAB-TOKEN': this.gitlabToken
+            }
           }
-        }
-      )
+        )
 
-      this.setRepo(res.repo)
-      this.setProject(res.project)
+        this.setRepo(res.repo)
+        this.setProject(res.project)
+        this.setError(null)
+      } catch (e) {
+        this.setError(e)
+      }
     }
   }
 }

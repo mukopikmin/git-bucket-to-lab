@@ -55,14 +55,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
-  props: ['pairs', 'loading'],
+  props: ['loading'],
   data() {
     return {
       query: ''
     }
   },
   computed: {
+    ...mapState(['pairs']),
     filtered() {
       return this.pairs.filter((p) => p.repo.name.includes(this.query))
     }

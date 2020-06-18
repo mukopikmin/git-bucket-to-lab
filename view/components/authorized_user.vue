@@ -19,9 +19,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-  props: ['loading', 'gitbucketUser', 'gitlabUser'],
+  props: ['loading'],
   computed: {
+    ...mapState(['gitbucketUser', 'gitlabUser']),
     isBothAuthorized() {
       return this.gitbucketUser && this.gitlabUser
     }

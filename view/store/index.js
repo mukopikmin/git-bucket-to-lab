@@ -1,15 +1,28 @@
 export const state = () => ({
   gitbucketUser: '',
+  gitlabUser: '',
+  gitbucketUrl: '',
+  gitlabUrl: '',
   gitbucketToken: '',
   gitlabToken: '',
   pairs: [],
   repo: null,
-  project: null
+  project: null,
+  error: null
 })
 
 export const mutations = {
   setGitbucketUser(state, payload) {
-    state.gitbucketUser = payload.user
+    state.gitbucketUser = payload.gitbucketUser
+  },
+  setGitlabUser(state, payload) {
+    state.gitlabUser = payload.gitlabUser
+  },
+  setGitbucketUrl(state, payload) {
+    state.gitbucketUrl = payload.gitbucketUrl
+  },
+  setGitlabUrl(state, payload) {
+    state.gitlabUrl = payload.gitlabUrl
   },
   setGitbucketToken(state, payload) {
     state.gitbucketToken = payload.token
@@ -25,12 +38,24 @@ export const mutations = {
   },
   setProject(state, payload) {
     state.project = payload.project
+  },
+  setError(state, payload) {
+    state.error = payload.error
   }
 }
 
 export const actions = {
-  setGitbucketUser({ commit }, user) {
-    commit('setGitbucketUser', { user })
+  setGitbucketUser({ commit }, gitbucketUser) {
+    commit('setGitbucketUser', { gitbucketUser })
+  },
+  setGitlabUser({ commit }, gitlabUser) {
+    commit('setGitlabUser', { gitlabUser })
+  },
+  setGitbucketUrl({ commit }, gitbucketUrl) {
+    commit('setGitbucketUrl', { gitbucketUrl })
+  },
+  setGitlabUrl({ commit }, gitlabUrl) {
+    commit('setGitlabUrl', { gitlabUrl })
   },
   setGitbucketToken({ commit }, token) {
     commit('setGitbucketToken', { token })
@@ -46,5 +71,8 @@ export const actions = {
   },
   setProject({ commit }, project) {
     commit('setProject', { project })
+  },
+  setError({ commit }, error) {
+    commit('setError', { error })
   }
 }

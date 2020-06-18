@@ -1,33 +1,39 @@
 <template>
   <div>
-    <AuthForm
-      :loading="loading"
-      :gitbucket-url="gitbucketUrl"
-      :gitlab-url="gitlabUrl"
-    />
+    <ErrorMessage />
+    <AuthForm :loading="loading" />
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import AuthForm from '@/components/auth_form'
+import ErrorMessage from '@/components/error_message'
 
 export default {
   components: {
-    AuthForm
+    AuthForm,
+    ErrorMessage
   },
   data() {
     return {
-      gitbucketUrl: '',
-      gitlabUrl: '',
       loading: true
     }
   },
   async mounted() {
-    const res = await this.$axios.$get('/auth')
+    try {
+      const res = await this.$axios.$get('/auth')
 
-    this.loading = false
-    this.gitbucketUrl = res.gitbucket_url
-    this.gitlabUrl = res.gitlab_url
+      this.loading = false
+      this.setGitbucketUrl(res.gitbucket_url)
+      this.setGitlabUrl(res.gitlab_url)
+      this.setError(null)
+    } catch (e) {
+      this.setError(e)
+    }
+  },
+  methods: {
+    ...mapActions(['setError', 'setGitbucketUrl', 'setGitlabUrl'])
   }
 }
 </script>

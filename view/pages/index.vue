@@ -1,32 +1,30 @@
 <template>
   <div>
-    <AuhorizedUser
-      :loading="loading"
-      :gitbucket-user="gitbucketUser"
-      :gitlab-user="gitlabUser"
-    />
+    <ErrorMessage />
+    <AuhorizedUser :loading="loading" />
 
     <div class="mt-3">
-      <RepoTable :loading="loading" :pairs="pairs" />
+      <RepoTable :loading="loading" />
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import AuhorizedUser from '@/components/authorized_user'
 import RepoTable from '@/components/repo_table'
+import ErrorMessage from '@/components/error_message'
 
 export default {
   components: {
     AuhorizedUser,
-    RepoTable
+    RepoTable,
+    ErrorMessage
   },
   data() {
     return {
       gitbucketUser: null,
       gitlabUser: null,
-      pairs: [],
       loading: true
     }
   },
@@ -42,18 +40,27 @@ export default {
         this.$router.push('/auth')
       }
 
-      const res = await this.$axios.$get('', {
-        headers: {
-          'X-GITBUCKET-TOKEN': this.gitbucketToken,
-          'X-GITLAB-TOKEN': this.gitlabToken
-        }
-      })
-      this.loading = false
+      try {
+        const res = await this.$axios.$get('', {
+          headers: {
+            'X-GITBUCKET-TOKEN': this.gitbucketToken,
+            'X-GITLAB-TOKEN': this.gitlabToken
+          }
+        })
 
-      this.gitbucketUser = res.gitbucket_user
-      this.gitlabUser = res.gitlab_user
-      this.pairs = res.pairs
+        this.setGitbucketUser(res.gitbucket_user)
+        this.setGitlabUser(res.gitlab_user)
+        this.setPairs(res.pairs)
+        this.setError(null)
+      } catch (e) {
+        this.setError(e)
+      }
+
+      this.loading = false
     }, 0)
+  },
+  methods: {
+    ...mapActions(['setError', 'setPairs', 'setGitbucketUser', 'setGitlabUser'])
   }
 }
 </script>

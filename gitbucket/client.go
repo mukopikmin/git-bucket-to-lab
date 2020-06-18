@@ -1,6 +1,7 @@
 package gitbucket
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -15,6 +16,11 @@ type Client struct {
 	maxPage    int
 	perPage    int
 	*http.Client
+}
+
+// APIError ...
+type APIError struct {
+	Message string `json:"message"`
 }
 
 // APIEndpoint ...
@@ -39,15 +45,21 @@ func (c *Client) authGet(path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
-	}
 
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		var apierr APIError
+		if err = json.Unmarshal([]byte(body), &apierr); err != nil {
+			return nil, err
+		}
+
+		return nil, fmt.Errorf(apierr.Message + " on GitBucket")
 	}
 
 	return body, nil
@@ -67,7 +79,7 @@ func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
 		return nil, err
 	}
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("error with status: %d", res.StatusCode)
+		return nil, fmt.Errorf("Error POST %s with status %d on GitBucket", path, res.StatusCode)
 	}
 
 	defer res.Body.Close()

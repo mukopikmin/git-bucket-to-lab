@@ -59,22 +59,27 @@ export default {
     ...mapState(['gitbucketUser', 'gitbucketToken', 'gitlabToken'])
   },
   methods: {
-    ...mapActions(['setRepo', 'setProject']),
+    ...mapActions(['setRepo', 'setProject', 'setError']),
     async migrateRepo() {
-      const res = await this.$axios.$post(
-        `/${this.repo.owner.login}/${this.repo.name}/repo`,
-        null,
-        {
-          headers: {
-            'X-GITBUCKET-USER': this.gitbucketUser,
-            'X-GITBUCKET-TOKEN': this.gitbucketToken,
-            'X-GITLAB-TOKEN': this.gitlabToken
+      try {
+        const res = await this.$axios.$post(
+          `/${this.repo.owner.login}/${this.repo.name}/repo`,
+          null,
+          {
+            headers: {
+              'X-GITBUCKET-USER': this.gitbucketUser.login,
+              'X-GITBUCKET-TOKEN': this.gitbucketToken,
+              'X-GITLAB-TOKEN': this.gitlabToken
+            }
           }
-        }
-      )
+        )
 
-      this.setRepo(res.repo)
-      this.setProject(res.project)
+        this.setRepo(res.repo)
+        this.setProject(res.project)
+        this.setError(null)
+      } catch (e) {
+        this.setError(e)
+      }
     }
   }
 }

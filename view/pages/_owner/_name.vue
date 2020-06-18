@@ -1,5 +1,7 @@
 <template>
   <div>
+    <ErrorMessage />
+
     <b-row class="mb-3">
       <b-col sm="6">
         <h4 class="text-center">GitBucket</h4>
@@ -39,6 +41,7 @@ import RepoIssues from '@/components/repo_issues'
 import ProjectIssues from '@/components/project_issues'
 import PullRequests from '@/components/pull_requests'
 import MergeRequests from '@/components/merge_requests'
+import ErrorMessage from '@/components/error_message'
 
 export default {
   components: {
@@ -47,7 +50,8 @@ export default {
     RepoIssues,
     ProjectIssues,
     PullRequests,
-    MergeRequests
+    MergeRequests,
+    ErrorMessage
   },
   data() {
     return {
@@ -55,7 +59,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['gitbucketToken', 'gitlabToken', 'repo', 'project']),
+    ...mapState(['gitbucketToken', 'gitlabToken', 'error', 'repo', 'project']),
     isAuthoirized() {
       return !this.gitbucketToken || !this.gitlabToken
     },

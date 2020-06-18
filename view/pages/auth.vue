@@ -29,7 +29,7 @@ export default {
       this.setGitlabUrl(res.gitlab_url)
       this.setError(null)
     } catch (e) {
-      this.setError(e)
+      this.setError(e.response.data.message)
     }
   },
   methods: {

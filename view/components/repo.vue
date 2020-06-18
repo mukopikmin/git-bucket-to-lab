@@ -78,7 +78,7 @@ export default {
         this.setProject(res.project)
         this.setError(null)
       } catch (e) {
-        this.setError(e)
+        this.setError(e.response.data.message)
       }
     }
   }

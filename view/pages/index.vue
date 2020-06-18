@@ -53,7 +53,7 @@ export default {
         this.setPairs(res.pairs)
         this.setError(null)
       } catch (e) {
-        this.setError(e)
+        this.setError(e.response.data.message)
       }
 
       this.loading = false

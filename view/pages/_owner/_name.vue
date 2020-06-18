@@ -84,20 +84,25 @@ export default {
         this.$router.push('/auth')
       }
 
-      const res = await this.$axios.$get(`/${owner}/${name}`, {
-        headers: {
-          'X-GITBUCKET-TOKEN': this.gitbucketToken,
-          'X-GITLAB-TOKEN': this.gitlabToken
-        }
-      })
+      try {
+        const res = await this.$axios.$get(`/${owner}/${name}`, {
+          headers: {
+            'X-GITBUCKET-TOKEN': this.gitbucketToken,
+            'X-GITLAB-TOKEN': this.gitlabToken
+          }
+        })
 
-      this.setRepo(res.repo)
-      this.setProject(res.project)
+        this.setRepo(res.repo)
+        this.setProject(res.project)
+        this.setError(null)
+      } catch (e) {
+        this.setError(e.response.data.message)
+      }
       this.loading = false
     })
   },
   methods: {
-    ...mapActions(['setRepo', 'setProject'])
+    ...mapActions(['setRepo', 'setProject', 'setError'])
   }
 }
 </script>

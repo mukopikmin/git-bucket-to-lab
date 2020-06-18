@@ -13,7 +13,7 @@
       <b-list-group flush>
         <b-list-group-item v-if="noPulls">No pull requests</b-list-group-item>
         <b-list-group-item
-          v-for="pull in pulls"
+          v-for="pull in pagedPulls"
           :key="`pull-${pull.number}`"
           class="d-flex justify-content-between align-items-center text-align-left"
         >
@@ -65,7 +65,7 @@ export default {
   },
   computed: {
     ...mapState(['gitbucketToken', 'gitlabToken']),
-    pagedIssues() {
+    pagedPulls() {
       return this.pulls.slice(
         this.perPage * (this.page - 1),
         this.perPage * this.page

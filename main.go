@@ -73,7 +73,7 @@ func main() {
 				})
 			}
 		} else {
-			if err := c.File("index.html"); err != nil {
+			if err := c.File("view/dist/index.html"); err != nil {
 				c.Logger().Error(err)
 			}
 		}

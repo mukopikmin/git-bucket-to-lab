@@ -1,6 +1,7 @@
 export const state = () => ({
-  gitbucketUser: '',
-  gitlabUser: '',
+  username: '',
+  gitbucketUser: null,
+  gitlabUser: null,
   gitbucketUrl: '',
   gitlabUrl: '',
   gitbucketToken: '',
@@ -14,6 +15,7 @@ export const state = () => ({
 export const mutations = {
   setGitbucketUser(state, payload) {
     state.gitbucketUser = payload.gitbucketUser
+    state.username = payload.gitbucketUser.login
   },
   setGitlabUser(state, payload) {
     state.gitlabUser = payload.gitlabUser

@@ -8,7 +8,7 @@
           same login name, set up before start migration.
         </p>
         <b-input-group prepend="Username" class="mt-3">
-          <b-form-input v-model="username"></b-form-input>
+          <b-form-input v-model="usernameInput"></b-form-input>
         </b-input-group>
 
         <div v-if="isUserSet">
@@ -69,18 +69,33 @@ export default {
   props: ['loading'],
   data() {
     return {
-      username: '',
+      usernameInput: '',
       gitbucketTokenInput: '',
       gitlabTokenInput: ''
     }
   },
   computed: {
-    ...mapState(['gitbucketUrl', 'gitlabUrl', 'gitbucketToken', 'gitlabToken']),
+    ...mapState([
+      'gitbucketUser',
+      'gitbucketUrl',
+      'gitlabUrl',
+      'gitbucketToken',
+      'gitlabToken',
+      'username'
+    ]),
     isUserSet() {
-      return this.username !== ''
+      return this.usernameInput !== ''
     }
   },
   watch: {
+    gitbucketUser: {
+      immediate: true,
+      handler(pre, cur) {
+        setTimeout(() => {
+          this.usernameInput = this.username
+        }, 0)
+      }
+    },
     gitbucketToken: {
       immediate: true,
       handler() {

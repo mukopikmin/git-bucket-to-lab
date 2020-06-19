@@ -1,5 +1,5 @@
 <template>
-  <b-card title="Authorization">
+  <b-card header="Authorization status">
     <div v-if="loading" class="text-center">
       <b-spinner variant="primary"></b-spinner>
     </div>

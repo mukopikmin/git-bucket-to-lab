@@ -2,7 +2,11 @@
   <b-card no-body>
     <b-card-header header-tag="nav">
       <span class="title">Pull Requests</span>
-      <MigrateButton class="migrate-button" :action="migratePulls" />
+      <MigrateButton
+        class="migrate-button"
+        :migrating="migrating"
+        :action="migratePulls"
+      />
     </b-card-header>
 
     <b-card-body v-if="loading" class="text-center my-2">
@@ -18,16 +22,12 @@
           class="d-flex justify-content-between align-items-center text-align-left"
         >
           <span>
-            <b-icon-check-circle
+            <b-icon-info-circle
               v-if="pull.state == 'open'"
               variant="success"
               class="mr-1"
-            ></b-icon-check-circle>
-            <b-icon-slash-circle
-              v-else
-              variant="danger"
-              class="mr-1"
-            ></b-icon-slash-circle>
+            />
+            <b-icon-check2 v-else variant="danger" class="mr-1" />
             #{{ pull.number }} {{ pull.title }}
           </span>
           <b-badge v-if="pull.comments.length > 0" variant="primary" pill>{{
@@ -43,6 +43,13 @@
         @change="onPageChange"
       />
     </div>
+
+    <template v-slot:footer>
+      <small class="text-muted"
+        ><b-icon-info-circle class="mr-1" />{{ openCount }} Open
+        <b-icon-check2 class="ml-2 mr-1" />{{ closedCount }} Closed</small
+      >
+    </template>
   </b-card>
 </template>
 
@@ -60,7 +67,8 @@ export default {
   data() {
     return {
       page: 1,
-      perPage: 4
+      perPage: process.env.pageSize,
+      migrating: false
     }
   },
   computed: {
@@ -79,6 +87,12 @@ export default {
     },
     noPulls() {
       return this.pulls.length === 0
+    },
+    openCount() {
+      return this.pulls.filter((p) => p.state === 'open').length
+    },
+    closedCount() {
+      return this.pulls.filter((p) => p.state === 'closed').length
     }
   },
   methods: {
@@ -88,6 +102,7 @@ export default {
     },
     async migratePulls() {
       try {
+        this.migrating = true
         const res = await this.$axios.$post(
           `/${this.repo.owner.login}/${this.repo.name}/pulls`,
           null,
@@ -104,6 +119,8 @@ export default {
         this.setError(null)
       } catch (e) {
         this.setError(e.response.data.message)
+      } finally {
+        this.migrating = false
       }
     }
   }

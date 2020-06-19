@@ -1,3 +1,4 @@
 module.exports = {
-  apiBaseUrl: '/api'
+  apiBaseUrl: '/api',
+  pageSize: 10
 }

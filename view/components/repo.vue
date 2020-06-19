@@ -2,7 +2,11 @@
   <b-card no-body>
     <b-card-header header-tag="nav">
       <span class="title">Repository</span>
-      <MigrateButton class="migrate-button" :action="migrateRepo" />
+      <MigrateButton
+        class="migrate-button"
+        :migrating="migrating"
+        :action="migrateRepo"
+      />
     </b-card-header>
 
     <b-card-body>
@@ -11,7 +15,11 @@
       </div>
 
       <div v-else-if="repo">
-        <b-card-title>{{ repo.full_name }}</b-card-title>
+        <b-card-title>
+          <b-icon-lock v-if="repo.private" class="mr-1" />
+          <b-icon-bookmarks v-else class="mr-1" />
+          {{ repo.full_name }}
+        </b-card-title>
         <b-card-text>{{ repo.description }}</b-card-text>
       </div>
     </b-card-body>
@@ -38,6 +46,15 @@
         </b-list-group>
       </div>
     </div>
+
+    <template v-if="repo" v-slot:footer>
+      <small class="text-muted"
+        ><a :href="repo.html_url" target="_blank">
+          <b-icon-box-arrow-up-right class="mr-1"></b-icon-box-arrow-up-right
+          >Open repository
+        </a></small
+      >
+    </template>
   </b-card>
 </template>
 
@@ -52,22 +69,28 @@ export default {
     MigrateButton
   },
   props: ['repo', 'loading'],
+  data() {
+    return {
+      migrating: false
+    }
+  },
   computed: {
     isNoBranches() {
       return this.repo.branches.length === 0
     },
-    ...mapState(['gitbucketUser', 'gitbucketToken', 'gitlabToken'])
+    ...mapState(['username', 'gitbucketUser', 'gitbucketToken', 'gitlabToken'])
   },
   methods: {
     ...mapActions(['setRepo', 'setProject', 'setError']),
     async migrateRepo() {
       try {
+        this.migrating = true
         const res = await this.$axios.$post(
           `/${this.repo.owner.login}/${this.repo.name}/repo`,
           null,
           {
             headers: {
-              'X-GITBUCKET-USER': this.gitbucketUser.login,
+              'X-GITBUCKET-USER': this.username,
               'X-GITBUCKET-TOKEN': this.gitbucketToken,
               'X-GITLAB-TOKEN': this.gitlabToken
             }
@@ -78,7 +101,10 @@ export default {
         this.setProject(res.project)
         this.setError(null)
       } catch (e) {
+        console.error(e)
         this.setError(e.response.data.message)
+      } finally {
+        this.migrating = false
       }
     }
   }
@@ -99,5 +125,8 @@ export default {
 }
 .branch {
   width: 100%;
+}
+.divider {
+  margin: 0;
 }
 </style>

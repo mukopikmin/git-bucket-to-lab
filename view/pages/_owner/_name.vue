@@ -97,8 +97,9 @@ export default {
         this.setError(null)
       } catch (e) {
         this.setError(e.response.data.message)
+      } finally {
+        this.loading = false
       }
-      this.loading = false
     })
   },
   methods: {

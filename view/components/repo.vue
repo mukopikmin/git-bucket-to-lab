@@ -48,12 +48,12 @@
     </div>
 
     <template v-if="repo" v-slot:footer>
-      <small class="text-muted"
-        ><a :href="repo.html_url" target="_blank">
-          <b-icon-box-arrow-up-right class="mr-1"></b-icon-box-arrow-up-right
-          >Open repository
-        </a></small
-      >
+      <small class="text-muted">
+        <a :href="repo.html_url" target="_blank">
+          <b-icon-box-arrow-up-right class="mr-1" />
+          Open repository
+        </a>
+      </small>
     </template>
   </b-card>
 </template>

@@ -52,9 +52,14 @@
               </b-input-group-append>
             </b-input-group>
 
-            <b-button class="my-3" block variant="outline-primary" @click="auth"
-              >Authorize</b-button
+            <b-button
+              class="my-3"
+              block
+              variant="outline-primary"
+              @click="auth"
             >
+              Authorize
+            </b-button>
           </div>
         </div>
       </b-col>

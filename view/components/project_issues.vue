@@ -29,8 +29,9 @@
             v-if="issue.comments && issue.comments.length > 0"
             variant="primary"
             pill
-            >{{ issue.comments.length }}</b-badge
           >
+            {{ issue.comments.length }}
+          </b-badge>
         </b-list-group-item>
       </b-list-group>
 
@@ -43,10 +44,12 @@
     </div>
 
     <template v-slot:footer>
-      <small class="text-muted"
-        ><b-icon-info-circle class="mr-1" />{{ openCount }} Open
-        <b-icon-check2 class="ml-2 mr-1" />{{ closedCount }} Closed</small
-      >
+      <small class="text-muted">
+        <b-icon-info-circle class="mr-1" />
+        {{ openCount }} Open
+        <b-icon-check2 class="ml-2 mr-1" />
+        {{ closedCount }} Closed
+      </small>
     </template>
   </b-card>
 </template>

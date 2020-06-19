@@ -6,13 +6,13 @@
     <div v-else>
       <b-card-text v-if="isBothAuthorized">
         <p>You are signed in both services succesfully.</p>
-        <span> GitBucket: {{ gitbucketUser.login }} </span>
+        <span>GitBucket: {{ gitbucketUser.login }}</span>
         <b-icon-check-circle-fill variant="success" class="ml-1" />
-        <span class="ml-3"> GitLab: {{ gitlabUser.username }} </span>
+        <span class="ml-3">GitLab: {{ gitlabUser.username }}</span>
         <b-icon-check-circle-fill variant="success" class="ml-1" />
-        <b-button class="auth" variant="outline-primary" @click="auth"
-          >Authorization setting</b-button
-        >
+        <b-button class="auth" variant="outline-primary" @click="auth">
+          Authorization setting
+        </b-button>
       </b-card-text>
     </div>
   </b-card>

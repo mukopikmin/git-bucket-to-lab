@@ -33,18 +33,19 @@
                   name: 'owner-name',
                   params: { owner: pair.repo.owner.login, name: pair.repo.name }
                 }"
-                >Migration</nuxt-link
               >
+                Migration
+              </nuxt-link>
             </td>
             <td>
-              <a target="_blank" :href="pair.repo.http_url">{{
-                pair.repo.full_name
-              }}</a>
+              <a target="_blank" :href="pair.repo.http_url">
+                {{ pair.repo.full_name }}
+              </a>
             </td>
             <td v-if="pair.project">
-              <a target="_blank" :href="pair.project.web_url">{{
-                pair.project.path_with_namespace
-              }}</a>
+              <a target="_blank" :href="pair.project.web_url">
+                {{ pair.project.path_with_namespace }}
+              </a>
             </td>
             <td v-else></td>
           </tr>

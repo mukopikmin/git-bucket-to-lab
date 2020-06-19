@@ -10,8 +10,8 @@
         <b-card-title>
           <b-icon-lock v-if="isPrivate" class="mr-1" />
           <b-icon-bookmarks v-else class="mr-1" />
-          {{ project.path_with_namespace }}</b-card-title
-        >
+          {{ project.path_with_namespace }}
+        </b-card-title>
         <b-card-text>{{ project.description }}</b-card-text>
       </div>
 
@@ -32,7 +32,8 @@
             v-for="branch in project.branches"
             :key="branch.commit.sha"
             class="d-flex justify-content-between align-items-center text-align-left"
-            ><Branch
+          >
+            <Branch
               class="branch"
               :name="branch.name"
               :sha="branch.commit.id"
@@ -43,12 +44,12 @@
     </div>
 
     <template v-if="project" v-slot:footer>
-      <small class="text-muted"
-        ><a :href="project.web_url" target="_blank">
-          <b-icon-box-arrow-up-right class="mr-1"></b-icon-box-arrow-up-right
-          >Open project
-        </a></small
-      >
+      <small class="text-muted">
+        <a :href="project.web_url" target="_blank">
+          <b-icon-box-arrow-up-right class="mr-1"></b-icon-box-arrow-up-right>
+          Open project
+        </a>
+      </small>
     </template>
   </b-card>
 </template>

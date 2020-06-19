@@ -8,7 +8,13 @@
 
 <script>
 export default {
-  props: ['action', 'migrating']
+  props: {
+    action: {
+      type: Function,
+      required: true
+    },
+    migrating: Boolean
+  }
 }
 </script>
 

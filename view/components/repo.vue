@@ -68,7 +68,14 @@ export default {
     Branch,
     MigrateButton
   },
-  props: ['repo', 'loading'],
+  props: {
+    repo: {
+      type: Object,
+      required: false,
+      default: null
+    },
+    loading: Boolean
+  },
   data() {
     return {
       migrating: false
@@ -101,7 +108,6 @@ export default {
         this.setProject(res.project)
         this.setError(null)
       } catch (e) {
-        console.error(e)
         this.setError(e.response.data.message)
       } finally {
         this.migrating = false

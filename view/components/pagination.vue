@@ -13,7 +13,16 @@
 
 <script>
 export default {
-  props: ['page', 'pageSize'],
+  props: {
+    page: {
+      type: Number,
+      required: true
+    },
+    pageSize: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       perPage: 4

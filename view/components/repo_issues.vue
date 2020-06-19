@@ -65,7 +65,18 @@ export default {
     MigrateButton,
     Pagination
   },
-  props: ['repo', 'issues', 'loading'],
+  props: {
+    repo: {
+      type: Object,
+      required: false,
+      default: null
+    },
+    issues: {
+      type: Array,
+      required: true
+    },
+    loading: Boolean
+  },
   data() {
     return {
       page: 1,

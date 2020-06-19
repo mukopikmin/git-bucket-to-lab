@@ -60,7 +60,14 @@ export default {
   components: {
     Branch
   },
-  props: ['project', 'loading'],
+  props: {
+    project: {
+      type: Object,
+      required: false,
+      default: null
+    },
+    loading: Boolean
+  },
   computed: {
     isNoBranches() {
       return this.project.branches.length === 0

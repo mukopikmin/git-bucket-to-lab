@@ -58,7 +58,13 @@ export default {
   components: {
     Pagination
   },
-  props: ['issues', 'loading'],
+  props: {
+    issues: {
+      type: Array,
+      required: true
+    },
+    loading: Boolean
+  },
   data() {
     return {
       page: 1,

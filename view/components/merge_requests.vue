@@ -53,11 +53,18 @@
 
 <script>
 import Pagination from '@/components/pagination'
+
 export default {
   components: {
     Pagination
   },
-  props: ['merges', 'loading'],
+  props: {
+    merges: {
+      type: Array,
+      required: true
+    },
+    loading: Boolean
+  },
   data() {
     return {
       page: 1,

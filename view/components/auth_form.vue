@@ -66,7 +66,9 @@
 import { mapActions, mapState } from 'vuex'
 
 export default {
-  props: ['loading'],
+  props: {
+    loading: Boolean
+  },
   data() {
     return {
       usernameInput: '',

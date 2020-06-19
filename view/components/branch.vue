@@ -8,7 +8,16 @@
 
 <script>
 export default {
-  props: ['name', 'sha'],
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    sha: {
+      type: String,
+      required: true
+    }
+  },
   computed: {
     shortSha() {
       return this.sha.slice(0, 5)

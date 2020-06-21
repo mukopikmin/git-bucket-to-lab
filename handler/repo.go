@@ -18,8 +18,10 @@ type RepoParam struct {
 // ShowRepo ...
 func ShowRepo(c echo.Context) error {
 	h := c.Request().Header
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), h.Get("X-GITBUCKET-TOKEN"))
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), h.Get("X-GITLAB-TOKEN"))
+	btoken := h.Get("X-GITBUCKET-TOKEN")
+	ltoken := h.Get("X-GITLAB-TOKEN")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), btoken)
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), ltoken)
 	owner := c.Param("owner")
 	name := c.Param("name")
 
@@ -53,8 +55,14 @@ func ShowRepo(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
+		tags, err := l.GetTags(project)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+
 		project.Issues = i
 		project.Merges = m
+		project.Tags = tags
 	}
 
 	params := RepoParam{repo, project}

@@ -247,6 +247,7 @@ func push(storage *memory.Storage, worktree billy.Filesystem, url string) error 
 		RemoteName: remote,
 		RefSpecs: []config.RefSpec{
 			config.RefSpec("+refs/heads/*:refs/heads/*"),
+			config.RefSpec("+refs/tags/*:refs/tags/*"),
 		},
 		Auth: &http.BasicAuth{
 			Username: "root",

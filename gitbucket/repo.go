@@ -30,6 +30,7 @@ type Repo struct {
 	Issues        []Issue  `json:"issues"`
 	Pulls         []Pull   `json:"pulls"`
 	Branches      []Branch `json:"branches"`
+	Tags          []Tag    `json:"tags"`
 }
 
 // RepoRequest ...
@@ -76,7 +77,13 @@ func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
 		return nil, err
 	}
 
+	tags, err := c.GetTags(&repo, owner)
+	if err != nil {
+		return nil, err
+	}
+
 	repo.Branches = branches
+	repo.Tags = tags
 
 	return &repo, nil
 }

@@ -21,26 +21,29 @@
     </b-card-body>
 
     <div v-if="project">
-      <b-card-body v-if="isNoBranches">
-        <b-card-text>No branches</b-card-text>
-      </b-card-body>
+      <b-list-group flush>
+        <b-list-group-item>Branches</b-list-group-item>
+        <b-list-group-item v-if="isNoBranches">No branches</b-list-group-item>
+        <b-list-group-item
+          v-for="branch in project.branches"
+          :key="branch.commit.sha"
+          class="d-flex justify-content-between align-items-center text-align-left"
+        >
+          <Branch class="branch" :name="branch.name" :sha="branch.commit.id" />
+        </b-list-group-item>
+      </b-list-group>
 
-      <div v-else>
-        <b-list-group flush>
-          <b-list-group-item>Branches</b-list-group-item>
-          <b-list-group-item
-            v-for="branch in project.branches"
-            :key="branch.commit.sha"
-            class="d-flex justify-content-between align-items-center text-align-left"
-          >
-            <Branch
-              class="branch"
-              :name="branch.name"
-              :sha="branch.commit.id"
-            />
-          </b-list-group-item>
-        </b-list-group>
-      </div>
+      <b-list-group flush>
+        <b-list-group-item>Tags</b-list-group-item>
+        <b-list-group-item v-if="isNoTags">No tags</b-list-group-item>
+        <b-list-group-item
+          v-for="tag in project.tags"
+          :key="tag.commit.id"
+          class="d-flex justify-content-between align-items-center text-align-left"
+        >
+          <Branch class="branch" :name="tag.name" :sha="tag.commit.id" />
+        </b-list-group-item>
+      </b-list-group>
     </div>
 
     <template v-if="project" v-slot:footer>
@@ -72,6 +75,9 @@ export default {
   computed: {
     isNoBranches() {
       return this.project.branches.length === 0
+    },
+    isNoTags() {
+      return this.project.tags.length === 0
     },
     isPrivate() {
       return this.project.visibility === 'private'

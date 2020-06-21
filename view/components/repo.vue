@@ -25,26 +25,29 @@
     </b-card-body>
 
     <div v-if="repo">
-      <b-card-body v-if="isNoBranches">
-        <b-card-text>No branches</b-card-text>
-      </b-card-body>
+      <b-list-group flush>
+        <b-list-group-item>Branches</b-list-group-item>
+        <b-list-group-item v-if="isNoBranches">No branches</b-list-group-item>
+        <b-list-group-item
+          v-for="branch in repo.branches"
+          :key="branch.commit.sha"
+          class="d-flex justify-content-between align-items-center text-align-left"
+        >
+          <Branch class="branch" :name="branch.name" :sha="branch.commit.sha" />
+        </b-list-group-item>
+      </b-list-group>
 
-      <div v-else>
-        <b-list-group flush>
-          <b-list-group-item>Branches</b-list-group-item>
-          <b-list-group-item
-            v-for="branch in repo.branches"
-            :key="branch.commit.sha"
-            class="d-flex justify-content-between align-items-center text-align-left"
-          >
-            <Branch
-              class="branch"
-              :name="branch.name"
-              :sha="branch.commit.sha"
-            />
-          </b-list-group-item>
-        </b-list-group>
-      </div>
+      <b-list-group flush>
+        <b-list-group-item>Tags</b-list-group-item>
+        <b-list-group-item v-if="isNoTags">No tags</b-list-group-item>
+        <b-list-group-item
+          v-for="tag in repo.tags"
+          :key="tag.name"
+          class="d-flex justify-content-between align-items-center text-align-left"
+        >
+          <Branch class="branch" :name="tag.name" :sha="tag.sha" />
+        </b-list-group-item>
+      </b-list-group>
     </div>
 
     <template v-if="repo" v-slot:footer>
@@ -84,6 +87,9 @@ export default {
   computed: {
     isNoBranches() {
       return this.repo.branches.length === 0
+    },
+    isNoTags() {
+      return this.repo.tags.length === 0
     },
     ...mapState(['username', 'gitbucketUser', 'gitbucketToken', 'gitlabToken'])
   },

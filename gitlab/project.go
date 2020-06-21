@@ -94,6 +94,7 @@ type Project struct {
 	Issues   []Issue  `json:"issues"`
 	Merges   []Merge  `json:"merges"`
 	Branches []Branch `json:"branches"`
+	Tags     []Tag    `json:"tags"`
 }
 
 // ProjectRequest ...
@@ -230,6 +231,7 @@ func (p *Project) Push(storage storage.Storer, worktree billy.Filesystem, token 
 		RemoteName: remote,
 		RefSpecs: []config.RefSpec{
 			config.RefSpec("+refs/heads/*:refs/heads/*"),
+			config.RefSpec("+refs/tags/*:refs/tags/*"),
 		},
 		Auth: &http.BasicAuth{
 			Username: "oauth2",

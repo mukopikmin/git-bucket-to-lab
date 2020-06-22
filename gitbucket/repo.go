@@ -46,15 +46,37 @@ type RepoRequest struct {
 
 // GetRepos ...
 func (c *Client) GetRepos() ([]Repo, error) {
-	body, err := c.authGet("/user/repos")
+	groups, err := c.GetAuthenticatedGroups()
 	if err != nil {
 		return nil, err
 	}
 
 	repos := make([]Repo, 0)
-	if err = json.Unmarshal([]byte(body), &repos); err != nil {
+	for _, g := range groups {
+		body, err := c.authGet("/orgs/" + g.Login + "/repos")
+		if err != nil {
+			return nil, err
+		}
+
+		_repos := make([]Repo, 0)
+		if err = json.Unmarshal([]byte(body), &_repos); err != nil {
+			return nil, err
+		}
+
+		repos = append(repos, _repos...)
+	}
+
+	body, err := c.authGet("/user/repos")
+	if err != nil {
 		return nil, err
 	}
+
+	_repos := make([]Repo, 0)
+	if err = json.Unmarshal([]byte(body), &_repos); err != nil {
+		return nil, err
+	}
+
+	repos = append(repos, _repos...)
 
 	return repos, nil
 }

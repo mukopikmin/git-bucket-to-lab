@@ -50,6 +50,8 @@ export default {
 
         this.setGitbucketUser(res.gitbucket_user)
         this.setGitlabUser(res.gitlab_user)
+        this.setGitbucketGroups(res.gitbucket_groups)
+        this.setGitlabGroups(res.gitlab_groups)
         this.setPairs(res.pairs)
         this.setError(null)
       } catch (e) {
@@ -60,7 +62,14 @@ export default {
     }, 0)
   },
   methods: {
-    ...mapActions(['setError', 'setPairs', 'setGitbucketUser', 'setGitlabUser'])
+    ...mapActions([
+      'setError',
+      'setPairs',
+      'setGitbucketUser',
+      'setGitlabUser',
+      'setGitbucketGroups',
+      'setGitlabGroups'
+    ])
   }
 }
 </script>

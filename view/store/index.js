@@ -2,6 +2,8 @@ export const state = () => ({
   username: '',
   gitbucketUser: null,
   gitlabUser: null,
+  gitbucketGroups: [],
+  gitlabGroups: [],
   gitbucketUrl: '',
   gitlabUrl: '',
   gitbucketToken: '',
@@ -19,6 +21,12 @@ export const mutations = {
   },
   setGitlabUser(state, payload) {
     state.gitlabUser = payload.gitlabUser
+  },
+  setGitbucketGroups(state, payload) {
+    state.gitbucketGroups = payload.gitbucketGroups
+  },
+  setGitlabGroups(state, payload) {
+    state.gitlabGroups = payload.gitlabGroups
   },
   setGitbucketUrl(state, payload) {
     state.gitbucketUrl = payload.gitbucketUrl
@@ -52,6 +60,12 @@ export const actions = {
   },
   setGitlabUser({ commit }, gitlabUser) {
     commit('setGitlabUser', { gitlabUser })
+  },
+  setGitbucketGroups({ commit }, gitbucketGroups) {
+    commit('setGitbucketGroups', { gitbucketGroups })
+  },
+  setGitlabGroups({ commit }, gitlabGroups) {
+    commit('setGitlabGroups', { gitlabGroups })
   },
   setGitbucketUrl({ commit }, gitbucketUrl) {
     commit('setGitbucketUrl', { gitbucketUrl })

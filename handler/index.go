@@ -17,9 +17,11 @@ type Pair struct {
 
 // IndexParam ...
 type IndexParam struct {
-	GitbucketUser *gitbucket.User `json:"gitbucket_user"`
-	GitlabUser    *gitlab.User    `json:"gitlab_user"`
-	Pairs         []Pair          `json:"pairs"`
+	GitbucketUser   *gitbucket.User   `json:"gitbucket_user"`
+	GitlabUser      *gitlab.User      `json:"gitlab_user"`
+	GitbucketGroups []gitbucket.Group `json:"gitbucket_groups"`
+	GitlabGroups    []gitlab.Group    `json:"gitlab_groups"`
+	Pairs           []Pair            `json:"pairs"`
 }
 
 // Index ...
@@ -38,6 +40,16 @@ func Index(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
+	bgroups, err := b.GetAuthenticatedGroups()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	lgroups, err := l.GetAuthorizedGroups()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	repos, err := b.GetRepos()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -48,7 +60,7 @@ func Index(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	params := IndexParam{buser, luser, []Pair{}}
+	params := IndexParam{buser, luser, bgroups, lgroups, []Pair{}}
 	for i, r := range repos {
 		var project *gitlab.Project
 		for _, p := range projects {

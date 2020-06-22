@@ -13,16 +13,12 @@
           class="d-flex justify-content-between align-items-center text-align-left"
         >
           <span>
-            <b-icon-check-circle
+            <b-icon-info-circle
               v-if="issue.state == 'opened'"
               variant="success"
               class="mr-1"
-            ></b-icon-check-circle>
-            <b-icon-slash-circle
-              v-else
-              variant="danger"
-              class="mr-1"
-            ></b-icon-slash-circle>
+            ></b-icon-info-circle>
+            <b-icon-check2 v-else variant="danger" class="mr-1"></b-icon-check2>
             #{{ issue.iid }} {{ issue.title }}
           </span>
           <b-badge

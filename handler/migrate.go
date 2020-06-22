@@ -11,8 +11,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// MigrateRepo ...
-func MigrateRepo(c echo.Context) error {
+// MigrateUserRepo ...
+func MigrateUserRepo(c echo.Context) error {
 	h := c.Request().Header
 	user := h.Get("X-GITBUCKET-USER")
 	btoken := h.Get("X-GITBUCKET-TOKEN")
@@ -35,6 +35,47 @@ func MigrateRepo(c echo.Context) error {
 	}
 
 	project, err := l.CreateProject(name, repo.Description)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	err = project.Push(storage, worktree, ltoken)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return ShowRepo(c)
+}
+
+// MigrateGroupRepo ...
+func MigrateGroupRepo(c echo.Context) error {
+	h := c.Request().Header
+	user := h.Get("X-GITBUCKET-USER")
+	btoken := h.Get("X-GITBUCKET-TOKEN")
+	ltoken := h.Get("X-GITLAB-TOKEN")
+	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), btoken)
+	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), ltoken)
+	owner := c.Param("owner")
+	name := c.Param("name")
+	storage := memory.NewStorage()
+	worktree := memfs.New()
+
+	repo, err := b.GetRepo(owner, name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	err = repo.Clone(storage, worktree, user, btoken)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	group, err := l.GetGroup(owner)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	project, err := l.CreateGroupProject(group, name, repo.Description)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

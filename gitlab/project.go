@@ -147,7 +147,25 @@ func (c *Client) GetProject(owner string, name string) (*Project, error) {
 		return nil, err
 	}
 
+	issues, err := c.GetIssues(&project)
+	if err != nil {
+		return nil, err
+	}
+
+	merges, err := c.GetMerges(&project)
+	if err != nil {
+		return nil, err
+	}
+
+	tags, err := c.GetTags(&project)
+	if err != nil {
+		return nil, err
+	}
+
 	project.Branches = branches
+	project.Issues = issues
+	project.Merges = merges
+	project.Tags = tags
 
 	return &project, nil
 }

@@ -1,4 +1,5 @@
 {
   "editor.formatOnSave": true,
-  "eslint.workingDirectories": ["./view"]
+  "eslint.workingDirectories": ["./view"],
+  "prettier.printWidth": 80
 }

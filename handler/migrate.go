@@ -101,17 +101,12 @@ func MigrateIssues(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	issues, err := b.GetIssues(repo)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
 	project, err := l.GetProject(owner, name)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	for _, i := range issues {
+	for _, i := range repo.Issues {
 		issue, err := l.CreateIssue(project, i.Title, i.Body)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -141,17 +136,12 @@ func MigratePulls(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	pulls, err := b.GetPulls(repo)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
 	project, err := l.GetProject(owner, name)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	for _, p := range pulls {
+	for _, p := range repo.Pulls {
 		m, err := l.CreateMerge(project, p.Title, p.Head.Ref, p.Base.Ref, p.Body)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())

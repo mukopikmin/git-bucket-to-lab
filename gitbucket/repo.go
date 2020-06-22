@@ -104,8 +104,20 @@ func (c *Client) GetRepo(owner string, name string) (*Repo, error) {
 		return nil, err
 	}
 
+	issues, err := c.GetIssues(&repo)
+	if err != nil {
+		return nil, err
+	}
+
+	pulls, err := c.GetPulls(&repo)
+	if err != nil {
+		return nil, err
+	}
+
 	repo.Branches = branches
 	repo.Tags = tags
+	repo.Issues = issues
+	repo.Pulls = pulls
 
 	return &repo, nil
 }

@@ -17,16 +17,16 @@
       <div v-else-if="repo">
         <b-card-title>
           <b-icon-lock v-if="repo.private" class="mr-1" />
-          <b-icon-bookmarks v-else class="mr-1" />
-          {{ repo.full_name }}
+          <b-icon-bookmark v-else class="mr-1" />
+          {{ repo.owner.login }} / {{ repo.name }}
         </b-card-title>
         <b-card-text>{{ repo.description }}</b-card-text>
       </div>
     </b-card-body>
 
     <div v-if="repo">
-      <b-list-group flush>
-        <b-list-group-item>Branches</b-list-group-item>
+      <h5 class="list-title">Branches</h5>
+      <b-list-group flush class="border-top border-bottom">
         <b-list-group-item v-if="isNoBranches">No branches</b-list-group-item>
         <b-list-group-item
           v-for="branch in repo.branches"
@@ -37,8 +37,8 @@
         </b-list-group-item>
       </b-list-group>
 
-      <b-list-group flush>
-        <b-list-group-item>Tags</b-list-group-item>
+      <h5 class="list-title mt-4">Tags</h5>
+      <b-list-group flush class="border-top">
         <b-list-group-item v-if="isNoTags">No tags</b-list-group-item>
         <b-list-group-item
           v-for="tag in repo.tags"
@@ -91,24 +91,26 @@ export default {
     isNoTags() {
       return this.repo.tags.length === 0
     },
+    isOrgRepo() {
+      return this.repo.owner.type === 'Orgnization'
+    },
     ...mapState(['username', 'gitbucketUser', 'gitbucketToken', 'gitlabToken'])
   },
   methods: {
     ...mapActions(['setRepo', 'setProject', 'setError']),
     async migrateRepo() {
+      const url = this.isOrgRepo
+        ? `/${this.repo.owner.login}/${this.repo.name}/repo/group`
+        : `/${this.repo.owner.login}/${this.repo.name}/repo`
       try {
         this.migrating = true
-        const res = await this.$axios.$post(
-          `/${this.repo.owner.login}/${this.repo.name}/repo/group`,
-          null,
-          {
-            headers: {
-              'X-GITBUCKET-USER': this.username,
-              'X-GITBUCKET-TOKEN': this.gitbucketToken,
-              'X-GITLAB-TOKEN': this.gitlabToken
-            }
+        const res = await this.$axios.$post(url, null, {
+          headers: {
+            'X-GITBUCKET-USER': this.username,
+            'X-GITBUCKET-TOKEN': this.gitbucketToken,
+            'X-GITLAB-TOKEN': this.gitlabToken
           }
-        )
+        })
 
         this.setRepo(res.repo)
         this.setProject(res.project)
@@ -140,5 +142,14 @@ export default {
 }
 .divider {
   margin: 0;
+}
+.list-title {
+  padding-left: 20px;
+}
+.border-top {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 </style>

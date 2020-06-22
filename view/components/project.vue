@@ -10,7 +10,7 @@
         <b-card-title>
           <b-icon-lock v-if="isPrivate" class="mr-1" />
           <b-icon-bookmarks v-else class="mr-1" />
-          {{ project.path_with_namespace }}
+          {{ project.name_with_namespace }}
         </b-card-title>
         <b-card-text>{{ project.description }}</b-card-text>
       </div>
@@ -21,8 +21,8 @@
     </b-card-body>
 
     <div v-if="project">
-      <b-list-group flush>
-        <b-list-group-item>Branches</b-list-group-item>
+      <h5 class="list-title">Branches</h5>
+      <b-list-group flush class="border-top border-bottom">
         <b-list-group-item v-if="isNoBranches">No branches</b-list-group-item>
         <b-list-group-item
           v-for="branch in project.branches"
@@ -33,8 +33,8 @@
         </b-list-group-item>
       </b-list-group>
 
-      <b-list-group flush>
-        <b-list-group-item>Tags</b-list-group-item>
+      <h5 class="list-title mt-4">Tags</h5>
+      <b-list-group flush class="border-top">
         <b-list-group-item v-if="isNoTags">No tags</b-list-group-item>
         <b-list-group-item
           v-for="tag in project.tags"
@@ -89,5 +89,14 @@ export default {
 <style scoped>
 .branch {
   width: 100%;
+}
+.list-title {
+  padding-left: 20px;
+}
+.border-top {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 </style>

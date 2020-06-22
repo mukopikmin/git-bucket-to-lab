@@ -40,19 +40,19 @@ func (c *Client) GetUsers() ([]User, error) {
 }
 
 // GetGroups ...
-func (c *Client) GetGroups() ([]User, error) {
-	body, err := c.authGet("/user/orgs")
-	if err != nil {
-		return nil, err
-	}
+// func (c *Client) GetGroups() ([]User, error) {
+// 	body, err := c.authGet("/user/orgs")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	var orgs []User
-	if err = json.Unmarshal([]byte(body), &orgs); err != nil {
-		return nil, err
-	}
+// 	var orgs []User
+// 	if err = json.Unmarshal([]byte(body), &orgs); err != nil {
+// 		return nil, err
+// 	}
 
-	return orgs, nil
-}
+// 	return orgs, nil
+// }
 
 // GetAuthorizedUser ...
 func (c *Client) GetAuthorizedUser() (*User, error) {

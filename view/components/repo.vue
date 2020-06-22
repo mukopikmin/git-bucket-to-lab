@@ -99,7 +99,7 @@ export default {
       try {
         this.migrating = true
         const res = await this.$axios.$post(
-          `/${this.repo.owner.login}/${this.repo.name}/repo`,
+          `/${this.repo.owner.login}/${this.repo.name}/repo/group`,
           null,
           {
             headers: {

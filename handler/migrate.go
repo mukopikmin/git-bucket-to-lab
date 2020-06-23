@@ -34,9 +34,17 @@ func MigrateUserRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	project, err := l.CreateProject(name, repo.Description)
+	luser, err := l.GetAuthorizedUser()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	project, err := l.GetProject(owner, name)
+	if project == nil {
+		project, err = l.CreateProject(luser.ID, repo.Name, repo.Description)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
 	}
 
 	err = project.Push(storage, worktree, ltoken)
@@ -75,9 +83,12 @@ func MigrateGroupRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	project, err := l.CreateGroupProject(group, name, repo.Description)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	project, err := l.GetProject(owner, name)
+	if project == nil {
+		project, err = l.CreateProject(group.ID, name, repo.Description)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
 	}
 
 	err = project.Push(storage, worktree, ltoken)

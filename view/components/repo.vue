@@ -92,7 +92,7 @@ export default {
       return this.repo.tags.length === 0
     },
     isOrgRepo() {
-      return this.repo.owner.type === 'Orgnization'
+      return this.repo.owner.type === 'Organization'
     },
     ...mapState(['username', 'gitbucketUser', 'gitbucketToken', 'gitlabToken'])
   },

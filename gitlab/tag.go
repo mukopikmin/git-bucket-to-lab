@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Tag ...
 type Tag struct {
 	Commit struct {
 		ID             string    `json:"id"`

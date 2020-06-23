@@ -10,7 +10,7 @@
         <b-card-title>
           <b-icon-lock v-if="isPrivate" class="mr-1" />
           <b-icon-bookmarks v-else class="mr-1" />
-          {{ project.name_with_namespace }}
+          {{ project.namespace.path }} / {{ project.path }}
         </b-card-title>
         <b-card-text>{{ project.description }}</b-card-text>
       </div>
@@ -49,8 +49,8 @@
     <template v-if="project" v-slot:footer>
       <small class="text-muted">
         <a :href="project.web_url" target="_blank">
-          <b-icon-box-arrow-up-right class="mr-1"></b-icon-box-arrow-up-right>
-          Open project
+          <b-icon-box-arrow-up-right class="mr-1" />
+          <span>Open project</span>
         </a>
       </small>
     </template>

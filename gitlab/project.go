@@ -170,32 +170,9 @@ func (c *Client) GetProject(owner string, name string) (*Project, error) {
 	return &project, nil
 }
 
-// CreateGroupProject ...
-func (c *Client) CreateGroupProject(group *Group, name string, description string) (*Project, error) {
-	proReq := ProjectRequest{name, description, group.ID}
-	jsonBody, err := json.Marshal(proReq)
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := c.authPost("/projects", jsonBody)
-	if err != nil {
-		return nil, err
-	}
-
-	var project Project
-	if err = json.Unmarshal([]byte(body), &project); err != nil {
-		return nil, err
-	}
-
-	return &project, nil
-}
-
 // CreateProject ...
-func (c *Client) CreateProject(name string, description string) (*Project, error) {
-	proReq := ProjectRequest{}
-	proReq.Name = name
-	proReq.Description = description
+func (c *Client) CreateProject(nsID int, name string, description string) (*Project, error) {
+	proReq := ProjectRequest{name, description, nsID}
 
 	jsonBody, err := json.Marshal(proReq)
 	if err != nil {

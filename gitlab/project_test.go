@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 	"testing"
-
-	"github.com/bxcodec/faker/v3"
 )
 
 func TestGetProjects(t *testing.T) {
@@ -22,15 +20,15 @@ func TestGetProjects(t *testing.T) {
 	fmt.Println(projects)
 }
 
-func TestCreateProject(t *testing.T) {
-	endpoint := "http://localhost/api/v4"
-	token := os.Getenv("GITLAB_TOKEN")
-	c := NewClient(endpoint, token)
+// func TestCreateProject(t *testing.T) {
+// 	endpoint := "http://localhost/api/v4"
+// 	token := os.Getenv("GITLAB_TOKEN")
+// 	c := NewClient(endpoint, token)
 
-	project, err := c.CreateProject(faker.Word(), faker.Sentence())
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	project, err := c.CreateProject(faker.Word(), faker.Sentence())
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	fmt.Println(project)
-}
+// 	fmt.Println(project)
+// }

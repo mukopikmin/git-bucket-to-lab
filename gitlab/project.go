@@ -102,6 +102,7 @@ type ProjectRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	NamespaceID int    `json:"namespace_id"`
+	Visibility  string `json:"visibility"`
 }
 
 // GetProjects ...
@@ -171,8 +172,14 @@ func (c *Client) GetProject(owner string, name string) (*Project, error) {
 }
 
 // CreateProject ...
-func (c *Client) CreateProject(nsID int, name string, description string) (*Project, error) {
-	proReq := ProjectRequest{name, description, nsID}
+func (c *Client) CreateProject(nsID int, name string, description string, private bool) (*Project, error) {
+	var visibility string
+	if private {
+		visibility = "private"
+	} else {
+		visibility = "public"
+	}
+	proReq := ProjectRequest{name, description, nsID, visibility}
 
 	jsonBody, err := json.Marshal(proReq)
 	if err != nil {

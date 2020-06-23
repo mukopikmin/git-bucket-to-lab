@@ -9,7 +9,7 @@
       <div v-else-if="project">
         <b-card-title>
           <b-icon-lock v-if="isPrivate" class="mr-1" />
-          <b-icon-bookmarks v-else class="mr-1" />
+          <b-icon-bookmark v-else class="mr-1" />
           {{ project.namespace.path }} / {{ project.path }}
         </b-card-title>
         <b-card-text>{{ project.description }}</b-card-text>

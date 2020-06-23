@@ -26,7 +26,7 @@
               </div>
             </td>
           </tr>
-          <tr v-for="(pair, i) in filtered" :key="i">
+          <tr v-for="(pair, i) in pagedPairs" :key="i">
             <td>
               <nuxt-link
                 :to="{
@@ -51,31 +51,58 @@
           </tr>
         </tbody>
       </table>
+
+      <Pagination
+        v-if="paginationEnabled"
+        :page="page"
+        :page-size="pageSize"
+        @change="onPageChange"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import Pagination from '@/components/pagination'
 
 export default {
+  components: {
+    Pagination
+  },
   props: {
     loading: Boolean
   },
   data() {
     return {
-      query: ''
+      query: '',
+      page: 1,
+      perPage: process.env.pageSize * 2
     }
   },
   computed: {
     ...mapState(['pairs']),
     filtered() {
       return this.pairs.filter((p) => p.repo.name.includes(this.query))
+    },
+    pagedPairs() {
+      return this.pairs
+        .filter((p) => p.repo.name.includes(this.query))
+        .slice(this.perPage * (this.page - 1), this.perPage * this.page)
+    },
+    pageSize() {
+      return Math.ceil(this.pairs.length / this.perPage)
+    },
+    paginationEnabled() {
+      return this.pageSize > 1
     }
   },
   methods: {
     clear() {
       this.query = ''
+    },
+    onPageChange(e) {
+      this.page = e
     }
   }
 }

@@ -1,5 +1,5 @@
 {
   "editor.formatOnSave": true,
   "eslint.workingDirectories": ["./view"],
-  "prettier.printWidth": 80
+  "prettier.configPath": "view/.prettierrc"
 }

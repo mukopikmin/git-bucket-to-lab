@@ -144,7 +144,7 @@ export default {
     }
   },
   mounted() {
-    this.perPage = this.perPage + (3 - (this.perPage % 3))
+    this.perPage = (this.perPage + (3 - (this.perPage % 3))) * 2
   },
   methods: {
     clear() {

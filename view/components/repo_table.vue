@@ -77,21 +77,22 @@ export default {
     return {
       query: '',
       page: 1,
-      perPage: process.env.pageSize * 2
+      perPage: process.env.pageSize
     }
   },
   computed: {
     ...mapState(['pairs']),
-    filtered() {
+    filteredPairs() {
       return this.pairs.filter((p) => p.repo.name.includes(this.query))
     },
     pagedPairs() {
-      return this.pairs
-        .filter((p) => p.repo.name.includes(this.query))
-        .slice(this.perPage * (this.page - 1), this.perPage * this.page)
+      return this.filteredPairs.slice(
+        this.perPage * (this.page - 1),
+        this.perPage * this.page
+      )
     },
     pageSize() {
-      return Math.ceil(this.pairs.length / this.perPage)
+      return Math.ceil(this.filteredPairs.length / this.perPage)
     },
     paginationEnabled() {
       return this.pageSize > 1

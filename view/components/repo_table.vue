@@ -1,13 +1,32 @@
 <template>
   <div>
-    <b-input-group prepend="Filter" class="mt-3">
-      <b-form-input v-model="query"></b-form-input>
-      <b-input-group-append>
-        <b-button variant="outline-primary" @click="clear">
-          <b-icon-x></b-icon-x>
-        </b-button>
-      </b-input-group-append>
-    </b-input-group>
+    <b-row>
+      <b-col>
+        <b-input-group>
+          <template v-slot:prepend>
+            <b-input-group-text>
+              <b-icon-person></b-icon-person>
+            </b-input-group-text>
+          </template>
+          <b-form-select v-model="owner" :options="options"></b-form-select>
+        </b-input-group>
+      </b-col>
+      <b-col>
+        <b-input-group>
+          <template v-slot:prepend>
+            <b-input-group-text>
+              <b-icon-search></b-icon-search>
+            </b-input-group-text>
+          </template>
+          <b-form-input v-model="query"></b-form-input>
+          <b-input-group-append>
+            <b-button variant="outline-primary" @click="clear">
+              <b-icon-x></b-icon-x>
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+      </b-col>
+    </b-row>
 
     <div class="card my-3">
       <table class="table card-table table-hover">
@@ -76,14 +95,17 @@ export default {
   data() {
     return {
       query: '',
+      owner: null,
       page: 1,
       perPage: process.env.pageSize
     }
   },
   computed: {
-    ...mapState(['pairs']),
+    ...mapState(['pairs', 'gitbucketUser', 'gitbucketGroups']),
     filteredPairs() {
-      return this.pairs.filter((p) => p.repo.name.includes(this.query))
+      return this.pairs
+        .filter((p) => p.repo.name.includes(this.query))
+        .filter((p) => !this.owner || p.repo.owner.login === this.owner)
     },
     pagedPairs() {
       return this.filteredPairs.slice(
@@ -96,6 +118,28 @@ export default {
     },
     paginationEnabled() {
       return this.pageSize > 1
+    },
+    options() {
+      if (!this.gitbucketUser) {
+        return []
+      }
+
+      const none = {
+        value: null,
+        text: 'Select user / group to show'
+      }
+      const user = {
+        value: this.gitbucketUser.login,
+        text: this.gitbucketUser.login
+      }
+      const groups = this.gitbucketGroups.map((g) => {
+        return {
+          value: g.login,
+          text: g.login
+        }
+      })
+
+      return [none, user, ...groups]
     }
   },
   methods: {

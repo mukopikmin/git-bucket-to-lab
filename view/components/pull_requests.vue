@@ -6,6 +6,8 @@
         class="migrate-button"
         :migrating="migrating"
         :action="migratePulls"
+        label="Migrate"
+        :disable="isNotMigratable"
       />
     </b-card-header>
 
@@ -14,7 +16,7 @@
     </b-card-body>
 
     <div v-else>
-      <b-list-group flush>
+      <b-list-group flush :class="paginationEnabled ? 'border-bottom' : ''">
         <b-list-group-item v-if="noPulls">No pull requests</b-list-group-item>
         <b-list-group-item
           v-for="pull in pagedPulls"
@@ -75,7 +77,8 @@ export default {
       type: Array,
       required: true
     },
-    loading: Boolean
+    loading: Boolean,
+    migratable: Boolean
   },
   data() {
     return {
@@ -106,6 +109,9 @@ export default {
     },
     closedCount() {
       return this.pulls.filter((p) => p.state === 'closed').length
+    },
+    isNotMigratable() {
+      return !this.migratable
     }
   },
   methods: {
@@ -151,5 +157,9 @@ export default {
 }
 .migrate-button {
   float: right;
+}
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  margin-bottom: 16px;
 }
 </style>

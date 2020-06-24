@@ -1,8 +1,8 @@
 <template>
-  <b-button size="sm" variant="primary" :disabled="migrating" @click="action">
+  <b-button size="sm" variant="primary" :disabled="disabled" @click="action">
     <b-spinner v-if="migrating" small></b-spinner>
     <b-icon-box-seam v-else class="mr-1"></b-icon-box-seam>
-    Migrate
+    {{ label }}
   </b-button>
 </template>
 
@@ -13,7 +13,17 @@ export default {
       type: Function,
       required: true
     },
-    migrating: Boolean
+    label: {
+      type: String,
+      required: true
+    },
+    migrating: Boolean,
+    disable: Boolean
+  },
+  computed: {
+    disabled() {
+      return this.disable || this.migrating
+    }
   }
 }
 </script>

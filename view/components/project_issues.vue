@@ -5,7 +5,7 @@
     </b-card-body>
 
     <div v-else>
-      <b-list-group flush>
+      <b-list-group flush :class="paginationEnabled ? 'border-bottom' : ''">
         <b-list-group-item v-if="noIssues">No issuess</b-list-group-item>
         <b-list-group-item
           v-for="issue in pagedIssues"
@@ -100,3 +100,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  margin-bottom: 16px;
+}
+</style>

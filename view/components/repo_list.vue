@@ -8,7 +8,11 @@
               <b-icon-person></b-icon-person>
             </b-input-group-text>
           </template>
-          <b-form-select v-model="owner" :options="options"></b-form-select>
+          <b-form-select
+            v-model="owner"
+            :options="options"
+            @change="onOwnerChange"
+          ></b-form-select>
         </b-input-group>
       </b-col>
       <b-col>
@@ -18,7 +22,10 @@
               <b-icon-search></b-icon-search>
             </b-input-group-text>
           </template>
-          <b-form-input v-model="query"></b-form-input>
+          <b-form-input
+            v-model="query"
+            placeholder="Filter with repository name"
+          ></b-form-input>
           <b-input-group-append>
             <b-button variant="outline-primary" @click="clear">
               <b-icon-x></b-icon-x>
@@ -28,55 +35,49 @@
       </b-col>
     </b-row>
 
-    <div class="card my-3">
-      <table class="table card-table table-hover">
-        <thead>
-          <tr>
-            <th></th>
-            <th>GitBucket</th>
-            <th>GitLab</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="loading">
-            <td colspan="4">
-              <div class="text-center my-3">
-                <b-spinner variant="primary"></b-spinner>
-              </div>
-            </td>
-          </tr>
-          <tr v-for="(pair, i) in pagedPairs" :key="i">
-            <td>
-              <nuxt-link
-                :to="{
-                  name: 'owner-name',
-                  params: { owner: pair.repo.owner.login, name: pair.repo.name }
-                }"
-              >
-                Migration
-              </nuxt-link>
-            </td>
-            <td>
-              <a target="_blank" :href="pair.repo.http_url">
-                {{ pair.repo.full_name }}
-              </a>
-            </td>
-            <td v-if="pair.project">
-              <a target="_blank" :href="pair.project.web_url">
-                {{ pair.project.path_with_namespace }}
-              </a>
-            </td>
-            <td v-else></td>
-          </tr>
-        </tbody>
-      </table>
+    <b-card-group columns class="mt-3">
+      <b-card v-for="(pair, i) in pagedPairs" :key="i">
+        <b-card-text>
+          <nuxt-link
+            :to="{
+              name: 'owner-name',
+              params: { owner: pair.repo.owner.login, name: pair.repo.name }
+            }"
+          >
+            <b-icon-lock v-if="pair.repo.private" class="mr-1" />
+            <b-icon-bookmark v-else class="mr-1" />
+            {{ pair.repo.full_name }}
+          </nuxt-link>
+        </b-card-text>
+        <b-card-text>
+          <small>
+            <a target="_blank" :href="pair.repo.http_url">
+              <b-icon-box-arrow-up-right class="mr-1" />
+              GitBucket
+            </a>
+            <a
+              v-if="pair.project"
+              target="_blank"
+              :href="pair.project.web_url"
+              class="ml-3"
+            >
+              <b-icon-box-arrow-up-right class="mr-1" />
+              GitLab
+            </a>
+          </small>
+        </b-card-text>
+      </b-card>
+    </b-card-group>
 
-      <Pagination
-        v-if="paginationEnabled"
-        :page="page"
-        :page-size="pageSize"
-        @change="onPageChange"
-      />
+    <Pagination
+      v-if="paginationEnabled"
+      :page="page"
+      :page-size="pageSize"
+      @change="onPageChange"
+    />
+
+    <div v-if="loading" class="text-center my-5">
+      <b-spinner variant="primary"></b-spinner>
     </div>
   </div>
 </template>
@@ -142,12 +143,18 @@ export default {
       return [none, user, ...groups]
     }
   },
+  mounted() {
+    this.perPage = this.perPage + (3 - (this.perPage % 3))
+  },
   methods: {
     clear() {
       this.query = ''
     },
     onPageChange(e) {
       this.page = e
+    },
+    onOwnerChange() {
+      this.page = 1
     }
   }
 }

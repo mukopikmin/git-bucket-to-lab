@@ -5,7 +5,7 @@
     </b-card-body>
 
     <div v-else>
-      <b-list-group flush>
+      <b-list-group flush :class="paginationEnabled ? 'border-bottom' : ''">
         <b-list-group-item v-if="noMerges">No merge requests</b-list-group-item>
         <b-list-group-item
           v-for="merge in pagedMerges"
@@ -101,4 +101,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.border-bottom {
+  border-bottom: 1px solid r gba(0, 0, 0, 0.125);
+  margin-bottom: 16px;
+}
+</style>

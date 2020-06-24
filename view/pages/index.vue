@@ -1,10 +1,18 @@
 <template>
   <div>
     <ErrorMessage />
-    <AuhorizedUser :loading="loading" />
+
+    <b-row>
+      <b-col>
+        <AuhorizedUser :loading="loading" />
+      </b-col>
+      <b-col>
+        <GroupList :loading="loading" />
+      </b-col>
+    </b-row>
 
     <div class="mt-3">
-      <RepoTable :loading="loading" />
+      <RepoList :loading="loading" />
     </div>
   </div>
 </template>
@@ -12,13 +20,15 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import AuhorizedUser from '@/components/authorized_user'
-import RepoTable from '@/components/repo_table'
+import GroupList from '@/components/group_list'
+import RepoList from '@/components/repo_list'
 import ErrorMessage from '@/components/error_message'
 
 export default {
   components: {
     AuhorizedUser,
-    RepoTable,
+    RepoList,
+    GroupList,
     ErrorMessage
   },
   data() {

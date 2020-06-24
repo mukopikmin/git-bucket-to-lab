@@ -6,6 +6,8 @@
         class="migrate-button"
         :migrating="migrating"
         :action="migrateRepo"
+        :label="buttonLabel"
+        :disable="isNotMigratable"
       />
     </b-card-header>
 
@@ -77,7 +79,9 @@ export default {
       required: false,
       default: null
     },
-    loading: Boolean
+    loading: Boolean,
+    migratable: Boolean,
+    migrated: Boolean
   },
   data() {
     return {
@@ -85,6 +89,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['username', 'gitbucketUser', 'gitbucketToken', 'gitlabToken']),
     isNoBranches() {
       return this.repo.branches.length === 0
     },
@@ -94,7 +99,12 @@ export default {
     isOrgRepo() {
       return this.repo.owner.type === 'Organization'
     },
-    ...mapState(['username', 'gitbucketUser', 'gitbucketToken', 'gitlabToken'])
+    buttonLabel() {
+      return this.migrated ? 'Sync' : 'Migrate'
+    },
+    isNotMigratable() {
+      return !this.migratable
+    }
   },
   methods: {
     ...mapActions(['setRepo', 'setProject', 'setError']),

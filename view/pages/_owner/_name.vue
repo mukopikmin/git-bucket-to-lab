@@ -5,7 +5,12 @@
     <b-row class="mb-3">
       <b-col sm="6">
         <h4 class="text-center">GitBucket</h4>
-        <Repo :repo="repo" :loading="loading" />
+        <Repo
+          :repo="repo"
+          :loading="loading"
+          :migratable="isRepoMigratable"
+          :migrated="isRepoMigrated"
+        />
       </b-col>
       <b-col sm="6">
         <h4 class="text-center">GitLab</h4>
@@ -15,7 +20,12 @@
 
     <b-row class="mb-3">
       <b-col sm="6">
-        <RepoIssues :repo="repo" :issues="gitbucketIssues" :loading="loading" />
+        <RepoIssues
+          :repo="repo"
+          :issues="gitbucketIssues"
+          :loading="loading"
+          :migratable="isIssuesMigratable"
+        />
       </b-col>
       <b-col sm="6">
         <ProjectIssues :issues="gitlabIssues" :loading="loading" />
@@ -24,7 +34,12 @@
 
     <b-row class="mb-3">
       <b-col sm="6">
-        <PullRequests :repo="repo" :pulls="pulls" :loading="loading" />
+        <PullRequests
+          :repo="repo"
+          :pulls="pulls"
+          :loading="loading"
+          :migratable="isPullsMigratable"
+        />
       </b-col>
       <b-col sm="6">
         <MergeRequests :merges="merges" :loading="loading" />
@@ -74,6 +89,18 @@ export default {
     },
     merges() {
       return this.project ? this.project.merges : []
+    },
+    isRepoMigratable() {
+      return true
+    },
+    isRepoMigrated() {
+      return !!this.project
+    },
+    isIssuesMigratable() {
+      return !!this.project
+    },
+    isPullsMigratable() {
+      return !!this.project
     }
   },
   mounted() {

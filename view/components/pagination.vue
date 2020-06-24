@@ -1,6 +1,5 @@
 <template>
   <div>
-    <hr class="divider" />
     <b-pagination-nav
       v-model="innerPage"
       :value="innerPage"
@@ -46,8 +45,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.divider {
-  margin-top: 0;
-}
-</style>
+<style scoped></style>

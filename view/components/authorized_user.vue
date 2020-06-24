@@ -12,7 +12,7 @@
         <span class="ml-3">GitLab: {{ gitlabUser.username }}</span>
         <b-icon-check-circle-fill variant="success" class="ml-1" />
 
-        <div v-for="group in gitbucketGroups" :key="group.id">
+        <!-- <div v-for="group in gitbucketGroups" :key="group.id">
           <span>GitBucket: {{ group.login }}</span>
           <b-icon-check-circle-fill variant="success" class="ml-1" />
           <span class="ml-3">GitLab: {{ group.username }}</span>
@@ -22,7 +22,7 @@
             class="ml-1"
           />
           <b-icon-x v-else variant="danger"></b-icon-x>
-        </div>
+        </div> -->
         <b-button class="auth" variant="outline-primary" @click="auth">
           Authorization setting
         </b-button>

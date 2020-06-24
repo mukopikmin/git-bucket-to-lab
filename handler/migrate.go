@@ -118,7 +118,7 @@ func MigrateIssues(c echo.Context) error {
 	}
 
 	for _, i := range repo.Issues {
-		issue, err := l.CreateIssue(project, i.Title, i.Body)
+		issue, err := l.CreateIssue(project, i.Number, i.Title, i.Body)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}

@@ -67,6 +67,7 @@ type Issue struct {
 
 // IssueRequest ...
 type IssueRequest struct {
+	IID         int    `json:"iid"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
@@ -108,9 +109,9 @@ func (c *Client) GetIssues(p *Project) ([]Issue, error) {
 }
 
 // CreateIssue ...
-func (c *Client) CreateIssue(p *Project, title string, description string) (*Issue, error) {
+func (c *Client) CreateIssue(p *Project, iid int, title string, description string) (*Issue, error) {
 	path := fmt.Sprintf("/projects/%d/issues", p.ID)
-	issueReq := IssueRequest{title, description}
+	issueReq := IssueRequest{iid, title, description}
 
 	jsonBody, err := json.Marshal(issueReq)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -105,8 +106,16 @@ func (c *Client) CreatePull(repo *Repo, title string, head string, base string, 
 		return nil, err
 	}
 
+	// Patch to avoid wrong response of GitBucket API
+	// GitBucket returns response as escaped JSON string
+	// Need to remove escaped character and double quotes at edge of string
+	// Ref. https://github.com/gitbucket/gitbucket/issues/2306
+	fixedJSON := strings.ReplaceAll(fmt.Sprintf("%s", resBody), "\\", "")
+	fixedJSON = strings.TrimLeft(fixedJSON, "\"")
+	fixedJSON = strings.TrimRight(fixedJSON, "\"")
+
 	var pull Pull
-	if err = json.Unmarshal([]byte(resBody), &pull); err != nil {
+	if err = json.Unmarshal([]byte([]byte(fixedJSON)), &pull); err != nil {
 		return nil, err
 	}
 

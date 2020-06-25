@@ -129,6 +129,13 @@ func MigrateIssues(c echo.Context) error {
 				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 			}
 		}
+
+		if i.State == "closed" {
+			err = l.CloseIssue(issue)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			}
+		}
 	}
 
 	return ShowRepo(c)
@@ -160,6 +167,13 @@ func MigratePulls(c echo.Context) error {
 
 		for _, comment := range p.Comments {
 			_, err := l.CreateMergeComment(project, m, comment.Body, comment.CreatedAt)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			}
+		}
+
+		if p.State == "closed" {
+			err = l.CloseMerge(m)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 			}

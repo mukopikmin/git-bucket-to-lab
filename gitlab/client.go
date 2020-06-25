@@ -106,7 +106,7 @@ func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
 }
 
 func (c *Client) authPut(path string, jsonBody []byte) ([]byte, error) {
-	req, err := http.NewRequest("`PUT", c.APIEndpoint()+path, strings.NewReader(string(jsonBody)))
+	req, err := http.NewRequest("PUT", c.APIEndpoint()+path, strings.NewReader(string(jsonBody)))
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (c *Client) authPut(path string, jsonBody []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode != 204 {
+	if res.StatusCode != 200 && res.StatusCode != 204 {
 		return nil, fmt.Errorf("Error PUT %s with status %d on GitLab", path, res.StatusCode)
 	}
 

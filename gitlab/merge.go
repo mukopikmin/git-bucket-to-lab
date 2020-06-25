@@ -81,6 +81,11 @@ type MergeRequest struct {
 	StateEvent   string `json:"state_event"`
 }
 
+// MergeUpdateRequest ...
+type MergeUpdateRequest struct {
+	StateEvent string `json:"state_event"`
+}
+
 // GetMerges ...
 func (c *Client) GetMerges(p *Project) ([]Merge, error) {
 	merges := make([]Merge, 0)
@@ -138,4 +143,22 @@ func (c *Client) CreateMerge(p *Project, title string, sb string, tb string, des
 	}
 
 	return &merge, nil
+}
+
+// CloseMerge ...
+func (c *Client) CloseMerge(m *Merge) error {
+	path := fmt.Sprintf("/projects/%d/merge_requests/%d", m.ProjectID, m.Iid)
+	mergeReq := MergeUpdateRequest{"close"}
+
+	jsonBody, err := json.Marshal(mergeReq)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.authPut(path, jsonBody)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

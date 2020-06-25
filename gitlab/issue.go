@@ -72,6 +72,11 @@ type IssueRequest struct {
 	Description string `json:"description"`
 }
 
+// IssueUpdateRequest ...
+type IssueUpdateRequest struct {
+	StateEvent string `json:"state_event"`
+}
+
 // GetIssues ...
 func (c *Client) GetIssues(p *Project) ([]Issue, error) {
 	issues := make([]Issue, 0)
@@ -129,4 +134,22 @@ func (c *Client) CreateIssue(p *Project, iid int, title string, description stri
 	}
 
 	return &issue, nil
+}
+
+// CloseIssue ...
+func (c *Client) CloseIssue(i *Issue) error {
+	path := fmt.Sprintf("/projects/%d/issues/%d", i.ProjectID, i.Iid)
+	issueReq := IssueUpdateRequest{"close"}
+
+	jsonBody, err := json.Marshal(issueReq)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.authPut(path, jsonBody)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/storage"
 )
@@ -145,7 +144,7 @@ func (c *Client) CreateRepo(name string, description string, private bool) (*Rep
 
 // Clone ...
 func (repo *Repo) Clone(storage storage.Storer, worktree billy.Filesystem, user string, token string) error {
-	r, err := git.Clone(storage, worktree, &git.CloneOptions{
+	_, err := git.Clone(storage, worktree, &git.CloneOptions{
 		URL: repo.CloneURL,
 		Auth: &http.BasicAuth{
 			Username: user,
@@ -154,20 +153,6 @@ func (repo *Repo) Clone(storage storage.Storer, worktree billy.Filesystem, user 
 	})
 	if err != nil {
 		return err
-	}
-
-	w, err := r.Worktree()
-	if err != nil {
-		return err
-	}
-
-	for _, branch := range repo.Branches {
-		err = w.Checkout(&git.CheckoutOptions{
-			Branch: plumbing.ReferenceName("refs/remotes/origin/" + branch.Name),
-		})
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

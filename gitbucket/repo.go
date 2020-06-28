@@ -45,7 +45,7 @@ type RepoRequest struct {
 
 // GetRepos ...
 func (c *Client) GetRepos() ([]Repo, error) {
-	groups, err := c.GetAuthenticatedGroups()
+	groups, err := c.GetAuthorizedGroups()
 	if err != nil {
 		return nil, err
 	}

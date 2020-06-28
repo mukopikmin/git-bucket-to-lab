@@ -52,7 +52,7 @@ func MigrateUserRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return ShowRepo(c)
+	return Repo(c)
 }
 
 // MigrateGroupRepo ...
@@ -96,7 +96,7 @@ func MigrateGroupRepo(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return ShowRepo(c)
+	return Repo(c)
 }
 
 // MigrateIssues ...
@@ -138,7 +138,7 @@ func MigrateIssues(c echo.Context) error {
 		}
 	}
 
-	return ShowRepo(c)
+	return Repo(c)
 }
 
 // MigratePulls ..
@@ -180,5 +180,5 @@ func MigratePulls(c echo.Context) error {
 		}
 	}
 
-	return ShowRepo(c)
+	return Repo(c)
 }

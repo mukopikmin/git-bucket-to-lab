@@ -1,41 +1,43 @@
 package handler
 
 import (
-	"git-bucket-to-lab/gitbucket"
-	"git-bucket-to-lab/gitlab"
+	"git-bucket-to-lab/migration"
 	"net/http"
-	"os"
 
 	"github.com/labstack/echo/v4"
 )
 
-// RepoParam ...
-type RepoParam struct {
-	Repo    *gitbucket.Repo `json:"repo"`
-	Project *gitlab.Project `json:"project"`
+// Repos ...
+func Repos(c echo.Context) error {
+	h := c.Request().Header
+	client, err := migration.NewClient(h.Get("X-GITBUCKET-TOKEN"), h.Get("X-GITLAB-TOKEN"))
+	if err != nil {
+		return err
+	}
+
+	params, err := client.GetMigrations()
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, params)
 }
 
-// ShowRepo ...
-func ShowRepo(c echo.Context) error {
+// Repo ...
+func Repo(c echo.Context) error {
 	h := c.Request().Header
-	btoken := h.Get("X-GITBUCKET-TOKEN")
-	ltoken := h.Get("X-GITLAB-TOKEN")
-	b := gitbucket.NewClient(os.Getenv("GITBUCKET_URL"), btoken)
-	l := gitlab.NewClient(os.Getenv("GITLAB_URL"), ltoken)
 	owner := c.Param("owner")
 	name := c.Param("name")
 
-	repo, err := b.GetRepo(owner, name)
+	client, err := migration.NewClient(h.Get("X-GITBUCKET-TOKEN"), h.Get("X-GITLAB-TOKEN"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return err
 	}
 
-	project, err := l.GetProject(owner, name)
-	if err == nil {
-		// Ignore error
+	m, err := client.GetMigration(owner, name)
+	if err != nil {
+		return err
 	}
 
-	params := RepoParam{repo, project}
-
-	return c.JSON(http.StatusOK, params)
+	return c.JSON(http.StatusOK, m)
 }

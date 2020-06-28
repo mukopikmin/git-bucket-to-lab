@@ -15,8 +15,8 @@ type Group struct {
 	AvatarURL string    `json:"avatar_url"`
 }
 
-// GetAuthenticatedGroups ...
-func (c *Client) GetAuthenticatedGroups() ([]Group, error) {
+// GetAuthorizedGroups ...
+func (c *Client) GetAuthorizedGroups() ([]Group, error) {
 	path := "/user/orgs"
 	body, err := c.authGet(path)
 	if err != nil {

@@ -44,9 +44,10 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	e.GET("/api", handler.Index)
 	e.GET("/api/auth", handler.Auth)
-	e.GET("/api/:owner/:name", handler.ShowRepo)
+	e.GET("/api/auth/state", handler.AuthState)
+	e.GET("/api/repos", handler.Repos)
+	e.GET("/api/:owner/:name", handler.Repo)
 	e.POST("/api/:owner/:name/repo", handler.MigrateUserRepo)
 	e.POST("/api/:owner/:name/repo/group", handler.MigrateGroupRepo)
 	e.POST("/api/:owner/:name/issues", handler.MigrateIssues)

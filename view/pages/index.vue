@@ -51,7 +51,15 @@ export default {
       }
 
       try {
-        const res = await this.$axios.$get('', {
+        const pairs = await this.$axios.$get('/repos', {
+          headers: {
+            'X-GITBUCKET-TOKEN': this.gitbucketToken,
+            'X-GITLAB-TOKEN': this.gitlabToken
+          }
+        })
+        this.setPairs(pairs)
+
+        const res = await this.$axios.$get('/auth/state', {
           headers: {
             'X-GITBUCKET-TOKEN': this.gitbucketToken,
             'X-GITLAB-TOKEN': this.gitlabToken
@@ -62,7 +70,6 @@ export default {
         this.setGitlabUser(res.gitlab_user)
         this.setGitbucketGroups(res.gitbucket_groups)
         this.setGitlabGroups(res.gitlab_groups)
-        this.setPairs(res.pairs)
         this.setError(null)
       } catch (e) {
         this.setError(e.response.data.message)

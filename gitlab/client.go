@@ -1,7 +1,6 @@
 package gitlab
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -17,11 +16,6 @@ type Client struct {
 	maxPage    int
 	perPage    int
 	*http.Client
-}
-
-// APIError ...
-type APIError struct {
-	Message string `json:"message"`
 }
 
 // APIEndpoint ...
@@ -58,16 +52,11 @@ func (c *Client) authGet(path string) ([]byte, int, error) {
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, 1, err
+		return nil, 0, err
 	}
 
 	if res.StatusCode != 200 {
-		var apierr APIError
-		if err = json.Unmarshal([]byte(body), &apierr); err != nil {
-			return nil, 1, err
-		}
-
-		return nil, 1, fmt.Errorf(apierr.Message + " on GitLab")
+		return nil, 0, fmt.Errorf(string(body))
 	}
 
 	total, err := strconv.Atoi(res.Header.Get("X-TOTAL-PAGES"))
@@ -91,15 +80,16 @@ func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode != 201 {
-		return nil, fmt.Errorf("Error POST %s with status %d on GitLab", path, res.StatusCode)
-	}
 
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != 201 {
+		return nil, fmt.Errorf(string(body))
 	}
 
 	return body, nil
@@ -118,15 +108,15 @@ func (c *Client) authPut(path string, jsonBody []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode != 200 && res.StatusCode != 204 {
-		return nil, fmt.Errorf("Error PUT %s with status %d on GitLab", path, res.StatusCode)
-	}
-
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode != 200 && res.StatusCode != 204 {
+		return nil, fmt.Errorf(string(body))
 	}
 
 	return body, nil

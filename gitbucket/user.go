@@ -89,3 +89,8 @@ func (c *Client) GetAuthorizedUser() (*User, error) {
 
 // 	return &user, nil
 // }
+
+// IsOrganization ...
+func (u *User) IsOrganization() bool {
+	return u.Type == "Organization"
+}

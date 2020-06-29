@@ -11,7 +11,12 @@ export const state = () => ({
   pairs: [],
   repo: null,
   project: null,
-  error: null
+  error: null,
+  migratable: {
+    repo: false,
+    issues: false,
+    pulls: false
+  }
 })
 
 export const mutations = {
@@ -45,6 +50,9 @@ export const mutations = {
   },
   setRepo(state, payload) {
     state.repo = payload.repo
+    state.migratable.repo = payload.repoMigratable
+    state.migratable.issues = payload.issuesMigratable
+    state.migratable.pulls = payload.pullsMigratable
   },
   setProject(state, payload) {
     state.project = payload.project
@@ -83,7 +91,7 @@ export const actions = {
     commit('setPairs', { pairs })
   },
   setRepo({ commit }, repo) {
-    commit('setRepo', { repo })
+    commit('setRepo', { ...repo })
   },
   setProject({ commit }, project) {
     commit('setProject', { project })

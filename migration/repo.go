@@ -7,12 +7,11 @@ import (
 
 // Migration ...
 type Migration struct {
-	Repo           *gitbucket.Repo `json:"repo"`
-	Project        *gitlab.Project `json:"project"`
-	RepoMigrated   bool            `json:"repo_migrated"`
-	IssuesMigrated bool            `json:"issues_migrated"`
-	PullsMigrated  bool            `json:"pulls_migrated"`
-	Migratable     bool            `json:"migratable"`
+	Repo             *gitbucket.Repo `json:"repo"`
+	Project          *gitlab.Project `json:"project"`
+	IssuesMigratable bool            `json:"issues_migratable"`
+	PullsMigratable  bool            `json:"pulls_migratable"`
+	RepoMigratable   bool            `json:"repo_migratable"`
 }
 
 // GetMigrations ...
@@ -44,11 +43,10 @@ func (c *Client) GetMigrations() ([]Migration, error) {
 			}
 		}
 
-		rm := project != nil
-		im := rm && len(repo.Issues) == len(project.Issues)
-		pm := rm && len(repo.Pulls) == len(project.Merges)
-		m := Migration{&repo, project, rm, im, pm, false}
-		m.Migratable = m.isMigratable(lus)
+		m := Migration{&repo, project, false, false, false}
+		m.RepoMigratable = m.isRepoMigratable(lus)
+		m.IssuesMigratable = m.isIssuesMigratable()
+		m.PullsMigratable = m.isPullsMigratable()
 		migrations = append(migrations, m)
 	}
 
@@ -72,25 +70,36 @@ func (c *Client) GetMigration(owner string, name string) (*Migration, error) {
 		return nil, err
 	}
 
-	rm := p != nil
-	im := rm && len(r.Issues) == len(p.Issues)
-	pm := rm && len(r.Pulls) == len(p.Merges)
-	m := &Migration{r, p, rm, im, pm, false}
-	m.Migratable = m.isMigratable(lus)
+	m := &Migration{r, p, false, false, false}
+	m.RepoMigratable = m.isRepoMigratable(lus)
+	m.IssuesMigratable = m.isIssuesMigratable()
+	m.PullsMigratable = m.isPullsMigratable()
 
 	return m, nil
 }
 
-func (m *Migration) isMigratable(labGroups []gitlab.Group) bool {
-	if m.Project == nil {
-		return true
+func (m *Migration) isPullsMigratable() bool {
+	return m.Project != nil && len(m.Repo.Pulls) > len(m.Project.Merges)
+}
+
+func (m *Migration) isIssuesMigratable() bool {
+	return m.Project != nil && len(m.Repo.Issues) > len(m.Project.Issues)
+}
+
+func (m *Migration) isRepoMigratable(labGroups []gitlab.Group) bool {
+	if m.Project != nil {
+		return false
 	}
 
-	for _, g := range labGroups {
-		if m.Repo.Owner.Login == g.Path {
-			return true
+	if m.Repo.Owner.IsOrganization() {
+		for _, g := range labGroups {
+			if m.Repo.Owner.Login == g.Path {
+				if !m.Repo.Private || g.IsPrivate() {
+					return false
+				}
+			}
 		}
 	}
 
-	return false
+	return true
 }

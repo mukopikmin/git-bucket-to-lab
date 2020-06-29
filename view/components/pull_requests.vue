@@ -77,8 +77,7 @@ export default {
       type: Array,
       required: true
     },
-    loading: Boolean,
-    migratable: Boolean
+    loading: Boolean
   },
   data() {
     return {
@@ -88,7 +87,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['gitbucketToken', 'gitlabToken']),
+    ...mapState(['gitbucketToken', 'gitlabToken', 'migratable']),
     pagedPulls() {
       return this.pulls.slice(
         this.perPage * (this.page - 1),
@@ -111,7 +110,7 @@ export default {
       return this.pulls.filter((p) => p.state === 'closed').length
     },
     isNotMigratable() {
-      return !this.migratable
+      return this.loading || !this.migratable.pulls
     }
   },
   methods: {
@@ -133,7 +132,12 @@ export default {
           }
         )
 
-        this.setRepo(res.repo)
+        this.setRepo({
+          repo: res.repo,
+          repoMigratable: res.repo_migratable,
+          issuesMigratable: res.issues_migratable,
+          pullsMigratable: res.pulls_migratable
+        })
         this.setProject(res.project)
         this.setError(null)
       } catch (e) {

@@ -79,17 +79,22 @@ export default {
       required: false,
       default: null
     },
-    loading: Boolean,
-    migratable: Boolean,
-    migrated: Boolean
+    loading: Boolean
   },
   data() {
     return {
-      migrating: false
+      migrating: false,
+      repoMigrablae: false
     }
   },
   computed: {
-    ...mapState(['username', 'gitbucketUser', 'gitbucketToken', 'gitlabToken']),
+    ...mapState([
+      'username',
+      'gitbucketUser',
+      'gitbucketToken',
+      'gitlabToken',
+      'migratable'
+    ]),
     isNoBranches() {
       return this.repo.branches.length === 0
     },
@@ -103,7 +108,7 @@ export default {
       return this.migrated ? 'Sync' : 'Migrate'
     },
     isNotMigratable() {
-      return !this.migratable
+      return this.loading || !this.migratable.repo
     }
   },
   methods: {
@@ -122,7 +127,12 @@ export default {
           }
         })
 
-        this.setRepo(res.repo)
+        this.setRepo({
+          repo: res.repo,
+          repoMigratable: res.repo_migratable,
+          issuesMigratable: res.issues_migratable,
+          pullsMigratable: res.pulls_migratable
+        })
         this.setProject(res.project)
         this.setError(null)
       } catch (e) {

@@ -5,12 +5,7 @@
     <b-row class="mb-3">
       <b-col sm="6">
         <h4 class="text-center">GitBucket</h4>
-        <Repo
-          :repo="repo"
-          :loading="loading"
-          :migratable="isRepoMigratable"
-          :migrated="isRepoMigrated"
-        />
+        <Repo :repo="repo" :loading="loading" />
       </b-col>
       <b-col sm="6">
         <h4 class="text-center">GitLab</h4>
@@ -20,12 +15,7 @@
 
     <b-row class="mb-3">
       <b-col sm="6">
-        <RepoIssues
-          :repo="repo"
-          :issues="gitbucketIssues"
-          :loading="loading"
-          :migratable="isIssuesMigratable"
-        />
+        <RepoIssues :repo="repo" :issues="gitbucketIssues" :loading="loading" />
       </b-col>
       <b-col sm="6">
         <ProjectIssues :issues="gitlabIssues" :loading="loading" />
@@ -34,12 +24,7 @@
 
     <b-row class="mb-3">
       <b-col sm="6">
-        <PullRequests
-          :repo="repo"
-          :pulls="pulls"
-          :loading="loading"
-          :migratable="isPullsMigratable"
-        />
+        <PullRequests :repo="repo" :pulls="pulls" :loading="loading" />
       </b-col>
       <b-col sm="6">
         <MergeRequests :merges="merges" :loading="loading" />
@@ -119,7 +104,12 @@ export default {
           }
         })
 
-        this.setRepo(res.repo)
+        this.setRepo({
+          repo: res.repo,
+          repoMigratable: res.repo_migratable,
+          issuesMigratable: res.issues_migratable,
+          pullsMigratable: res.pulls_migratable
+        })
         this.setProject(res.project)
         this.setError(null)
       } catch (e) {

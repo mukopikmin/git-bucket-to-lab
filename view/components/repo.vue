@@ -93,7 +93,8 @@ export default {
       'gitbucketUser',
       'gitbucketToken',
       'gitlabToken',
-      'migratable'
+      'migratable',
+      'project'
     ]),
     isNoBranches() {
       return this.repo.branches.length === 0
@@ -105,7 +106,7 @@ export default {
       return this.repo.owner.type === 'Organization'
     },
     buttonLabel() {
-      return this.migrated ? 'Sync' : 'Migrate'
+      return this.project ? 'Sync' : 'Migrate'
     },
     isNotMigratable() {
       return this.loading || !this.migratable.repo

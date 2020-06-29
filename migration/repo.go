@@ -87,10 +87,6 @@ func (m *Migration) isIssuesMigratable() bool {
 }
 
 func (m *Migration) isRepoMigratable(labGroups []gitlab.Group) bool {
-	if m.Project != nil {
-		return false
-	}
-
 	if m.Repo.Owner.IsOrganization() {
 		for _, g := range labGroups {
 			if m.Repo.Owner.Login == g.Path {

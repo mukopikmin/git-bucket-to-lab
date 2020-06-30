@@ -26,6 +26,11 @@ func (c *Client) GetMigrations() ([]Migration, error) {
 		return nil, err
 	}
 
+	lu, err := c.lab.GetAuthorizedUser()
+	if err != nil {
+		return nil, err
+	}
+
 	lus, err := c.lab.GetAuthorizedGroups()
 	if err != nil {
 		return nil, err
@@ -44,7 +49,7 @@ func (c *Client) GetMigrations() ([]Migration, error) {
 		}
 
 		m := Migration{&repo, project, false, false, false}
-		m.RepoMigratable = m.isRepoMigratable(lus)
+		m.RepoMigratable = m.isRepoMigratable(lu, lus)
 		m.IssuesMigratable = m.isIssuesMigratable()
 		m.PullsMigratable = m.isPullsMigratable()
 		migrations = append(migrations, m)
@@ -65,13 +70,18 @@ func (c *Client) GetMigration(owner string, name string) (*Migration, error) {
 		// Ignore error
 	}
 
+	lu, err := c.lab.GetAuthorizedUser()
+	if err != nil {
+		return nil, err
+	}
+
 	lus, err := c.lab.GetAuthorizedGroups()
 	if err != nil {
 		return nil, err
 	}
 
 	m := &Migration{r, p, false, false, false}
-	m.RepoMigratable = m.isRepoMigratable(lus)
+	m.RepoMigratable = m.isRepoMigratable(lu, lus)
 	m.IssuesMigratable = m.isIssuesMigratable()
 	m.PullsMigratable = m.isPullsMigratable()
 
@@ -86,16 +96,16 @@ func (m *Migration) isIssuesMigratable() bool {
 	return m.Project != nil && len(m.Repo.Issues) > len(m.Project.Issues)
 }
 
-func (m *Migration) isRepoMigratable(labGroups []gitlab.Group) bool {
+func (m *Migration) isRepoMigratable(labUser *gitlab.User, labGroups []gitlab.Group) bool {
 	if m.Repo.Owner.IsOrganization() {
 		for _, g := range labGroups {
 			if m.Repo.Owner.Login == g.Path {
-				if !m.Repo.Private || g.IsPrivate() {
-					return false
-				}
+				return m.Repo.Private || !g.IsPrivate()
 			}
 		}
+
+		return false
 	}
 
-	return true
+	return m.Repo.Owner.Login == labUser.Username
 }

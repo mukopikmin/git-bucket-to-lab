@@ -3,6 +3,9 @@ package migration
 import (
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/gitlab"
+
+	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-git/v5/storage/memory"
 )
 
 // Migration ...
@@ -108,4 +111,98 @@ func (m *Migration) isRepoMigratable(labUser *gitlab.User, labGroups []gitlab.Gr
 	}
 
 	return m.Repo.Owner.Login == labUser.Username
+}
+
+// ExecRepo ...
+func (c *Client) ExecRepo(m *Migration) (*Migration, error) {
+	if m.Project == nil {
+		nsID := 0
+		if m.Repo.Owner.IsOrganization() {
+			group, err := c.lab.GetGroup(m.Repo.Owner.Login)
+			if err != nil {
+				return nil, err
+			}
+			nsID = group.ID
+		} else {
+			user, err := c.lab.GetAuthorizedUser()
+			if err != nil {
+				return nil, err
+			}
+			nsID = user.ID
+		}
+
+		project, err := c.lab.CreateProject(nsID, m.Repo.Name, m.Repo.Description, m.Repo.Private)
+		if err != nil {
+			return nil, err
+		}
+
+		m.Project = project
+	}
+
+	storage := memory.NewStorage()
+	worktree := memfs.New()
+
+	err := c.bucket.Clone(m.Repo, storage, worktree)
+	if err != nil {
+		return nil, err
+	}
+
+	err = c.lab.Push(m.Project, storage, worktree)
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
+// ExecIssues ...
+func (c *Client) ExecIssues(m *Migration) (*Migration, error) {
+	for _, i := range m.Repo.Issues {
+		issue, err := c.lab.CreateIssue(m.Project, i.Number, i.Title, i.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, comment := range i.Comments {
+			_, err := c.lab.CreateIssueComment(m.Project, issue, comment.Body, comment.CreatedAt)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if i.State == "closed" {
+			err = c.lab.CloseIssue(issue)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return c.GetMigration(m.Repo.Owner.Login, m.Repo.Name)
+}
+
+// ExecPulls ...
+func (c *Client) ExecPulls(m *Migration) (*Migration, error) {
+	for _, p := range m.Repo.Pulls {
+		merge, err := c.lab.CreateMerge(m.Project, p.Title, p.Head.Ref, p.Base.Ref, p.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, comment := range p.Comments {
+			_, err := c.lab.CreateMergeComment(m.Project, merge, comment.Body, comment.CreatedAt)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if p.State == "closed" {
+			err = c.lab.CloseMerge(merge)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return c.GetMigration(m.Repo.Owner.Login, m.Repo.Name)
 }

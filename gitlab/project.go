@@ -198,7 +198,7 @@ func (c *Client) CreateProject(nsID int, name string, description string, privat
 }
 
 // Push ...
-func (p *Project) Push(storage storage.Storer, worktree billy.Filesystem, token string) error {
+func (c *Client) Push(p *Project, storage storage.Storer, worktree billy.Filesystem) error {
 	remote := "lab"
 	r, err := git.Open(storage, worktree)
 	if err != nil {
@@ -221,7 +221,7 @@ func (p *Project) Push(storage storage.Storer, worktree billy.Filesystem, token 
 		},
 		Auth: &http.BasicAuth{
 			Username: "oauth2",
-			Password: token,
+			Password: c.token,
 		},
 	})
 	if err != nil {

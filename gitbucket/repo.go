@@ -143,12 +143,17 @@ func (c *Client) CreateRepo(name string, description string, private bool) (*Rep
 }
 
 // Clone ...
-func (repo *Repo) Clone(storage storage.Storer, worktree billy.Filesystem, user string, token string) error {
-	_, err := git.Clone(storage, worktree, &git.CloneOptions{
+func (c *Client) Clone(repo *Repo, storage storage.Storer, worktree billy.Filesystem) error {
+	user, err := c.GetAuthorizedUser()
+	if err != nil {
+		return err
+	}
+
+	_, err = git.Clone(storage, worktree, &git.CloneOptions{
 		URL: repo.CloneURL,
 		Auth: &http.BasicAuth{
-			Username: user,
-			Password: token,
+			Username: user.Login,
+			Password: c.apikey,
 		},
 	})
 	if err != nil {

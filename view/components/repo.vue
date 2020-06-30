@@ -115,18 +115,18 @@ export default {
   methods: {
     ...mapActions(['setRepo', 'setProject', 'setError']),
     async migrateRepo() {
-      const url = this.isOrgRepo
-        ? `/${this.repo.owner.login}/${this.repo.name}/repo/group`
-        : `/${this.repo.owner.login}/${this.repo.name}/repo`
       try {
         this.migrating = true
-        const res = await this.$axios.$post(url, null, {
-          headers: {
-            'X-GITBUCKET-USER': this.username,
-            'X-GITBUCKET-TOKEN': this.gitbucketToken,
-            'X-GITLAB-TOKEN': this.gitlabToken
+        const res = await this.$axios.$post(
+          `/${this.repo.owner.login}/${this.repo.name}/repo`,
+          null,
+          {
+            headers: {
+              'X-GITBUCKET-TOKEN': this.gitbucketToken,
+              'X-GITLAB-TOKEN': this.gitlabToken
+            }
           }
-        })
+        )
 
         this.setRepo({
           repo: res.repo,

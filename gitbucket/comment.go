@@ -74,3 +74,17 @@ func (c *Client) CreateComment(r *Repo, id int, message string) (*Comment, error
 
 	return &comment, nil
 }
+
+// MigratedBody ...
+func (c *Comment) MigratedBody() string {
+	format := "2006/1/2 15:04:05"
+	prefix := fmt.Sprintf(`> This comment is migrated from [#%d](%s).
+>
+> Original author: %s  
+> Original created date: %s UTC  
+> Original updated date: %s UTC  
+
+`, c.ID, c.HTMLURL, c.User.Login, c.CreatedAt.Format(format), c.UpdatedAt.Format(format))
+
+	return prefix + c.Body
+}

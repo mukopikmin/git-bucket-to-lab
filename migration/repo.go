@@ -88,6 +88,8 @@ func (c *Client) GetMigration(owner string, name string) (*Migration, error) {
 	m.IssuesMigratable = m.isIssuesMigratable()
 	m.PullsMigratable = m.isPullsMigratable()
 
+	// fmt.Println(m.Repo.Issues[0].MigratedDescription())
+
 	return m, nil
 }
 
@@ -113,8 +115,8 @@ func (m *Migration) isRepoMigratable(labUser *gitlab.User, labGroups []gitlab.Gr
 	return m.Repo.Owner.Login == labUser.Username
 }
 
-// ExecRepo ...
-func (c *Client) ExecRepo(m *Migration) (*Migration, error) {
+// MigrateRepo ...
+func (c *Client) MigrateRepo(m *Migration) (*Migration, error) {
 	if m.Project == nil {
 		nsID := 0
 		if m.Repo.Owner.IsOrganization() {
@@ -131,7 +133,7 @@ func (c *Client) ExecRepo(m *Migration) (*Migration, error) {
 			nsID = user.ID
 		}
 
-		project, err := c.lab.CreateProject(nsID, m.Repo.Name, m.Repo.Description, m.Repo.Private)
+		project, err := c.lab.CreateProject(nsID, m.Repo.Name, m.Repo.MigratedDescription(), m.Repo.Private)
 		if err != nil {
 			return nil, err
 		}
@@ -152,19 +154,19 @@ func (c *Client) ExecRepo(m *Migration) (*Migration, error) {
 		return nil, err
 	}
 
-	return m, nil
+	return c.GetMigration(m.Repo.Owner.Login, m.Repo.Name)
 }
 
-// ExecIssues ...
-func (c *Client) ExecIssues(m *Migration) (*Migration, error) {
+// MigrateIssues ...
+func (c *Client) MigrateIssues(m *Migration) (*Migration, error) {
 	for _, i := range m.Repo.Issues {
-		issue, err := c.lab.CreateIssue(m.Project, i.Number, i.Title, i.Body)
+		issue, err := c.lab.CreateIssue(m.Project, i.Number, i.Title, i.MigratedBody())
 		if err != nil {
 			return nil, err
 		}
 
 		for _, comment := range i.Comments {
-			_, err := c.lab.CreateIssueComment(m.Project, issue, comment.Body, comment.CreatedAt)
+			_, err := c.lab.CreateIssueComment(m.Project, issue, comment.MigratedBody(), comment.CreatedAt)
 			if err != nil {
 				return nil, err
 			}
@@ -181,16 +183,16 @@ func (c *Client) ExecIssues(m *Migration) (*Migration, error) {
 	return c.GetMigration(m.Repo.Owner.Login, m.Repo.Name)
 }
 
-// ExecPulls ...
-func (c *Client) ExecPulls(m *Migration) (*Migration, error) {
+// MigratePulls ...
+func (c *Client) MigratePulls(m *Migration) (*Migration, error) {
 	for _, p := range m.Repo.Pulls {
-		merge, err := c.lab.CreateMerge(m.Project, p.Title, p.Head.Ref, p.Base.Ref, p.Body)
+		merge, err := c.lab.CreateMerge(m.Project, p.Title, p.Head.Ref, p.Base.Ref, p.MigratedBody())
 		if err != nil {
 			return nil, err
 		}
 
 		for _, comment := range p.Comments {
-			_, err := c.lab.CreateMergeComment(m.Project, merge, comment.Body, comment.CreatedAt)
+			_, err := c.lab.CreateMergeComment(m.Project, merge, comment.MigratedBody(), comment.CreatedAt)
 			if err != nil {
 				return nil, err
 			}

@@ -2,6 +2,7 @@ package gitbucket
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
@@ -161,4 +162,12 @@ func (c *Client) Clone(repo *Repo, storage storage.Storer, worktree billy.Filesy
 	}
 
 	return nil
+}
+
+// MigratedDescription ...
+func (r *Repo) MigratedDescription() string {
+	now := time.Now().Format("2006/1/2 15:04:05")
+	prefix := "(Migrated from [GitBucket repository](" + r.HTMLURL + ") at " + now + ")\n\n"
+
+	return prefix + r.Description
 }

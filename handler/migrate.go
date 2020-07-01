@@ -23,7 +23,7 @@ func MigrateRepo(c echo.Context) error {
 		return err
 	}
 
-	m, err = client.ExecRepo(m)
+	m, err = client.MigrateRepo(m)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func MigrateIssues(c echo.Context) error {
 		return err
 	}
 
-	m, err = client.ExecIssues(m)
+	m, err = client.MigrateIssues(m)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func MigratePulls(c echo.Context) error {
 		return err
 	}
 
-	m, err = client.ExecPulls(m)
+	m, err = client.MigratePulls(m)
 	if err != nil {
 		return err
 	}

@@ -125,11 +125,8 @@ func (c *Client) CreatePull(repo *Repo, title string, head string, base string, 
 // MigratedBody ...
 func (p *Pull) MigratedBody() string {
 	format := "2006/1/2 15:04:05"
-	prefix := fmt.Sprintf(`> This merge request is migrated from [#%d](%s).
->
+	prefix := fmt.Sprintf(`> This merge request is migrated from [#%d](%s).  
 > Original author: %s  
-> Original created date: %s UTC  
-> Original updated date: %s UTC  
 
 `, p.Number, p.HTMLURL, p.User.Login, p.CreatedAt.Format(format), p.UpdatedAt.Format(format))
 

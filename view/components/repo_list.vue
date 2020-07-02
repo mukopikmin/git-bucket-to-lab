@@ -33,6 +33,14 @@
           </b-input-group-append>
         </b-input-group>
       </b-col>
+      <b-col>
+        <b-form-checkbox v-model="state.migrated" inline class="mt-2">
+          Migrated
+        </b-form-checkbox>
+        <b-form-checkbox v-model="state.notMigrated" inline class="mt-2">
+          Not migrated
+        </b-form-checkbox>
+      </b-col>
     </b-row>
 
     <b-card-group columns class="mt-3">
@@ -96,6 +104,10 @@ export default {
   data() {
     return {
       query: '',
+      state: {
+        migrated: true,
+        notMigrated: true
+      },
       owner: null,
       page: 1,
       perPage: process.env.pageSize
@@ -107,6 +119,8 @@ export default {
       return this.pairs
         .filter((p) => p.repo.name.includes(this.query))
         .filter((p) => !this.owner || p.repo.owner.login === this.owner)
+        .filter((p) => this.state.notMigrated || p.project)
+        .filter((p) => this.state.migrated || !p.project)
     },
     pagedPairs() {
       return this.filteredPairs.slice(

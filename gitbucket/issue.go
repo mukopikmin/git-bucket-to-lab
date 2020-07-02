@@ -93,11 +93,8 @@ func (c *Client) CreateIssue(repo *Repo, title string, body string) (*Issue, err
 // MigratedBody ...
 func (i *Issue) MigratedBody() string {
 	format := "2006/1/2 15:04:05"
-	prefix := fmt.Sprintf(`> This issue is migrated from [#%d](%s).
->
+	prefix := fmt.Sprintf(`> This issue is migrated from [#%d](%s).  
 > Original author: %s  
-> Original created date: %s UTC  
-> Original updated date: %s UTC  
 
 `, i.Number, i.HTMLURL, i.User.Login, i.CreatedAt.Format(format), i.UpdatedAt.Format(format))
 

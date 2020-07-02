@@ -43,49 +43,51 @@
       </b-col>
     </b-row>
 
-    <b-card-group columns class="mt-3">
-      <b-card v-for="(pair, i) in pagedPairs" :key="i">
-        <b-card-text>
-          <nuxt-link
-            :to="{
-              name: 'owner-name',
-              params: { owner: pair.repo.owner.login, name: pair.repo.name }
-            }"
-          >
-            <b-icon-lock v-if="pair.repo.private" class="mr-1" />
-            <b-icon-bookmark v-else class="mr-1" />
-            {{ pair.repo.full_name }}
-          </nuxt-link>
-        </b-card-text>
-        <b-card-text>
-          <small>
-            <a target="_blank" :href="pair.repo.http_url">
-              <b-icon-box-arrow-up-right class="mr-1" />
-              GitBucket
-            </a>
-            <a
-              v-if="pair.project"
-              target="_blank"
-              :href="pair.project.web_url"
-              class="ml-3"
-            >
-              <b-icon-box-arrow-up-right class="mr-1" />
-              GitLab
-            </a>
-          </small>
-        </b-card-text>
-      </b-card>
-    </b-card-group>
-
-    <Pagination
-      v-if="paginationEnabled"
-      :page="page"
-      :page-size="pageSize"
-      @change="onPageChange"
-    />
-
     <div v-if="loading" class="text-center my-5">
       <b-spinner variant="primary"></b-spinner>
+    </div>
+
+    <div v-else>
+      <b-card-group columns class="mt-3">
+        <b-card v-for="(pair, i) in pagedPairs" :key="i">
+          <b-card-text>
+            <nuxt-link
+              :to="{
+                name: 'owner-name',
+                params: { owner: pair.repo.owner.login, name: pair.repo.name }
+              }"
+            >
+              <b-icon-lock v-if="pair.repo.private" class="mr-1" />
+              <b-icon-bookmark v-else class="mr-1" />
+              {{ pair.repo.full_name }}
+            </nuxt-link>
+          </b-card-text>
+          <b-card-text>
+            <small>
+              <a target="_blank" :href="pair.repo.http_url">
+                <b-icon-box-arrow-up-right class="mr-1" />
+                GitBucket
+              </a>
+              <a
+                v-if="pair.project"
+                target="_blank"
+                :href="pair.project.web_url"
+                class="ml-3"
+              >
+                <b-icon-box-arrow-up-right class="mr-1" />
+                GitLab
+              </a>
+            </small>
+          </b-card-text>
+        </b-card>
+      </b-card-group>
+
+      <Pagination
+        v-if="paginationEnabled"
+        :page="page"
+        :page-size="pageSize"
+        @change="onPageChange"
+      />
     </div>
   </div>
 </template>

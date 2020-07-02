@@ -26,7 +26,7 @@
       </div>
     </b-card-body>
 
-    <div v-if="repo">
+    <div v-if="!loading && repo">
       <h5 class="list-title">Branches</h5>
       <b-list-group flush class="border-top border-bottom">
         <b-list-group-item v-if="isNoBranches">No branches</b-list-group-item>
@@ -52,7 +52,7 @@
       </b-list-group>
     </div>
 
-    <template v-if="repo" v-slot:footer>
+    <template v-if="!loading && repo" v-slot:footer>
       <small class="text-muted">
         <a :href="repo.html_url" target="_blank">
           <b-icon-box-arrow-up-right class="mr-1" />

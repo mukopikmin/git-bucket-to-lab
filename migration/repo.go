@@ -88,8 +88,6 @@ func (c *Client) GetMigration(owner string, name string) (*Migration, error) {
 	m.IssuesMigratable = m.isIssuesMigratable()
 	m.PullsMigratable = m.isPullsMigratable()
 
-	// fmt.Println(m.Repo.Issues[0].MigratedDescription())
-
 	return m, nil
 }
 

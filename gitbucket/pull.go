@@ -122,13 +122,12 @@ func (c *Client) CreatePull(repo *Repo, title string, head string, base string, 
 	return &pull, nil
 }
 
-// MigratedBody ...
-func (p *Pull) MigratedBody() string {
-	format := "2006/1/2 15:04:05"
-	prefix := fmt.Sprintf(`> This merge request is migrated from [#%d](%s).  
+// MigratedPullBody ...
+func (c *Client) MigratedPullBody(p *Pull, r *Repo) (*string, error) {
+	prefix := fmt.Sprintf(`> This merge request is migrated from [#%d@GitBucket](%s).    
 > Original author: %s  
 
-`, p.Number, p.HTMLURL, p.User.Login, p.CreatedAt.Format(format), p.UpdatedAt.Format(format))
+`, p.Number, p.HTMLURL, p.User.Login)
 
 	if p.Merged {
 		prefix += "> This merge request has been merged.\n\n"
@@ -136,5 +135,12 @@ func (p *Pull) MigratedBody() string {
 		prefix += "> This merge request is not merged.\n\n"
 	}
 
-	return prefix + p.Body
+	b, err := c.migratedBody(p.Body, r)
+	if err != nil {
+		return nil, err
+	}
+
+	body := prefix + *b
+
+	return &body, nil
 }

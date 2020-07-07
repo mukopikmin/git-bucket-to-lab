@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -80,4 +82,35 @@ func (c *Client) authPost(path string, jsonBody []byte) ([]byte, error) {
 	}
 
 	return body, err
+}
+
+// MigratedBody ...
+func (c *Client) migratedBody(b string, r *Repo) (*string, error) {
+	body := b
+	if strings.Contains(b, "#") {
+		re := regexp.MustCompile("#(\\d+)")
+		result := re.FindAllStringSubmatch(b, -1)
+
+		if len(result) > 0 {
+			pulls, err := c.GetPulls(r)
+			if err != nil {
+				return nil, err
+			}
+
+			for _, r := range result {
+				id, err := strconv.Atoi(r[1])
+				if err != nil {
+					return nil, err
+				}
+
+				for i, p := range pulls {
+					if p.Number == id {
+						body = strings.Replace(body, "#"+strconv.Itoa(id), "!"+strconv.Itoa(i+1), -1)
+					}
+				}
+			}
+		}
+	}
+
+	return &body, nil
 }

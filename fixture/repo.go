@@ -52,6 +52,16 @@ func Generate() error {
 
 			fmt.Printf("Created issue comment : %d\n", comment.ID)
 		}
+
+		_, err = b.CreateComment(repo, issue.Number, "See #3 and #7")
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = b.CreateIssue(repo, faker.Sentence(), "See #7")
+	if err != nil {
+		return err
 	}
 
 	repo, err = b.GetRepo(repo.Owner.Login, repo.Name)
@@ -79,6 +89,16 @@ func Generate() error {
 
 			fmt.Printf("Created pull request comment : %d\n", comment.ID)
 		}
+
+		_, err = b.CreateComment(repo, p.Number, "See #3 and #7")
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = b.CreatePull(repo, faker.Sentence(), repo.Branches[0].Name, "master", "Fix #2, Ref #7")
+	if err != nil {
+		return err
 	}
 
 	return nil

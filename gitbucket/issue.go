@@ -64,6 +64,10 @@ func (c *Client) GetIssues(repo *Repo) ([]Issue, error) {
 		return issues[i].Number < issues[j].Number
 	})
 
+	for _, i := range issues {
+		c.MigratedIssueBody(&i, repo)
+	}
+
 	return issues, nil
 }
 
@@ -90,13 +94,18 @@ func (c *Client) CreateIssue(repo *Repo, title string, body string) (*Issue, err
 	return &issue, nil
 }
 
-// MigratedBody ...
-func (i *Issue) MigratedBody() string {
-	format := "2006/1/2 15:04:05"
-	prefix := fmt.Sprintf(`> This issue is migrated from [#%d](%s).  
-> Original author: %s  
+// MigratedIssueBody ...
+func (c *Client) MigratedIssueBody(i *Issue, r *Repo) (*string, error) {
+	prefix := fmt.Sprintf(`> This issue is migrated from [#%d@GitBucket](%s).  
+> Original author: %s
 
-`, i.Number, i.HTMLURL, i.User.Login, i.CreatedAt.Format(format), i.UpdatedAt.Format(format))
+`, i.Number, i.HTMLURL, i.User.Login)
+	b, err := c.migratedBody(i.Body, r)
+	if err != nil {
+		return nil, err
+	}
 
-	return prefix + i.Body
+	body := prefix + *b
+
+	return &body, nil
 }

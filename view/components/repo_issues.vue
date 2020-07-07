@@ -1,9 +1,7 @@
 <template>
   <b-card no-body>
     <b-card-header header-tag="nav">
-      <span class="title">
-        Issues
-      </span>
+      <span class="title">Issues</span>
       <MigrateButton
         class="migrate-button"
         :migrating="migrating"
@@ -27,7 +25,7 @@
         >
           <span>
             <b-icon-info-circle
-              v-if="issue.state == 'open'"
+              v-if="issue.state === 'open'"
               variant="success"
               class="mr-1"
             />
@@ -112,7 +110,7 @@ export default {
       return this.issues.filter((i) => i.state === 'closed').length
     },
     isNotMigratable() {
-      return this.loading || !this.migratable.pulls
+      return this.loading || !this.migratable.issues
     }
   },
   methods: {

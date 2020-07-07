@@ -158,13 +158,23 @@ func (c *Client) MigrateRepo(m *Migration) (*Migration, error) {
 // MigrateIssues ...
 func (c *Client) MigrateIssues(m *Migration) (*Migration, error) {
 	for _, i := range m.Repo.Issues {
-		issue, err := c.lab.CreateIssue(m.Project, i.Number, i.Title, i.MigratedBody())
+		body, err := c.bucket.MigratedIssueBody(&i, m.Repo)
+		if err != nil {
+			return nil, err
+		}
+
+		issue, err := c.lab.CreateIssue(m.Project, i.Number, i.Title, *body)
 		if err != nil {
 			return nil, err
 		}
 
 		for _, comment := range i.Comments {
-			_, err := c.lab.CreateIssueComment(m.Project, issue, comment.MigratedBody(), comment.CreatedAt)
+			body, err := c.bucket.MigratedCommentBody(&comment, m.Repo)
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = c.lab.CreateIssueComment(m.Project, issue, *body, comment.CreatedAt)
 			if err != nil {
 				return nil, err
 			}
@@ -184,13 +194,23 @@ func (c *Client) MigrateIssues(m *Migration) (*Migration, error) {
 // MigratePulls ...
 func (c *Client) MigratePulls(m *Migration) (*Migration, error) {
 	for _, p := range m.Repo.Pulls {
-		merge, err := c.lab.CreateMerge(m.Project, p.Title, p.Head.Ref, p.Base.Ref, p.MigratedBody())
+		body, err := c.bucket.MigratedPullBody(&p, m.Repo)
+		if err != nil {
+			return nil, err
+		}
+
+		merge, err := c.lab.CreateMerge(m.Project, p.Title, p.Head.Ref, p.Base.Ref, *body)
 		if err != nil {
 			return nil, err
 		}
 
 		for _, comment := range p.Comments {
-			_, err := c.lab.CreateMergeComment(m.Project, merge, comment.MigratedBody(), comment.CreatedAt)
+			body, err := c.bucket.MigratedCommentBody(&comment, m.Repo)
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = c.lab.CreateMergeComment(m.Project, merge, *body, comment.CreatedAt)
 			if err != nil {
 				return nil, err
 			}

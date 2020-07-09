@@ -9,8 +9,8 @@ import (
 func TestIsRepoMigratable(t *testing.T) {
 	labUser := gitlab.User{Username: "root"}
 	labGroups := []gitlab.Group{
-		gitlab.Group{Name: "public_group", Visibility: "public"},
-		gitlab.Group{Name: "private_group", Visibility: "private"},
+		{Name: "public_group", Visibility: "public"},
+		{Name: "private_group", Visibility: "private"},
 	}
 
 	repo := gitbucket.Repo{

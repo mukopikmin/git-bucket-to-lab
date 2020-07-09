@@ -2,6 +2,12 @@ package gitbucket
 
 import (
 	"encoding/json"
+	"fmt"
+
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/storage"
 )
 
 // Branch ...
@@ -36,4 +42,25 @@ func (c *Client) GetBranches(r *Repo) ([]Branch, error) {
 	}
 
 	return branches, nil
+}
+
+// CreateBranch ...
+func (c *Client) CreateBranch(repo *git.Repository, name string, hash string, storage storage.Storer, worktree billy.Filesystem) error {
+	w, err := repo.Worktree()
+	if err != nil {
+		return err
+	}
+
+	err = w.Checkout(&git.CheckoutOptions{
+		Create: true,
+		Hash:   plumbing.NewHash(hash),
+		Branch: plumbing.ReferenceName("refs/heads/" + name),
+	})
+	if err != nil {
+		// Ignore error
+		// Assume most checkout error is "already exists", and it is not a problem
+		fmt.Println(err)
+	}
+
+	return nil
 }

@@ -1,8 +1,12 @@
 package migration
 
 import (
+	"crypto/rand"
+	"encoding/binary"
+	"fmt"
 	"git-bucket-to-lab/gitbucket"
 	"git-bucket-to-lab/gitlab"
+	"strconv"
 
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5/storage/memory"
@@ -142,12 +146,12 @@ func (c *Client) MigrateRepo(m *Migration) (*Migration, error) {
 	storage := memory.NewStorage()
 	worktree := memfs.New()
 
-	err := c.bucket.Clone(m.Repo, storage, worktree)
+	_, err := c.bucket.Clone(m.Repo, storage, worktree)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.lab.Push(m.Project, storage, worktree)
+	err = c.lab.Push(m.Project, nil, storage, worktree)
 	if err != nil {
 		return nil, err
 	}
@@ -193,13 +197,37 @@ func (c *Client) MigrateIssues(m *Migration) (*Migration, error) {
 
 // MigratePulls ...
 func (c *Client) MigratePulls(m *Migration) (*Migration, error) {
+	storage := memory.NewStorage()
+	worktree := memfs.New()
+
+	repo, err := c.bucket.Clone(m.Repo, storage, worktree)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, p := range m.Repo.Pulls {
+		var n uint64
+		binary.Read(rand.Reader, binary.LittleEndian, &n)
+		branch := "tmp/migrate/" + strconv.FormatUint(n, 36)
+		fmt.Println(branch)
+		err = c.bucket.CreateBranch(repo, branch, p.Head.Sha, storage, worktree)
+		if err != nil {
+			return nil, err
+		}
+
+		err = c.lab.Push(m.Project, &branch, storage, worktree)
+		if err != nil {
+			// Ignore error
+			// Assume push will success, repository is cloned successfully
+			fmt.Println(err)
+		}
+
 		body, err := c.bucket.MigratedPullBody(&p, m.Repo)
 		if err != nil {
 			return nil, err
 		}
 
-		merge, err := c.lab.CreateMerge(m.Project, p.Title, p.Head.Ref, p.Base.Ref, *body)
+		merge, err := c.lab.CreateMerge(m.Project, p.Title, branch, p.Base.Ref, *body)
 		if err != nil {
 			return nil, err
 		}

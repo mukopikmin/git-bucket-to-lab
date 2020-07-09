@@ -57,14 +57,15 @@ func main() {
 		path := c.Request().URL.Path
 
 		if strings.HasPrefix(path, "/api") {
+			code := 500
 			if he, ok := err.(*echo.HTTPError); ok {
-				code := he.Code
-				message := he.Message
-				c.JSON(code, APIError{
-					Status:  code,
-					Message: message.(string),
-				})
+				code = he.Code
 			}
+
+			c.JSON(code, APIError{
+				Status:  code,
+				Message: err.Error(),
+			})
 		} else {
 			if err := c.File("view/dist/index.html"); err != nil {
 				c.Logger().Error(err)

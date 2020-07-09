@@ -107,7 +107,7 @@ export default {
     return {
       query: '',
       state: {
-        migrated: true,
+        migrated: false,
         notMigrated: true
       },
       owner: null,

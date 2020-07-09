@@ -198,7 +198,7 @@ func (c *Client) CreateProject(nsID int, name string, description string, privat
 }
 
 // Push ...
-func (c *Client) Push(p *Project, storage storage.Storer, worktree billy.Filesystem) error {
+func (c *Client) Push(p *Project, branch *string, storage storage.Storer, worktree billy.Filesystem) error {
 	remote := "lab"
 	r, err := git.Open(storage, worktree)
 	if err != nil {
@@ -210,15 +210,25 @@ func (c *Client) Push(p *Project, storage storage.Storer, worktree billy.Filesys
 		URLs: []string{p.HTTPURLToRepo},
 	})
 	if err != nil {
-		return err
+		// Ignore error
+		// Assume error is "remote already exists", and it is not a problem
+	}
+
+	refspecs := []config.RefSpec{}
+	if branch == nil {
+		refspecs = []config.RefSpec{
+			config.RefSpec("+refs/remotes/origin/*:refs/heads/*"),
+			config.RefSpec("+refs/tags/*:refs/tags/*"),
+		}
+	} else {
+		refspecs = []config.RefSpec{
+			config.RefSpec("+refs/heads/" + *branch + ":refs/heads/" + *branch),
+		}
 	}
 
 	err = r.Push(&git.PushOptions{
 		RemoteName: remote,
-		RefSpecs: []config.RefSpec{
-			config.RefSpec("+refs/remotes/origin/*:refs/heads/*"),
-			config.RefSpec("+refs/tags/*:refs/tags/*"),
-		},
+		RefSpecs:   refspecs,
 		Auth: &http.BasicAuth{
 			Username: "oauth2",
 			Password: c.token,

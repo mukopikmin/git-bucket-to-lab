@@ -71,6 +71,7 @@ func (c *Client) GetGroup(name string) (*Group, error) {
 	return &group, nil
 }
 
+// IsPrivate ...
 func (g *Group) IsPrivate() bool {
 	return g.Visibility == "private"
 }

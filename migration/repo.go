@@ -249,6 +249,11 @@ func (c *Client) MigratePulls(m *Migration) (*Migration, error) {
 			if err != nil {
 				return nil, err
 			}
+
+			err = c.lab.DeleteBranch(m.Project, branch)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 

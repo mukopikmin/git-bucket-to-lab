@@ -121,3 +121,28 @@ func (c *Client) authPut(path string, jsonBody []byte) ([]byte, error) {
 
 	return body, nil
 }
+
+func (c *Client) authDelete(path string) error {
+	req, err := http.NewRequest("DELETE", c.APIEndpoint()+path, nil)
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.token)
+
+	res, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode != 204 {
+		return fmt.Errorf(string(body))
+	}
+
+	return nil
+}

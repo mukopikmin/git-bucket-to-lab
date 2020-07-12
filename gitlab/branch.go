@@ -3,6 +3,7 @@ package gitlab
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 // Branch ...
@@ -53,4 +54,15 @@ func (c *Client) GetBranches(p *Project) ([]Branch, error) {
 	}
 
 	return branches, nil
+}
+
+// DeleteBranch ...
+func (c *Client) DeleteBranch(p *Project, name string) error {
+	path := fmt.Sprintf("/projects/%d/repository/branches/%s", p.ID, url.QueryEscape(name))
+	err := c.authDelete(path)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

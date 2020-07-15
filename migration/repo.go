@@ -208,14 +208,30 @@ func (c *Client) MigratePulls(m *Migration) (*Migration, error) {
 	for _, p := range m.Repo.Pulls {
 		var n uint64
 		binary.Read(rand.Reader, binary.LittleEndian, &n)
-		branch := "tmp/migrate/" + strconv.FormatUint(n, 36)
-		fmt.Println(branch)
-		err = c.bucket.CreateBranch(repo, branch, p.Head.Sha, storage, worktree)
+		ran := strconv.FormatUint(n, 36)
+		headBranch := "tmp/migrate/" + ran
+		baseBranch := "tmp/base/" + ran
+
+		// fmt.Println(headBranch)
+
+		err = c.bucket.CreateBranch(repo, baseBranch, p.Base.Sha, storage, worktree)
 		if err != nil {
 			return nil, err
 		}
 
-		err = c.lab.Push(m.Project, &branch, storage, worktree)
+		err = c.bucket.CreateBranch(repo, headBranch, p.Head.Sha, storage, worktree)
+		if err != nil {
+			return nil, err
+		}
+
+		err = c.lab.Push(m.Project, &baseBranch, storage, worktree)
+		if err != nil {
+			// Ignore error
+			// Assume push will success, repository is cloned successfully
+			fmt.Println(err)
+		}
+
+		err = c.lab.Push(m.Project, &headBranch, storage, worktree)
 		if err != nil {
 			// Ignore error
 			// Assume push will success, repository is cloned successfully
@@ -227,7 +243,7 @@ func (c *Client) MigratePulls(m *Migration) (*Migration, error) {
 			return nil, err
 		}
 
-		merge, err := c.lab.CreateMerge(m.Project, p.Title, branch, p.Base.Ref, *body)
+		merge, err := c.lab.CreateMerge(m.Project, p.Title, headBranch, baseBranch, *body)
 		if err != nil {
 			return nil, err
 		}
@@ -250,7 +266,12 @@ func (c *Client) MigratePulls(m *Migration) (*Migration, error) {
 				return nil, err
 			}
 
-			err = c.lab.DeleteBranch(m.Project, branch)
+			err = c.lab.DeleteBranch(m.Project, baseBranch)
+			if err != nil {
+				return nil, err
+			}
+
+			err = c.lab.DeleteBranch(m.Project, headBranch)
 			if err != nil {
 				return nil, err
 			}

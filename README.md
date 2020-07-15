@@ -11,8 +11,8 @@ Migrate repositories on GItBucket to projects on GitLab.
 
 - [x] Repository (Including code, commits, tags, branches)
 - [ ] Release
-- [ ] Issue
-- [ ] Pull request
+- [x] Issue
+- [x] Pull request
 - [ ] Wiki
 
 ## Install
@@ -22,6 +22,13 @@ Build client application.
     npm install
     npm run build
 
-Start server.
+Set environtment variable and start server.
 
-    go run main.go
+    GITBUCKET_URL=http://gitbucket.example.com GITLAB_URL=http://gitlab.example.com go run main.go
+
+### Run with docker
+
+    docker run \
+        -e GITBUCKET_URL=http://gitbucket.example.com \
+        -e GITLAB_URL=http://gitlab.example.com \
+        mukopikmin/git-bucket-to-lab

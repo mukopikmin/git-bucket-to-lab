@@ -126,7 +126,7 @@ export default {
     },
     generateGitbucketToken() {
       window.open(
-        `${this.gitbucketUrl}/${this.username}/_application`,
+        `${this.gitbucketUrl}/${this.usernameInput}/_application`,
         '_blank'
       )
     },

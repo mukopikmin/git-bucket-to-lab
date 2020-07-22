@@ -2,10 +2,8 @@ name: Go
 on:
   push:
     branches:
-      - master
-  pull_request:
-    branches:
-      - master
+      - "**"
+      - "!master"
 env:
   DOCKER_IMAGE_NAME: mukopikmin/git-bucket-to-lab
 jobs:
@@ -33,9 +31,3 @@ jobs:
         run: go test -v .
       - name: Build image
         run: docker build -t ${{ env.DOCKER_IMAGE_NAME }} .
-      - name: Login to Registry
-        env:
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-        run: echo "${DOCKER_HUB_TOKEN}" | docker login -u mukopikmin --password-stdin
-      - name: Push to Docker Hub
-        run: docker push "${{ env.DOCKER_IMAGE_NAME }}"

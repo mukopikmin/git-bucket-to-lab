@@ -22,7 +22,7 @@
             </td>
             <td>
               <b-icon-check-circle-fill
-                v-if="gitlabGroups.map((g) => g.name).includes(group.login)"
+                v-if="gitlabGroups.map((g) => g.path).includes(group.login)"
                 variant="success"
                 class="ml-1"
               />
